@@ -14,21 +14,21 @@ const Form = ({ route, method }) => {
   const handleSubmit = async (e) => {
     setisLoading(true)
     e.preventDefault();
-    try {
-        const res = await api.post(route,{username: username, password: password} )
+    // try {
+    //     const res = await api.post(route,{username: username, password: password} )
 
-        if (res.status >= 200 && res.status < 300) {
-            if (method === "login") {
-                navigate("/home")
-            } else {
-                navigate("/login")
-            }
-        }
-    } catch (error) {
-        console.log(error)
-    } finally {
-        setisLoading(false)
-    }
+    //     if (res.status >= 200 && res.status < 300) {
+    //         if (method === "login") {
+    //             navigate("/home")
+    //         } else {
+    //             navigate("/login")
+    //         }
+    //     }
+    // } catch (error) {
+    //     console.log(error)
+    // } finally {
+    //     setisLoading(false)
+    // }
     try {
         if (method === "login") {
             const res = await api.post("api/auth/login/", {username: username, password: password})
