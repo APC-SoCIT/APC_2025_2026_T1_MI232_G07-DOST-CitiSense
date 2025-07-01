@@ -1,5 +1,7 @@
+import Form from "../components/form";
+
 function Register() {
-    return <div>Register</div>
+    return <Form method="register" />
 }
 
 export default Register;
