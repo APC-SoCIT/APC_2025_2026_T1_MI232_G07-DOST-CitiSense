@@ -1,8 +1,14 @@
-import Form from "../components/form";
-
+import LoginForm from "../components/LoginForm";
 
 function Login() {
-    return <Form method="login" />
+    return(
+        <main className="flex flex-col items-center">
+            <div className="mt-5 justify-center">
+                <LoginForm method="login" route="/api/auth/token/"/>
+            </div>
+        </main>
+    ) 
+    
 }
 
 export default Login;
