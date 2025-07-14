@@ -20,6 +20,8 @@ const RegisterForm = ({ route, method }) => {
       navigate("/login")
     } catch (error) {
         alert(error)
+        // add a way to show the user error in the frontend and backend, next time
+        console.log(error)
     } finally {
         setisLoading(false)
     }

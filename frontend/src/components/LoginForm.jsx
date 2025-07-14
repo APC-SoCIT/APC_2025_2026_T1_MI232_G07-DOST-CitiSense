@@ -19,7 +19,8 @@ const LoginForm = ({ route, method }) => {
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
       navigate("/")
     } catch (error) {
-        alert(error)
+        alert(error.response.data.detail)
+        console.log(error)
     } finally {
         setisLoading(false)
     }
