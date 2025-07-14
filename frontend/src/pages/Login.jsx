@@ -4,7 +4,7 @@ function Login() {
     return(
         <main className="flex flex-col items-center">
             <div className="mt-5 justify-center">
-                <LoginForm method="login" route="/api/auth/token/"/>
+                <LoginForm route="/api/auth/token/"/>
             </div>
         </main>
     ) 

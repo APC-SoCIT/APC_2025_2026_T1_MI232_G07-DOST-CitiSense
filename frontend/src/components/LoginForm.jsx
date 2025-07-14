@@ -14,14 +14,10 @@ const LoginForm = ({ route, method }) => {
     e.preventDefault();
 
     try{
-      const res = await api.post(route, {username, password})
-        if (method === "login") {
-          localStorage.setItem(ACCESS_TOKEN, res.data.access)
-          localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
-          navigate("/")
-        } else {
-          navigate("/login")
-        }
+      const res = await api.post(route, {username, password})  
+      localStorage.setItem(ACCESS_TOKEN, res.data.access)
+      localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
+      navigate("/")
     } catch (error) {
         alert(error)
     } finally {
