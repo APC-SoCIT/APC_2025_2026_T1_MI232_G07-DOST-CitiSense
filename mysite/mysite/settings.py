@@ -182,14 +182,13 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS512",
 }
 
-
-ACCOUNT_LOGIN_METHODS = {"email"}
+# ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
+# ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_EMAIL_REQUIRED = False
+# ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
+ACCOUNT_SIGNUP_FIELDS = ["username", "password1", "password2"]
 
-
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
