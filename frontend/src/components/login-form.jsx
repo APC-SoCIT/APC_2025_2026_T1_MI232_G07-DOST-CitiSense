@@ -12,10 +12,12 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
+import api from "../api"
 
 
 export function LoginForm1({
   className,
+  route,
   ...props
 }) {
 
@@ -29,7 +31,7 @@ export function LoginForm1({
     setisLoading(true)
 
     try {
-      const res = await api.post(route, (username, password))
+      const res = await api.post(route, {username, password})
       localStorage.setItem(ACCESS_TOKEN, res.data.access)
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh)
       navigate("/")
@@ -57,7 +59,7 @@ export function LoginForm1({
               <div className="grid gap-6">
                 <div className="grid gap-3">
                   <Label htmlFor="email">Username</Label>
-                  <Input id="username" type="text" required/>
+                  <Input id="username" value={username} type="text" onChange={(e) => setUsername(e.target.value)} required/>
                 </div>
                 <div className="grid gap-3">
                   <div className="flex items-center">
@@ -66,9 +68,9 @@ export function LoginForm1({
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" required/>
+                  <Input id="password" value={password} type="password" onChange={(e) => setPassword(e.target.value)} required/>
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   Login
                 </Button>
               </div>
