@@ -7,12 +7,13 @@ import { Navigate } from 'react-router-dom'
 
 // import Dashboard from './pages/dashboard.jsx'
 // import NotFoundPage from './pages/NotFoundPage.jsx'
-// import Layout from './components/layout.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Home from './pages/Home.jsx'
+import DashboardPage from './pages/Dashboard1'
+import Layout from './pages/Layout.jsx'
+
 const Logout = () => {
   localStorage.clear()
   return <Navigate to="/login" />
@@ -24,19 +25,9 @@ const RegisterAndLogout = () => {
 }
 
 const router = createBrowserRouter([
-  // // {
-  // //   path:"/", 
-  // //   element: <ProtectedRoute><Layout /></ProtectedRoute>, 
-  // //   children: [
-  // //     {index: true, element: <App />},
-  // //     {path:"/dashboard", element: <Dashboard />},
-      
-  // // ],
-  // },
-
   {
   path: "/",
-  element: <ProtectedRoute />,
+  element: <Layout />,
   children: [
     {
       index: true,
@@ -49,6 +40,7 @@ const router = createBrowserRouter([
   {path:"/register", element: <RegisterAndLogout />},
   {path:"/logout", element: <Logout />},
   {path:"*", element: <NotFound />},
+  {path: "/dashboard", element: <DashboardPage />}
   
 ]);
 
