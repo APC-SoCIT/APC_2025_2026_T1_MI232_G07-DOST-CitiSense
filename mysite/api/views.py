@@ -23,8 +23,7 @@ def sentiment_count(request):
         total_count = Count("id") 
     )
     formattedsentiment = {item['sentiment']: item['sencount'] for item in sentimentcount}
-    gauge_percentage = ((senticounts['positive'] * 100 + senticounts['negative'] * 0 + senticounts['neutral'] * 50) / senticounts['total_count'])
-    return Response({"Gauge percentage": gauge_percentage,'service_counts': formattedsentiment})
+    return Response({'service_counts': formattedsentiment})
     
 
 @api_view(['GET'])
