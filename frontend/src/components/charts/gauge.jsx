@@ -1,16 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GaugeComponent from "react-gauge-component";
-import gaugedata from  '../../mockdata/gauge.json';
+import api from "../../api";
 
 const Gauge = () => {
-  return(
+  const [gaugeValue, setGaugeValue] = useState(0);
+
+  useEffect(() => {
+    getGauge();
+  }, []);
+
+  const getGauge = async () => {
+    try {
+      const res = await api.get("/sentimentposts/gauge/");
+      const resData = res.data?.["Gauge percentage"];    // optional chaining proceeds through if res.data is not undefined
+      if (typeof resData === "number") {    //check if the value is a number
+        setGaugeValue(resData);
+
+      } else {
+        console.error("Failed to fetch Gauge chart data", resData);
+        setGaugeValue(0);
+      }
+
+    } catch (error) {
+      console.error("Error fetching Gauge chart data:", error);
+    }
+  };
+  
+  return (
     <div>
       <GaugeComponent
-        value={gaugedata.gauge}
+        value={gaugeValue}
         type="radial"
         labels={{
           valueLabel: {
-            style: {fill: "#000000", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)"}
+            style: {
+              fill: "#000000",
+              textShadow: "1px 1px 2px rgba(0, 0, 0, 0.2)",
+            },
           },
           tickLabels: {
             type: "outer",
@@ -19,26 +45,26 @@ const Gauge = () => {
               { value: 40 },
               { value: 60 },
               { value: 80 },
-              { value: 100 }
+              { value: 100 },
             ],
-          }
+          },
         }}
         arc={{
-          colorArray: ['#EA4228','#5BE12C'],
-          subArcs: [{limit: 33.3}, {limit: 66.6}, {limit: 100}],
+          colorArray: ["#EA4228", "#5BE12C"],
+          subArcs: [{ limit: 33.3 }, { limit: 66.6 }, { limit: 100 }],
           padding: 0.02,
-          width: 0.3
+          width: 0.3,
         }}
         pointer={{
           elastic: true,
-          animationDelay: 0
+          animationDelay: 0,
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Gauge; 
+export default Gauge;
 // import React from 'react';
 // import GaugeChart from 'react-gauge-chart';
 // import gaugeData from '../mockdata/gauge.json'
