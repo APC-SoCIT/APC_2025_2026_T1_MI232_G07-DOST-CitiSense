@@ -11,8 +11,9 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Home from './pages/Home.jsx'
-import DashboardPage from './pages/Dashboard1'
+import DashboardPage1 from './pages/Dashboard1'
 import Layout from './pages/Layout.jsx'
+import DashboardPage from './pages/Dashboard.jsx'
 
 const Logout = () => {
   localStorage.clear()
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     {
       index: true,
       element: <Home />
+    },
+    {
+      path: "/dashboard",
+      element: <DashboardPage />
     }
   ]
 },
@@ -40,8 +45,7 @@ const router = createBrowserRouter([
   {path:"/register", element: <RegisterAndLogout />},
   {path:"/logout", element: <Logout />},
   {path:"*", element: <NotFound />},
-  {path: "/dashboard", element: <DashboardPage />}
-  
+  {path: "/dashboard1", element: <DashboardPage1 />},
 ]);
 
 createRoot(document.getElementById('root')).render(

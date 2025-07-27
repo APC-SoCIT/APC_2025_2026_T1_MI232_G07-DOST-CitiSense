@@ -1,0 +1,17 @@
+{
+    "series": [
+        {
+            "name": "Negative",
+            "data": [24,22]
+        },
+        {
+            "name": "Neutral",
+            "data": [35,50]
+        },
+        {
+            "name": "Positive",
+            "data": [41,28]
+        }
+            
+    ]
+}
