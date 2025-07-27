@@ -1,10 +1,11 @@
 from django.urls import path
 from . import views
-from .views import sentiment_count, gauge_chart
+from .views import sentiment_count, gauge_chart, gender_chart, service_chart
 
 urlpatterns = [
     path("sentimentposts/",views.SentimentPostListCreate.as_view(), name="sentiposts"),
-    path("sentimentposts/gen/", sentiment_count, name="sentigender"),
-    path("sentimentposts/gauge/", gauge_chart, name="sentigauge")
-
+    path("sentimentposts/count/", sentiment_count, name="senticount"),
+    path("sentimentposts/gauge/", gauge_chart, name="sentigauge"),
+    path("sentimentposts/gen/", gender_chart, name="sentigender"),
+    path("sentimentposts/service/", service_chart, name="sentiservice")
 ]
