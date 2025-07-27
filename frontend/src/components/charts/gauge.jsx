@@ -1,6 +1,6 @@
 import React from "react";
 import GaugeComponent from "react-gauge-component";
-import gaugedata from  '../mockdata/gauge.json';
+import gaugedata from  '../../mockdata/gauge.json';
 
 const Gauge = () => {
   return(

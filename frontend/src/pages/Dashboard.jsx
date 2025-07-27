@@ -1,6 +1,6 @@
-import Gauge from "../charts/gauge";
-import Service from "../charts/service";
-import Gender from "../charts/gender";
+import Gauge from "../components/charts/gauge";
+import Service from "../components/charts/service";
+import Gender from "../components/charts/gender";
 
 function Dashboard() {
   return (
@@ -19,7 +19,7 @@ function Dashboard() {
         <div className="h-[400px] rounded-md shadow mt-10 p-4">
           <Service />
         </div>
-      </div>  
+      </div>
 
       <div className="flex flex-col w-full lg:w-1/3 ml-5 pb-10">
         <div className="h-[400px] rounded-md shadow mt-20 p-4 ">
@@ -34,4 +34,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
