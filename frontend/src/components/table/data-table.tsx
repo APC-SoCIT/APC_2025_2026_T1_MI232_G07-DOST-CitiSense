@@ -17,9 +17,10 @@ import {
 } from "../../components/ui/table";
 import { useEffect, useState } from "react";
 import api from "../../api";
+import { Posttype } from "./columns";
 
 export function DataTable({ columns }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Posttype[]>([]);
 
   useEffect(() => {
     const getSentimentData = async () => {
