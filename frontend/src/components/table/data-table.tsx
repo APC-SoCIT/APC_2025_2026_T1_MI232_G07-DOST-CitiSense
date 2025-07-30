@@ -4,6 +4,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -18,10 +19,14 @@ import {
 import { useEffect, useState } from "react";
 import api from "../../api";
 import { Posttype } from "./columns";
+import { Button } from "../ui/button";
 
 export function DataTable({ columns }) {
   const [data, setData] = useState<Posttype[]>([]);
-
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
   useEffect(() => {
     const getSentimentData = async () => {
       try {
@@ -40,6 +45,11 @@ export function DataTable({ columns }) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: "onChange",
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    state: {
+      pagination,
+    },
     meta: {
       updateData: (rowIndex, columnId, value) => {
         setData((prev) =>
@@ -50,9 +60,9 @@ export function DataTable({ columns }) {
       },
     },
   });
-  console.log(data);
+  console.log(table.options.state);
   return (
-    <div className="flex h-full items-center justify-center">
+    <div className="flex flex-col h-full items-center justify-center">
       <div className="overflow-hidden rounded-md border">
         <Table
           className="items-center justify-center"
@@ -122,6 +132,51 @@ export function DataTable({ columns }) {
           </TableBody>
         </Table>
       </div>
+      <div className="flex items-center justify-center mt-10">
+        <Button
+          variant="default"
+          className="mr-5"
+          size=""
+          onClick={() => table.firstPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {"<<"}
+        </Button>
+        <Button
+          variant="default"
+          className="mr-5"
+          size=""
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {"<"}
+        </Button>
+        <Button
+          variant="default"
+          className="mr-5"
+          size=""
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {">"}
+        </Button>
+        <Button
+          variant="default"
+          className=""
+          size=""
+          onClick={() => table.lastPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {">>"}
+        </Button>
+      </div>
+      <span className="flex justify-center text-center items-center gap-1">
+        <div className="justify-center text-center items-center my-5">Page</div>
+        <strong>
+          {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getPageCount().toLocaleString()}
+        </strong>
+      </span>
     </div>
   );
 }

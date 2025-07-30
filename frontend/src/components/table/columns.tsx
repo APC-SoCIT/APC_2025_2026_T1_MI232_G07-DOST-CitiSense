@@ -1,8 +1,19 @@
 import { ColumnDef } from "@tanstack/react-table";
-import EditableCell from "./EditableCell";
+import DropdownCell from "./DropdownCell";
 
 type Gender = "M" | "F";
 type Sentiment = "Positive" | "Negative" | "Neutral";
+
+export type SentimentOption = {
+  label: Sentiment;
+  color: string;
+};
+
+export const senArray: SentimentOption[] = [
+  { label: "Positive", color: "bg-green-500" },
+  { label: "Neutral", color: "bg-yellow-500" },
+  { label: "Negative", color: "bg-red-500" },
+];
 
 export type Posttype = {
   id: number;
@@ -42,6 +53,6 @@ export const columns: ColumnDef<Posttype>[] = [
   {
     accessorKey: "sentiment",
     header: () => <span>sentiment</span>,
-    cell: EditableCell,
+    cell: DropdownCell,
   },
 ];

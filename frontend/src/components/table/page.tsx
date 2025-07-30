@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { columns, Posttype } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 function DemoPage() {

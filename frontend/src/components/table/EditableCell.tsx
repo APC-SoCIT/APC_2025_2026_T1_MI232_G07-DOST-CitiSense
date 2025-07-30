@@ -6,12 +6,8 @@ const EditableCell = ({ getValue, row, column, table }) => {
   const [value, setValue] = useState(initialValue);
 
   const onBlur = () => {
-    table.options.meta?.updateData(
-      row.index,
-      column.id,
-      value
-    )
-  }
+    table.options.meta?.updateData(row.index, column.id, value);
+  };
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
