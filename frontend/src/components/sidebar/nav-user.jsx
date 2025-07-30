@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useEffect, useState } from "react"
 import api from "../../api"
+import { Link } from "react-router-dom"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -99,10 +100,12 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
+            <Link to="/logout">
             <DropdownMenuItem>
               <LogOut />
               Log out
             </DropdownMenuItem>
+            </Link>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

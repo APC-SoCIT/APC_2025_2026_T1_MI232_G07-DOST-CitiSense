@@ -70,11 +70,16 @@ export default function Table() {
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: "onChange",
   });
-
+  console.log('this is the core row model', table.getCoreRowModel())
+  console.log('this is the column', table.getHeaderGroups())
   return (
     <div className="flex items-center justify-center min-h-full">
-      <table className="border border-gray-300 items-center justify-center ">
+      <table
+        style={{ width: table.getCenterTotalSize() }}
+        className="border border-gray-300 items-center justify-center "
+      >
         <thead className="bg-gray-100">
           {table.getHeaderGroups().map((headerGroup) => {
             return (
@@ -83,12 +88,21 @@ export default function Table() {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="border px-4"
+                    className="border px-4 relative"
+                    style={{ width: header.getSize() }}
                   >
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()
                     )}
+
+                    <div
+                      onDoubleClick={() => header.column.resetSize()}
+                      onMouseDown={header.getResizeHandler()}
+                      className={`absolute right-0 top-0 h-full w-1.5 cursor-col-resize select-none z-10 ${
+                        header.column.getIsResizing() ? "bg-blue-500" : ""
+                      }`}
+                    />
                   </th>
                 ))}
               </tr>
@@ -98,14 +112,15 @@ export default function Table() {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id} className="border px-4">
-                    {" "}
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  className="border px-4 text-center"
+                  style={{ width: cell.column.getSize() }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

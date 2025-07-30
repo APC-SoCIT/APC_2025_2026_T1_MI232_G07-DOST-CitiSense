@@ -15,6 +15,7 @@ import DashboardPage1 from './pages/Dashboard1'
 import Layout from './pages/Layout.jsx'
 import DashboardPage from './pages/Dashboard.jsx'
 import Table from './components/table/table.js'
+import DemoPage from './components/table/page.js'
 
 const Logout = () => {
   localStorage.clear()
@@ -37,7 +38,7 @@ const router = createBrowserRouter([
     },
     {
       path: "/archive",   //test for fast navigation to home
-      element: <Home />
+      element: <DemoPage />
     },
     {
       path: "/dashboard",
