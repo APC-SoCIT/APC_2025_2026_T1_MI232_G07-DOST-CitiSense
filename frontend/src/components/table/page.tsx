@@ -3,7 +3,7 @@ import { DataTable } from "./data-table";
 
 function DemoPage() {
   return (
-    <div>
+    <div className="scale-80">
       <DataTable columns={columns} />
     </div>
   );

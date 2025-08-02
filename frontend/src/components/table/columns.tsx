@@ -32,27 +32,27 @@ export const columns: ColumnDef<Posttype>[] = [
   },
   {
     accessorKey: "name",
-    header: () => <span>name</span>,
+    header: () => <span>Name</span>,
     cell: (info) => info.getValue(),
   },
   {
     accessorKey: "service",
-    header: () => <span>service</span>,
+    header: () => <span>Service</span>,
     cell: (info) => info.getValue(),
   },
   {
     accessorKey: "gender",
-    header: () => <span>gender</span>,
+    header: () => <span>Gender</span>,
     cell: (info) => info.getValue(),
   },
   {
     accessorKey: "feedback",
-    header: () => <span>feedback</span>,
+    header: () => <span>Feedback</span>,
     cell: (info) => info.getValue(),
   },
   {
     accessorKey: "sentiment",
-    header: () => <span>sentiment</span>,
+    header: () => <span>Sentiment</span>,
     cell: DropdownCell,
   },
 ];
