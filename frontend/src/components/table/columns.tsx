@@ -29,11 +29,14 @@ export const columns: ColumnDef<Posttype>[] = [
     accessorKey: "id",
     header: () => <span>ID</span>,
     cell: (info) => info.getValue(),
+    enableColumnFilter: false,
   },
   {
     accessorKey: "name",
     header: () => <span>Name</span>,
     cell: (info) => info.getValue(),
+
+    enableColumnFilter: false,
   },
   {
     accessorKey: "service",
@@ -49,6 +52,7 @@ export const columns: ColumnDef<Posttype>[] = [
     accessorKey: "feedback",
     header: () => <span>Feedback</span>,
     cell: (info) => info.getValue(),
+    enableColumnFilter: false,
   },
   {
     accessorKey: "sentiment",

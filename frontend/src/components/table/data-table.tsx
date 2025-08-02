@@ -2,9 +2,15 @@
 
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFacetedMinMaxValues,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -23,6 +29,8 @@ import { Button } from "../ui/button";
 
 import { ChevronDown } from "lucide-react";
 import ColumnVisibility from "./ColumnVisibility";
+import FilterText from "./FilterText";
+import FilterDropdown from "./FilterDropdown";
 
 export function DataTable({ columns }) {
   const [data, setData] = useState<Posttype[]>([]);
@@ -31,13 +39,14 @@ export function DataTable({ columns }) {
     pageSize: 7,
   });
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   useEffect(() => {
     const getSentimentData = async () => {
       try {
         const res = await api.get("/sentimentposts/");
         setData(res?.data);
-        console.log(res);
+        // console.log(res);
       } catch (error) {
         console.log(error);
       }
@@ -51,12 +60,17 @@ export function DataTable({ columns }) {
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: "onChange",
     columnResizeDirection: "ltr",
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     onPaginationChange: setPagination,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       pagination,
       columnVisibility,
+      columnFilters,
     },
     meta: {
       updateData: (rowIndex, columnId, value) => {
@@ -69,10 +83,8 @@ export function DataTable({ columns }) {
     },
   });
 
-  console.log(table.options.state);
-
   return (
-    <div className="-mt-16">
+    <div className="-mt-2">
       <div className="flex flex-col w-full mx-auto">
         <div className="flex justify-end py-2">
           <ColumnVisibility table={table} />
@@ -89,12 +101,26 @@ export function DataTable({ columns }) {
                         className="border-r relative text-center"
                         style={{ width: header.getSize() }}
                       >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
+                        {/* column header rendering */}
+                        {!header.isPlaceholder && (
+                          <div className="relative w-full flex justify-center items-center gap-2">
+                            <div className="w-full text-center px-8">
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </div>
+
+                            {/* filter button */}
+                            {header.column.getCanFilter() && (
+                              <div className="absolute right-1">
+                                <FilterDropdown column={header.column} />
+                              </div>
                             )}
+                          </div>
+                        )}
+
+                        {/* column resizing */}
                         <div
                           onDoubleClick={() => header.column.resetSize()}
                           onMouseDown={header.getResizeHandler()}
@@ -143,6 +169,7 @@ export function DataTable({ columns }) {
             </TableBody>
           </Table>
         </div>
+        {/* pagination */}
         <div className="flex items-center justify-center mt-4">
           <Button
             variant="default"
@@ -189,6 +216,13 @@ export function DataTable({ columns }) {
           </strong>
         </span>
       </div>
+      <pre>
+        {JSON.stringify(
+          { columnFilters: table.getState().columnFilters },
+          null,
+          2
+        )}
+      </pre>
     </div>
   );
 }
