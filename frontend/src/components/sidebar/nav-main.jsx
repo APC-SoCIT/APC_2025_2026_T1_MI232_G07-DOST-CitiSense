@@ -24,8 +24,8 @@ export function NavMain({ items }) {
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          if(item.items) {
-            return(
+          if (item?.items) {
+            return (
               <Collapsible
                 key={item.title}
                 asChild
@@ -59,15 +59,17 @@ export function NavMain({ items }) {
               </Collapsible>
             );
           } else {
-            return(
+            return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <a href={item.url}>
                     <item.icon />
-                    <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">
+                      {item.title}
+                    </span>
                   </a>
                 </SidebarMenuButton>
-              </SidebarMenuItem> 
+              </SidebarMenuItem>
             );
           }
         })}
