@@ -35,18 +35,19 @@ export const columns: ColumnDef<Posttype>[] = [
     accessorKey: "name",
     header: () => <span>Name</span>,
     cell: (info) => info.getValue(),
-
     enableColumnFilter: false,
   },
   {
     accessorKey: "service",
     header: () => <span>Service</span>,
     cell: (info) => info.getValue(),
+    filterFn: "arrIncludesSome",
   },
   {
     accessorKey: "gender",
     header: () => <span>Gender</span>,
     cell: (info) => info.getValue(),
+    filterFn: "arrIncludesSome",
   },
   {
     accessorKey: "feedback",
@@ -58,5 +59,6 @@ export const columns: ColumnDef<Posttype>[] = [
     accessorKey: "sentiment",
     header: () => <span>Sentiment</span>,
     cell: DropdownCell,
+    filterFn: "arrIncludesSome",
   },
 ];

@@ -10,7 +10,7 @@ import { ChevronDown } from "lucide-react";
 
 const ColumnVisibility = ({ table }) => {
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button className="" variant="outline" size="">
           Filter Columns
@@ -25,6 +25,7 @@ const ColumnVisibility = ({ table }) => {
               className={`${
                 column.id.length === 2 ? "uppercase" : "capitalize"
               }`}
+              onSelect={(e) => e.preventDefault()}
               checked={column.getIsVisible()}
               onCheckedChange={(isChecked: boolean) =>
                 column.toggleVisibility(isChecked)

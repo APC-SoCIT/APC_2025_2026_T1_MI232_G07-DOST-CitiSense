@@ -3,23 +3,42 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  TableDropdownMenuCheckBoxItem,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Funnel } from "lucide-react";
+import { getFacetedUniqueValues } from "@tanstack/react-table";
 
 const FilterDropdown = ({ column }) => {
-  const columnFilterValue = column.getFilterValue();
+  const columnFilterValue = column.getFilterValue() ?? []; //fallback array if user hasn't filtered anything yet
 
+  // transform unique values into an key, value pairs
+  // only get the first 5,000 and only recalculate if not if unique values changed
   const sortedUniqueValues = useMemo(
-    () => Array.from(column.getFacetedUniqueValues().keys()).slice(0, 5000),
+    () =>
+      Array.from(column.getFacetedUniqueValues().entries()).slice(
+        0,
+        5000
+      ) as Array<[string | number, number]>, // each sorted unique value returns an array of tuple
     [column.getFacetedUniqueValues()]
   );
 
+  // checks the current value in the column
+  // if it isn't in the filter, put the current value in the filter array, else remove it.
+  const handleSelectChange = (value: string | number) => {
+    if (!columnFilterValue.includes(value)) {
+      column.setFilterValue([...columnFilterValue, value]);
+    } else {
+      column.setFilterValue(
+        columnFilterValue.filter((filterWords: string) => filterWords !== value)
+      );
+    }
+  };
+
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           className="p-1 rounded hover:bg-sky-100 scale-70"
@@ -30,23 +49,30 @@ const FilterDropdown = ({ column }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="">
-        <DropdownMenuRadioGroup
-          value={columnFilterValue?.toString()}
-          onValueChange={(e) => column.setFilterValue(e)}
+        <DropdownMenuCheckboxItem
+          checked={""}
+          onCheckedChange={() => column.setFilterValue(undefined)}
+          className="text-red-500"
         >
-          <DropdownMenuRadioItem className="text-red-500" value="">
-            Clear
-          </DropdownMenuRadioItem>
-          {sortedUniqueValues.map((value) => (
-            <DropdownMenuRadioItem
-              value={String(value)}
-              key={String(value)}
-              className="flex items-center"
-            >
-              {value}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+          Clear
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuSeparator className="" />
+        {sortedUniqueValues.map(([value, count]) => (
+          <TableDropdownMenuCheckBoxItem
+            key={String(value)}
+            className=""
+            checked={columnFilterValue.includes(value)}
+            onCheckedChange={() => handleSelectChange(value)}
+            onSelect={(e) => e.preventDefault()}
+          >
+            <div className="flex items-center w-full justify-between">
+              <span className="text-sm text-gray-800">{value}</span>
+              <span className="ml-2 text-xs text-muted-foreground bg-gray-200 px-2 py-0.5 rounded-full">
+                {count}{" "}
+              </span>
+            </div>
+          </TableDropdownMenuCheckBoxItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );

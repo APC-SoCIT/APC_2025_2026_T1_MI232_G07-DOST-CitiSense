@@ -60,6 +60,20 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }) {
   );
 }
 
+function TableDropdownMenuItem({ className, variant = "default", ...props }) {
+  return (
+    <DropdownMenuPrimitive.Item
+      data-slot="dropdown-menu-item"
+      data-variant={variant}
+      className={cn(
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 function DropdownMenuCheckboxItem({ className, children, checked, ...props }) {
   return (
     <DropdownMenuPrimitive.CheckboxItem
@@ -75,6 +89,32 @@ function DropdownMenuCheckboxItem({ className, children, checked, ...props }) {
         <DropdownMenuPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </DropdownMenuPrimitive.ItemIndicator>
+      </span>
+      {children}
+    </DropdownMenuPrimitive.CheckboxItem>
+  );
+}
+
+function TableDropdownMenuCheckBoxItem({
+  className,
+  children,
+  checked,
+  ...props
+}) {
+  return (
+    <DropdownMenuPrimitive.CheckboxItem
+      data-slot="dropdown-menu-checkbox-item"
+      className={cn(
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      checked={checked}
+      {...props}
+    >
+      <span className="pointer-events-none absolute left-1 flex items-center justify-center">
+        <div className="w-5 h-5 flex items-center justify-center rounded-sm bg-gray-100 border border-gray-300">
+          {checked && <CheckIcon className="w-5 h-5 text-gray-800" />}
+        </div>
       </span>
       {children}
     </DropdownMenuPrimitive.CheckboxItem>
@@ -128,7 +168,7 @@ function TableDropdownMenuLabel({ className, ...props }) {
   return (
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
-      className={cn("px-2 py-1.5 text-sm font-medium", className)}
+      className={cn("px-2 py-0.5 text-sm font-medium", className)}
       {...props}
     />
   );
@@ -200,7 +240,9 @@ export {
   DropdownMenuLabel,
   TableDropdownMenuLabel,
   DropdownMenuItem,
+  TableDropdownMenuItem,
   DropdownMenuCheckboxItem,
+  TableDropdownMenuCheckBoxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,

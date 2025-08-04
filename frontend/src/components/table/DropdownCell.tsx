@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
   TableDropdownMenuLabel,
+  TableDropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { senArray } from "./columns";
@@ -15,29 +16,28 @@ const DropdownCell = ({ getValue, row, column, table }) => {
   const { updateData } = table.options.meta;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button className="w-20 focus-visible:ring" variant="ghost" size="">
           {sentiment}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="">
-        <TableDropdownMenuLabel className="text-left text-sm text-muted-foreground">
+        {/* <TableDropdownMenuLabel className="text-left text-sm text-muted-foreground">
           Sentiment
-        </TableDropdownMenuLabel>
-        <DropdownMenuSeparator className="" />
+        </TableDropdownMenuLabel> */}
+        {/* <DropdownMenuSeparator className="" /> */}
         {senArray.map(({ label, color }) => (
-          <DropdownMenuItem
+          <TableDropdownMenuItem
             key={label}
-            className="pr-5"
-            inset={false}
+            className=""
             onClick={() => updateData(row.index, column.id, label)}
           >
-            <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 mr-1 rounded-full ${color}`} />
+            <div className="flex items-center">
+              <span className={`w-2 h-2 mr-5 ml-2 rounded-full ${color}`} />
               <span>{label}</span>
             </div>
-          </DropdownMenuItem>
+          </TableDropdownMenuItem>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

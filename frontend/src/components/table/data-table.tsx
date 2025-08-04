@@ -211,8 +211,10 @@ export function DataTable({ columns }) {
         <span className="flex justify-center text-center items-center gap-1 mt-2">
           <div className="justify-center text-center items-center">Page</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount().toLocaleString()}
+            {table.getPageCount() === 0
+              ? 1
+              : table.getState().pagination.pageIndex + 1}{" "}
+            of {(table.getPageCount() || 1).toLocaleString()}
           </strong>
         </span>
       </div>
