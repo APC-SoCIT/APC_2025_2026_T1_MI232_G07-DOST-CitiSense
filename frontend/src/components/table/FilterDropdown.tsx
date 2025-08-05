@@ -26,7 +26,7 @@ const FilterDropdown = ({ column }) => {
   );
 
   // checks the current value in the column
-  // if it isn't in the filter, put the current value in the filter array, else remove it.
+  // if it isn't in the filter, put the current value in the filter array; else remove it.
   const handleSelectChange = (value: string | number) => {
     if (!columnFilterValue.includes(value)) {
       column.setFilterValue([...columnFilterValue, value]);

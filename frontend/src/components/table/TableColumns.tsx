@@ -1,4 +1,3 @@
-import { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
 
 type Gender = "M" | "F";
@@ -24,7 +23,7 @@ export type Posttype = {
   sentiment: Sentiment;
 };
 
-export const columns: ColumnDef<Posttype>[] = [
+export const getColumns = (isEditing: boolean) => [
   {
     accessorKey: "id",
     header: () => <span>ID</span>,
@@ -57,8 +56,17 @@ export const columns: ColumnDef<Posttype>[] = [
   },
   {
     accessorKey: "sentiment",
+    size: 160,
     header: () => <span>Sentiment</span>,
-    cell: DropdownCell,
+    cell: (info) => (
+      <div className="h-[44px] min-w-[60px] px-2 py-1 flex items-center justify-center">
+        {isEditing ? (
+          <DropdownCell {...info} />
+        ) : (
+          (info.getValue() as Sentiment)
+        )}
+      </div>
+    ),
     filterFn: "arrIncludesSome",
   },
 ];

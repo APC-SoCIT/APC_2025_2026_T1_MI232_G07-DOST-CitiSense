@@ -2,14 +2,11 @@ import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  TableDropdownMenuLabel,
   TableDropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { senArray } from "./columns";
+import { senArray } from "./TableColumns";
 
 const DropdownCell = ({ getValue, row, column, table }) => {
   const sentiment = getValue();
@@ -18,7 +15,7 @@ const DropdownCell = ({ getValue, row, column, table }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button className="w-20 focus-visible:ring" variant="ghost" size="">
+        <Button className="w-30 focus-visible:ring" variant="secondary" size="">
           {sentiment}
         </Button>
       </DropdownMenuTrigger>

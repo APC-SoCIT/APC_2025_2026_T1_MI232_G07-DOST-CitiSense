@@ -1,11 +1,9 @@
 "use client";
 
 import {
-  ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFacetedMinMaxValues,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
@@ -21,38 +19,31 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import React, { useEffect, useState } from "react";
-import api from "../../api";
-import { Posttype } from "./columns";
+} from "../ui/table";
+import React, { useState } from "react";
 import { Button } from "../ui/button";
 
-import { ChevronDown } from "lucide-react";
 import ColumnVisibility from "./ColumnVisibility";
-import FilterText from "./FilterText";
 import FilterDropdown from "./FilterDropdown";
+import Pagination from "./Pagination";
 
-export function DataTable({ columns }) {
-  const [data, setData] = useState<Posttype[]>([]);
+export function DataTable({
+  columns,
+  isEditing,
+  setIsEditing,
+  editedRows,
+  setEditedRows,
+  data,
+  setData,
+  postChange,
+  handleEditOrCancel,
+}) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 7,
   });
   const [columnVisibility, setColumnVisibility] = useState({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
-  useEffect(() => {
-    const getSentimentData = async () => {
-      try {
-        const res = await api.get("/sentimentposts/");
-        setData(res?.data);
-        // console.log(res);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getSentimentData();
-  }, []);
 
   const table = useReactTable({
     data,
@@ -67,6 +58,7 @@ export function DataTable({ columns }) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onPaginationChange: setPagination,
     onColumnVisibilityChange: setColumnVisibility,
+    autoResetPageIndex: false,
     state: {
       pagination,
       columnVisibility,
@@ -79,6 +71,8 @@ export function DataTable({ columns }) {
             index === rowIndex ? { ...row, [columnId]: value } : row
           )
         );
+        const toBeUpdated = data[rowIndex].id;
+        setEditedRows((prev) => new Set(prev).add(toBeUpdated)); //convert to set for unique value storage
       },
     },
   });
@@ -86,10 +80,31 @@ export function DataTable({ columns }) {
   return (
     <div className="-mt-2">
       <div className="flex flex-col w-full mx-auto">
-        <div className="flex justify-end py-2">
-          <ColumnVisibility table={table} />
+        <div className="flex flex-row justify-between">
+          <div className=" justify-start py-2">
+            <ColumnVisibility table={table} />
+          </div>
+          <div className="flex justify-between py-2 ">
+            <Button
+              className="mr-2"
+              size=""
+              variant={isEditing ? "destructive" : "default"}
+              onClick={handleEditOrCancel}
+            >
+              {isEditing ? "Cancel" : "Edit"}
+            </Button>
+            <Button
+              className=""
+              size=""
+              variant="default"
+              onClick={() => postChange()}
+              disabled={!isEditing}
+            >
+              Save
+            </Button>
+          </div>
         </div>
-        <div className="overflow-x-auto rounded-md border">
+        <div className="overflow-x-auto w-full rounded-md border">
           <Table>
             <TableHeader className="bg-gray-100">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -103,17 +118,20 @@ export function DataTable({ columns }) {
                       >
                         {/* column header rendering */}
                         {!header.isPlaceholder && (
-                          <div className="relative w-full flex justify-center items-center gap-2">
-                            <div className="w-full text-center px-8">
+                          <div className="flex items-center justify-between">
+                            <div
+                              className={`flex-1 items-center justify-center text-center ${
+                                header.column.getCanFilter() ? "ml-10" : ""
+                              }`}
+                            >
                               {flexRender(
                                 header.column.columnDef.header,
                                 header.getContext()
                               )}
                             </div>
-
                             {/* filter button */}
                             {header.column.getCanFilter() && (
-                              <div className="absolute right-1">
+                              <div className="justify-end">
                                 <FilterDropdown column={header.column} />
                               </div>
                             )}
@@ -171,42 +189,7 @@ export function DataTable({ columns }) {
         </div>
         {/* pagination */}
         <div className="flex items-center justify-center mt-4">
-          <Button
-            variant="default"
-            className="mr-4"
-            size=""
-            onClick={() => table.firstPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </Button>
-          <Button
-            variant="default"
-            className="mr-4"
-            size=""
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </Button>
-          <Button
-            variant="default"
-            className="mr-4"
-            size=""
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </Button>
-          <Button
-            variant="default"
-            className=""
-            size=""
-            onClick={() => table.lastPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
-          </Button>
+          <Pagination table={table} />
         </div>
         <span className="flex justify-center text-center items-center gap-1 mt-2">
           <div className="justify-center text-center items-center">Page</div>

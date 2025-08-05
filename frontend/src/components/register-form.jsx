@@ -19,16 +19,25 @@ export function RegisterForm({ className, route, ...props }) {
     setisLoading(true);
 
     try {
-        const res = await api.post(route, {username, email, password1, password2})
-        navigate("/login")
-    } catch(error) {
-        alert(error)
+      const res = await api.post(route, {
+        username,
+        email,
+        password1,
+        password2,
+      });
+      navigate("/login");
+    } catch (error) {
+      alert(error);
     } finally {
-        setisLoading(false)
+      setisLoading(false);
     }
   };
   return (
-    <form onSubmit={handleSubmit} className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={handleSubmit}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Register an account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -38,23 +47,48 @@ export function RegisterForm({ className, route, ...props }) {
       <div className="grid gap-6">
         <div className="grid gap-3">
           <Label htmlFor="username">Username</Label>
-          <Input id="username" value={username} type="text" onChange={(e) => setUsername(e.target.value)}required />
+          <Input
+            id="username"
+            value={username}
+            type="text"
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
         <div className="grid gap-3">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" value={email} type="email" placeholder="m@example.com" onChange={(e) => setEmail(e.target.value)}required />
+          <Input
+            id="email"
+            value={email}
+            type="email"
+            placeholder="m@example.com"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input id="password1" value={password1} type="password" onChange={(e) => setPassword1(e.target.value)} required />
+          <Input
+            id="password1"
+            value={password1}
+            type="password"
+            onChange={(e) => setPassword1(e.target.value)}
+            required
+          />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
             <Label htmlFor="password">Confirm Passsword</Label>
           </div>
-          <Input id="password2" value={password2} type="password" onChange={(e) => setPassword2(e.target.value)}required />
+          <Input
+            id="password2"
+            value={password2}
+            type="password"
+            onChange={(e) => setPassword2(e.target.value)}
+            required
+          />
         </div>
         <Button type="submit" className="w-full" disabled={isLoading}>
           Register
