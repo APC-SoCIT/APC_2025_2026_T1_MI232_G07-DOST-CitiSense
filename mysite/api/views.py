@@ -12,6 +12,10 @@ class SentimentPostListCreate(generics.ListCreateAPIView):
     queryset = SentimentPost.objects.all()
     serializer_class = SentimentSerializer
 
+class SentimentPostUpdate(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SentimentPost.objects.all()
+    serializer_class = SentimentSerializer
+
 @api_view(['GET'])
 def sentiment_count(request):
     sentimentcount = SentimentPost.objects.values('sentiment').annotate(sencount=Count('sentiment'))

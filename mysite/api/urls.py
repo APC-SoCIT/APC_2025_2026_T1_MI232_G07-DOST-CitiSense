@@ -4,6 +4,7 @@ from .views import sentiment_count, gauge_chart, gender_chart, service_chart
 
 urlpatterns = [
     path("sentimentposts/",views.SentimentPostListCreate.as_view(), name="sentiposts"),
+    path("sentimentposts/<int:pk>/", views.SentimentPostUpdate.as_view(), name="sentipost-update"),
     path("sentimentposts/count/", sentiment_count, name="senticount"),
     path("sentimentposts/gauge/", gauge_chart, name="sentigauge"),
     path("sentimentposts/gen/", gender_chart, name="sentigender"),
