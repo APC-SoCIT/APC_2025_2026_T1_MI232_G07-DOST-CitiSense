@@ -1,51 +1,101 @@
 import React from "react";
 import { Button } from "../ui/button";
 import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const Pagination = ({ table }) => {
   return (
-    <div>
-      <Button
-        variant="default"
-        className="mr-4"
-        size=""
-        onClick={() => table.firstPage()}
-        disabled={!table.getCanPreviousPage()}
-      >
-        <ChevronsLeft />
-      </Button>
-      <Button
-        variant="default"
-        className="mr-4"
-        size=""
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage()}
-      >
-        <ChevronLeft />
-      </Button>
-      <Button
-        variant="default"
-        className="mr-4"
-        size=""
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-      >
-        <ChevronRight />
-      </Button>
-      <Button
-        variant="default"
-        className=""
-        size=""
-        onClick={() => table.lastPage()}
-        disabled={!table.getCanNextPage()}
-      >
-        <ChevronsRight />
-      </Button>
+    <div className="flex w-full items-center justify-between">
+      {/* page count */}
+      <span className="flex justify-center text-center items-center gap-1">
+        <span>Page</span>
+        <span>
+          {table.getPageCount() === 0
+            ? 1
+            : table.getState().pagination.pageIndex + 1}{" "}
+          of {(table.getPageCount() || 1).toLocaleString()}
+        </span>
+      </span>
+      {/* no. of rows to be shown */}
+      <div className="flex">
+        <div className="mr-2">
+          <span className="mr-2">Rows per page</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="" variant="outline" size="">
+                {table.getState().pagination.pageSize}
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="">
+              <DropdownMenuRadioGroup
+                value={String(table.getState().pagination.pageSize)}
+                onValueChange={(e) => table.setPageSize(e)}
+              >
+                {[7, 10, 20, 30, 40, 50].map((pageSize) => (
+                  <DropdownMenuRadioItem
+                    key={pageSize}
+                    className="text-mono"
+                    value={pageSize}
+                    disabled={pageSize > table.getRowCount()}
+                  >
+                    Show {pageSize}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* pagination buttons: next, previous, first, last */}
+        <Button
+          variant="outline"
+          className="mr-1"
+          size=""
+          onClick={() => table.firstPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronsLeft />
+        </Button>
+        <Button
+          variant="outline"
+          className="mr-1"
+          size=""
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronLeft />
+        </Button>
+        <Button
+          variant="outline"
+          className="mr-1"
+          size=""
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronRight />
+        </Button>
+        <Button
+          variant="outline"
+          className=""
+          size=""
+          onClick={() => table.lastPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronsRight />
+        </Button>
+      </div>
     </div>
   );
 };

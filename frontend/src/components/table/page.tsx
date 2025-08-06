@@ -73,7 +73,7 @@ const DataTablePage = () => {
   }, [editedRows]);
 
   return (
-    <div className="scale-80">
+    <div className="scale-80 origin-top mt-10 flex justify-center items-center">
       <DataTable
         columns={columns}
         isEditing={isEditing}

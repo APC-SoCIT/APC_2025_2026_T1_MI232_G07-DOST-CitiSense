@@ -42,11 +42,11 @@ const Service = () => {
       //looks for the value pair of the current index and assigns it as the current index
       resData.forEach((item) => {
         const index = serviceMap[item.service];
-        if(index !== undefined) {
+        if (index !== undefined) {
           serviceCounts[item.sentiment][index] = item.sencount;
-        } 
+        }
       });
-      
+
       //maps through the modified serviceCounts and transforms it into a new array to pass onto the chart
       const serviceSeries = Object.entries(serviceCounts).map(
         ([sentiment, array]) => ({
@@ -56,13 +56,12 @@ const Service = () => {
       );
 
       setServiceValue(serviceSeries);
-
     } catch (error) {
       console.error("Error fetching Service chart data:", error);
       setServiceValue([]);
     }
   };
-  
+
   const options = {
     chart: {
       type: "bar",

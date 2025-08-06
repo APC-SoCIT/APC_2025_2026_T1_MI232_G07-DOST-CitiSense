@@ -25,7 +25,7 @@ const ColumnVisibility = ({ table }) => {
               className={`${
                 column.id.length === 2 ? "uppercase" : "capitalize"
               }`}
-              onSelect={(e) => e.preventDefault()}
+              onSelect={(e: Event) => e.preventDefault()}
               checked={column.getIsVisible()}
               onCheckedChange={(isChecked: boolean) =>
                 column.toggleVisibility(isChecked)
