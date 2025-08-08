@@ -13,6 +13,7 @@ import React, { useState, useRef, useEffect } from "react";
 import FilterDropdown from "./FilterDropdown";
 import Pagination from "./Pagination";
 import { useSidebar } from "../ui/sidebar";
+import { GripVertical } from "lucide-react";
 
 export function DataTable({ table, columns, columnFilters }) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
@@ -25,8 +26,8 @@ export function DataTable({ table, columns, columnFilters }) {
 
   return (
     <div className={state === "collapsed" ? "min-w-7xl" : "min-w-5xl"}>
-      <div ref={topOfTable} className="overflow-auto w-full rounded-md border">
-        <Table>
+      <div ref={topOfTable} className="rounded-md border">
+        <Table className="table-fixed">
           <TableHeader className="bg-gray-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -34,7 +35,8 @@ export function DataTable({ table, columns, columnFilters }) {
                   return (
                     <TableHead
                       key={header.id}
-                      className="border-r relative text-center"
+                      className="border-r-2 relative text-center"
+                      colSpan={header.colSpan}
                       style={{ width: header.getSize() }}
                     >
                       {/* column header rendering */}
@@ -88,7 +90,10 @@ export function DataTable({ table, columns, columnFilters }) {
                     <TableCell
                       key={cell.id}
                       className="font-normal text-center truncate max-w-0"
-                      style={{ width: cell.column.getSize() }}
+                      style={{
+                        width: cell.column.getSize(),
+                        minWidth: cell.column.columnDef.minSize,
+                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

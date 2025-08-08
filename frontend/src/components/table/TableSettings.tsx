@@ -12,6 +12,7 @@ import {
   Settings,
   SquareCheckBig,
   Table,
+  Trash2,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
@@ -93,7 +94,24 @@ const TableSettings = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-60" align="end">
-            <h4 className="text-sm font-medium mb-3">Table Settings</h4>
+            <div className="flex flex-row justify-between">
+              <h4 className="text-sm font-medium mb-3">Table Settings</h4>
+              <Button
+                size="sm"
+                className="h-5 w-5"
+                variant="destructive"
+                onClick={(e: Event) => {
+                  table.resetColumnFilters();
+                  localStorage.removeItem("filterValue");
+                  table.resetColumnVisibility();
+                  localStorage.removeItem("columnVisibility");
+                  table.resetColumnSizing();
+                  localStorage.removeItem("columnSizing");
+                }}
+              >
+                <Trash2 />
+              </Button>
+            </div>
             <div className="grid gap-2">
               <Button
                 className="justify-start"

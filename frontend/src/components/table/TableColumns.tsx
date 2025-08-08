@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
+import Dialog1 from "./TableDialog";
 
 type Gender = "M" | "F";
 type Sentiment = "Positive" | "Negative" | "Neutral";
@@ -37,18 +38,21 @@ export const getColumns = (isEditing: boolean): ColumnDef<Posttype, any>[] => [
     header: () => <span>Service</span>,
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
+    minSize: 200,
   },
   {
     accessorKey: "gender",
     header: () => <span>Gender</span>,
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
+    minSize: 150,
   },
   {
     accessorKey: "feedback",
     header: () => <span>Feedback</span>,
-    cell: (info) => info.getValue(),
+    cell: (info) => <Dialog1 text={String(info.getValue())} />,
     enableColumnFilter: false,
+    minSize: 74,
   },
   {
     accessorKey: "sentiment",
@@ -64,5 +68,6 @@ export const getColumns = (isEditing: boolean): ColumnDef<Posttype, any>[] => [
       </div>
     ),
     filterFn: "arrIncludesSome",
+    minSize: 77,
   },
 ];

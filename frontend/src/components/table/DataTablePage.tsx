@@ -19,7 +19,7 @@ import Dialog1 from "./TableDialog";
 
 const DataTablePage = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [errorMessages, setErrorMessages] = useState<String[]>([]);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
   const [data, setData] = useState<Posttype[]>([]);
   const [originalData, setOriginalData] = useState<Posttype[]>([]);
@@ -176,6 +176,13 @@ const DataTablePage = () => {
         setErrorMessages(reasonMessages);
         toast.error(`Error updating ${failed.length} rows`);
       } else {
+        const gMsg = accepted.map((msg, index) => {
+          return `Row ${index + 1} with value: ${JSON.stringify(
+            msg?.value.data.sentiment
+          )}`;
+        });
+        setShowDialog(true);
+        setErrorMessages(gMsg);
         toast.success(`Updated ${accepted.length} rows`);
       }
 
@@ -207,7 +214,7 @@ const DataTablePage = () => {
   }, [editedRows]);
 
   return (
-    <div className="scale-80 origin-top mt-10 flex justify-center items-center">
+    <div className="scale-80 origin-top mt-10">
       <div className="flex flex-col">
         <TableSettings
           table={table}
@@ -224,7 +231,7 @@ const DataTablePage = () => {
         <Dialog1
           showDialog={showDialog}
           setShowDialog={setShowDialog}
-          errorMessages={errorMessages}
+          text={errorMessages}
         />
       </div>
     </div>
