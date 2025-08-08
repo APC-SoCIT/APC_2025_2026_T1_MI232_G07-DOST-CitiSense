@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,9 +9,16 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Funnel } from "lucide-react";
-import { getFacetedUniqueValues } from "@tanstack/react-table";
+import {
+  getFacetedUniqueValues,
+  ColumnFiltersState,
+} from "@tanstack/react-table";
 
-const FilterDropdown = ({ column }) => {
+interface FilterDropdownProps {
+  column: any;
+  columnFilters?: ColumnFiltersState;
+}
+const FilterDropdown = ({ column, columnFilters }: FilterDropdownProps) => {
   const columnFilterValue = column.getFilterValue() ?? []; //fallback array if user hasn't filtered anything yet
 
   // transform unique values into an key, value pairs
@@ -26,15 +33,17 @@ const FilterDropdown = ({ column }) => {
   );
 
   // checks the current value in the column
-  // if it isn't in the filter, put the current value in the filter array; else remove it.
+  // if it isn't in the filter array, put the current value in the filter array; else remove it from the array
   const handleSelectChange = (value: string | number) => {
+    let newFilterValue: (string | number)[] = [];
     if (!columnFilterValue.includes(value)) {
-      column.setFilterValue([...columnFilterValue, value]);
+      newFilterValue = [...columnFilterValue, value];
     } else {
-      column.setFilterValue(
-        columnFilterValue.filter((filterWords: string) => filterWords !== value)
+      newFilterValue = columnFilterValue.filter(
+        (filterWords: string) => filterWords !== value
       );
     }
+    column.setFilterValue(newFilterValue);
   };
 
   return (

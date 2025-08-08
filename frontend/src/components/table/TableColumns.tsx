@@ -1,3 +1,4 @@
+import { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
 
 type Gender = "M" | "F";
@@ -23,13 +24,8 @@ export type Posttype = {
   sentiment: Sentiment;
 };
 
-export const getColumns = (isEditing: boolean) => [
-  {
-    accessorKey: "id",
-    header: () => <span>ID</span>,
-    cell: (info) => info.getValue(),
-    enableColumnFilter: false,
-  },
+//column definition array initialization, this is where tanstack is referencing from
+export const getColumns = (isEditing: boolean): ColumnDef<Posttype, any>[] => [
   {
     accessorKey: "name",
     header: () => <span>Name</span>,

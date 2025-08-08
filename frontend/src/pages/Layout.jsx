@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Outlet } from "react-router-dom";
 import ProtectedRoute from "../components/ProtectedRoute";
+import { Toaster } from "sonner";
 
 export default function Layout() {
   return (
@@ -12,6 +13,7 @@ export default function Layout() {
           <SidebarTrigger />
           <ProtectedRoute>
             <Outlet />
+            <Toaster richColors position="top-right" />
           </ProtectedRoute>
         </main>
       </div>

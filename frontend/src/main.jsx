@@ -11,7 +11,7 @@ import Home from "./pages/Home.jsx";
 import DashboardPage1 from "./pages/Dashboard1";
 import Layout from "./pages/Layout.jsx";
 import DashboardPage from "./pages/Dashboard.jsx";
-import DataTablePage from "./components/table/page.js";
+import DataTablePage from "./components/table/DataTablePage.js";
 
 const Logout = () => {
   localStorage.clear();

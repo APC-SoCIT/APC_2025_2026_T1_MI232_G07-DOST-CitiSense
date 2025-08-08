@@ -1,17 +1,6 @@
 "use client";
 
-import {
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-
+import { ColumnFiltersState, flexRender } from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -20,101 +9,23 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import React, { useState, useRef } from "react";
-import { Button } from "../ui/button";
-
-import ColumnVisibility from "./ColumnVisibility";
+import React, { useState, useRef, useEffect } from "react";
 import FilterDropdown from "./FilterDropdown";
 import Pagination from "./Pagination";
-import { Posttype } from "./TableColumns";
 import { useSidebar } from "../ui/sidebar";
 
-export function DataTable({
-  columns,
-  isEditing,
-  setIsEditing,
-  editedRows,
-  setEditedRows,
-  data,
-  setData,
-  postChange,
-  handleEditOrCancel,
-}) {
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const [columnVisibility, setColumnVisibility] = useState<
-    Record<string, boolean>
-  >({
-    id: false,
-  });
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const { state } = useSidebar();
+export function DataTable({ table, columns, columnFilters }) {
+  const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
+  const topOfTable = useRef<HTMLDivElement>(null); //reference point
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    columnResizeMode: "onChange",
-    columnResizeDirection: "ltr",
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    onPaginationChange: setPagination,
-    onColumnVisibilityChange: setColumnVisibility,
-    autoResetPageIndex: false,
-    state: {
-      pagination,
-      columnVisibility,
-      columnFilters,
-    },
-    meta: {
-      updateData: (
-        rowIndex: number,
-        columnId: string,
-        value: string | number
-      ) => {
-        setData((prev: Posttype[]) =>
-          prev.map((row, index) =>
-            index === rowIndex ? { ...row, [columnId]: value } : row
-          )
-        );
-        const toBeUpdated = data[rowIndex].id;
-        setEditedRows((prev: Posttype[]) => new Set(prev).add(toBeUpdated)); //convert to set for unique value storage
-      },
-    },
-  });
+  //scroll to top whenever page index resets, based on pagination
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, [table.getState().pagination]);
 
   return (
     <div className={state === "collapsed" ? "min-w-7xl" : "min-w-5xl"}>
-      <div className="flex flex-row justify-between">
-        <div className=" justify-start py-2">
-          <ColumnVisibility table={table} />
-        </div>
-        <div className="flex justify-between py-2 ">
-          <Button
-            className="mr-2"
-            size=""
-            variant={isEditing ? "destructive" : "bluedefault"}
-            onClick={handleEditOrCancel}
-          >
-            {isEditing ? "Cancel" : "Edit"}
-          </Button>
-          <Button
-            className=""
-            size=""
-            variant="default"
-            onClick={() => postChange()}
-            disabled={!isEditing}
-          >
-            Save
-          </Button>
-        </div>
-      </div>
-      <div className="overflow-auto w-full rounded-md border">
+      <div ref={topOfTable} className="overflow-auto w-full rounded-md border">
         <Table>
           <TableHeader className="bg-gray-100">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -142,7 +53,10 @@ export function DataTable({
 
                           {/* filter button */}
                           {header.column.getCanFilter() && (
-                            <FilterDropdown column={header.column} />
+                            <FilterDropdown
+                              column={header.column}
+                              columnFilters={columnFilters}
+                            />
                           )}
                         </div>
                       )}
