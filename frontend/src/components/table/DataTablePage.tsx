@@ -16,6 +16,7 @@ import {
 import TableSettings from "./TableSettings";
 import { toast } from "sonner";
 import Dialog1 from "./TableDialog";
+import Pagination from "./Pagination";
 
 const DataTablePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -61,8 +62,21 @@ const DataTablePage = () => {
     localStorage.setItem("filterValue", JSON.stringify(columnFilters));
   }, [columnFilters]);
 
-  //gets the stored page size from localstorage or falls back to 10 if not set
-  const storedPageSize = Number(localStorage.getItem("pageSize")) || 10;
+  //gets and initializes the state of pagination from localstorage, defaults to index: 0, and size: 10 when no pagination is saved.
+  const [pagination, setPagination] = useState(() => {
+    const savedPagination = localStorage.getItem("pagination");
+    return savedPagination
+      ? JSON.parse(savedPagination)
+      : {
+          pageIndex: 0,
+          pageSize: 10,
+        };
+  });
+
+  //puts the current pagination set by user in localstorage
+  useEffect(() => {
+    localStorage.setItem("pagination", JSON.stringify(pagination));
+  }, [pagination]);
 
   //initialization of the table that tanstack uses, along with its settings
   const table = useReactTable({
@@ -75,19 +89,16 @@ const DataTablePage = () => {
     onColumnFiltersChange: setColumnFilters,
     onColumnSizingChange: setColumnSizing,
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onColumnVisibilityChange: setColumnVisibility,
     autoResetPageIndex: false,
-    autoResetAll: false,
     state: {
+      pagination,
       columnVisibility,
       columnSizing,
       columnFilters,
-      pagination: {
-        pageIndex: 0,
-        pageSize: storedPageSize,
-      },
     },
 
     //for updating a cell within the table, uses meta of tanstack
@@ -176,13 +187,6 @@ const DataTablePage = () => {
         setErrorMessages(reasonMessages);
         toast.error(`Error updating ${failed.length} rows`);
       } else {
-        const gMsg = accepted.map((msg, index) => {
-          return `Row ${index + 1} with value: ${JSON.stringify(
-            msg?.value.data.sentiment
-          )}`;
-        });
-        setShowDialog(true);
-        setErrorMessages(gMsg);
         toast.success(`Updated ${accepted.length} rows`);
       }
 
@@ -233,6 +237,10 @@ const DataTablePage = () => {
           setShowDialog={setShowDialog}
           text={errorMessages}
         />
+        {/* pagination */}
+        <div className="mt-2">
+          <Pagination table={table} />
+        </div>
       </div>
     </div>
   );

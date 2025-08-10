@@ -1,6 +1,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
 import Dialog1 from "./TableDialog";
+import { Button } from "../ui/button";
+import { ArrowUpDown } from "lucide-react";
+import FilterDropdown from "./FilterDropdown";
 
 type Gender = "M" | "F";
 type Sentiment = "Positive" | "Negative" | "Neutral";
@@ -35,17 +38,27 @@ export const getColumns = (isEditing: boolean): ColumnDef<Posttype, any>[] => [
   },
   {
     accessorKey: "service",
-    header: () => <span>Service</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Service
+        <FilterDropdown column={column} />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
-    minSize: 200,
+    minSize: 100,
   },
   {
     accessorKey: "gender",
-    header: () => <span>Gender</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Gender
+        <FilterDropdown column={column} />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
-    minSize: 150,
+    minSize: 100,
   },
   {
     accessorKey: "feedback",
@@ -56,10 +69,14 @@ export const getColumns = (isEditing: boolean): ColumnDef<Posttype, any>[] => [
   },
   {
     accessorKey: "sentiment",
-    size: 160,
-    header: () => <span>Sentiment</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Sentiment
+        <FilterDropdown column={column} />
+      </div>
+    ),
     cell: (info) => (
-      <div className="h-[44px] min-w-[60px] px-2 py-1 flex items-center justify-center">
+      <div className="min-w-[60px] flex items-center justify-center">
         {isEditing ? (
           <DropdownCell {...info} />
         ) : (

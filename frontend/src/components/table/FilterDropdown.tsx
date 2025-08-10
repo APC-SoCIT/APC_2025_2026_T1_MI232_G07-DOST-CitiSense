@@ -17,8 +17,13 @@ import {
 interface FilterDropdownProps {
   column: any;
   columnFilters?: ColumnFiltersState;
+  columnName?: string;
 }
-const FilterDropdown = ({ column, columnFilters }: FilterDropdownProps) => {
+const FilterDropdown = ({
+  column,
+  columnFilters,
+  columnName,
+}: FilterDropdownProps) => {
   const columnFilterValue = column.getFilterValue() ?? []; //fallback array if user hasn't filtered anything yet
 
   // transform unique values into an key, value pairs
@@ -54,6 +59,7 @@ const FilterDropdown = ({ column, columnFilters }: FilterDropdownProps) => {
           variant="outline"
           size=""
         >
+          {columnName}
           <Funnel />
         </Button>
       </DropdownMenuTrigger>

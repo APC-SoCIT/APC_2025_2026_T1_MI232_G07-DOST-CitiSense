@@ -13,7 +13,8 @@ import React, { useState, useRef, useEffect } from "react";
 import FilterDropdown from "./FilterDropdown";
 import Pagination from "./Pagination";
 import { useSidebar } from "../ui/sidebar";
-import { GripVertical } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 export function DataTable({ table, columns, columnFilters }) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
@@ -24,59 +25,74 @@ export function DataTable({ table, columns, columnFilters }) {
     window.scroll(0, 0);
   }, [table.getState().pagination]);
 
+  useEffect(() => {
+    if (!table.getIsSomeColumnsVisible()) {
+      toast.error("No Columns Shown");
+    }
+  }, [table.getIsSomeColumnsVisible()]);
+
   return (
     <div className={state === "collapsed" ? "min-w-7xl" : "min-w-5xl"}>
       <div ref={topOfTable} className="rounded-md border">
         <Table className="table-fixed">
           <TableHeader className="bg-gray-100">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="border-r-2 relative text-center"
-                      colSpan={header.colSpan}
-                      style={{ width: header.getSize() }}
-                    >
-                      {/* column header rendering */}
-                      {!header.isPlaceholder && (
-                        <div className="flex items-center justify-center">
-                          <div
-                            className={`flex-1 items-center justify-center text-center ${
-                              header.column.getCanFilter() ? "ml-10" : ""
-                            }`}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+            {!table.getIsSomeColumnsVisible() ? (
+              <Table>
+                <TableHeader>
+                  <TableHead className="text-center">
+                    No columns are visible.
+                  </TableHead>
+                </TableHeader>
+              </Table>
+            ) : (
+              table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="border-r-2 relative text-center"
+                        colSpan={header.colSpan}
+                        style={{ width: header.getSize() }}
+                      >
+                        {/* column header rendering */}
+                        {!header.isPlaceholder && (
+                          <div className="flex items-center justify-center">
+                            <div
+                              className={`flex-1 items-center justify-center text-center ${
+                                header.column.getCanFilter() ? "" : ""
+                              }`}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                            </div>
+                            {/* filter button
+                            {header.column.getCanFilter() && (
+                              <FilterDropdown
+                                column={header.column}
+                                columnFilters={columnFilters}
+                              />
+                            )} */}
                           </div>
+                        )}
 
-                          {/* filter button */}
-                          {header.column.getCanFilter() && (
-                            <FilterDropdown
-                              column={header.column}
-                              columnFilters={columnFilters}
-                            />
-                          )}
-                        </div>
-                      )}
-
-                      {/* column resizing */}
-                      <div
-                        onDoubleClick={() => header.column.resetSize()}
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                        className={`absolute right-0 top-0 h-full w-1.5 cursor-col-resize select-none z-10 ${
-                          header.column.getIsResizing() ? "bg-gray-500" : ""
-                        }`}
-                      />
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+                        {/* column resizing */}
+                        <div
+                          onDoubleClick={() => header.column.resetSize()}
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                          className={`absolute right-0 top-0 h-full w-1.5 cursor-col-resize select-none z-10 ${
+                            header.column.getIsResizing() ? "bg-gray-500" : ""
+                          }`}
+                        />
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))
+            )}
           </TableHeader>
           {/* row cell */}
           <TableBody>
@@ -85,6 +101,7 @@ export function DataTable({ table, columns, columnFilters }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="h-[55px]"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -115,10 +132,6 @@ export function DataTable({ table, columns, columnFilters }) {
             )}
           </TableBody>
         </Table>
-      </div>
-      {/* pagination */}
-      <div className="mt-2">
-        <Pagination table={table} />
       </div>
     </div>
   );
