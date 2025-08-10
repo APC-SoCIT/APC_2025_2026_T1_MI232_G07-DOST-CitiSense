@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import {
   ChevronDown,
@@ -50,7 +49,7 @@ const Pagination = ({ table }) => {
                   localStorage.setItem("pageSize", String(e));
                 }}
               >
-                {[7, 10, 20, 30, 40, 50].map((pageSize) => (
+                {[7, 10, 20, 30, 40, 50, 100, 500, 1000].map((pageSize) => (
                   <DropdownMenuRadioItem
                     key={pageSize}
                     className="text-mono"

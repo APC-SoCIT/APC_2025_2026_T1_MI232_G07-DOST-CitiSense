@@ -9,16 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import FilterDropdown from "./FilterDropdown";
 import Pagination from "./Pagination";
 import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+import { MemoizedTableBody } from "./TableBody";
 
-export function DataTable({ table, columns, columnFilters }) {
+export function DataTable({ table }) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
-  const topOfTable = useRef<HTMLDivElement>(null); //reference point
 
   //scroll to top whenever page index resets, based on pagination
   useEffect(() => {
@@ -31,107 +30,97 @@ export function DataTable({ table, columns, columnFilters }) {
     }
   }, [table.getIsSomeColumnsVisible()]);
 
+  // calculate all column sizes at once, and save it during rerenders
+  // passes the column sizes as CSS variables to the Table component
+  // recalculates again if column sizing changes
+  // reference: https://tanstack.com/table/latest/docs/framework/react/examples/column-resizing-performant
+  const columnSizeVars = useMemo(() => {
+    const headers = table.getFlatHeaders();
+    const colSizes: { [key: string]: number } = {};
+    for (let i = 0; i < headers.length; i++) {
+      const header = headers[i];
+      colSizes[`--header-${header.id}-size`] = header.getSize();
+      colSizes[`--col-${header.column.id}-size`] = header.column.getSize();
+    }
+    return colSizes;
+  }, [table.getState().columnSizing, table.getState().columnSizingInfo]);
+
   return (
     <div className={state === "collapsed" ? "min-w-7xl" : "min-w-5xl"}>
-      <div ref={topOfTable} className="rounded-md border">
-        <Table className="table-fixed">
-          <TableHeader className="bg-gray-100">
-            {!table.getIsSomeColumnsVisible() ? (
-              <Table>
-                <TableHeader>
-                  <TableHead className="text-center">
-                    No columns are visible.
-                  </TableHead>
-                </TableHeader>
-              </Table>
-            ) : (
-              table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead
-                        key={header.id}
-                        className="border-r-2 relative text-center"
-                        colSpan={header.colSpan}
-                        style={{ width: header.getSize() }}
-                      >
-                        {/* column header rendering */}
-                        {!header.isPlaceholder && (
-                          <div className="flex items-center justify-center">
-                            <div
-                              className={`flex-1 items-center justify-center text-center ${
-                                header.column.getCanFilter() ? "" : ""
-                              }`}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                            </div>
-                            {/* filter button
+      <div className="rounded-md border">
+        <div
+          className="divTable"
+          style={{
+            ...columnSizeVars,
+          }}
+        >
+          <Table className="table-fixed">
+            <TableHeader className="bg-gray-100">
+              {!table.getIsSomeColumnsVisible() ? (
+                <Table>
+                  <TableHeader>
+                    <TableHead className="text-center">
+                      No columns are visible.
+                    </TableHead>
+                  </TableHeader>
+                </Table>
+              ) : (
+                table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className="border-r-2 relative text-center"
+                          colSpan={header.colSpan}
+                          style={{
+                            width: `calc(var(--header-${header?.id}-size) * 1px)`,
+                          }}
+                        >
+                          {/* column header rendering */}
+                          {!header.isPlaceholder && (
+                            <div className="flex items-center justify-center">
+                              <div
+                                className={`flex-1 items-center justify-center text-center ${
+                                  header.column.getCanFilter() ? "" : ""
+                                }`}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                              </div>
+                              {/* filter button
                             {header.column.getCanFilter() && (
                               <FilterDropdown
                                 column={header.column}
                                 columnFilters={columnFilters}
                               />
                             )} */}
-                          </div>
-                        )}
+                            </div>
+                          )}
 
-                        {/* column resizing */}
-                        <div
-                          onDoubleClick={() => header.column.resetSize()}
-                          onMouseDown={header.getResizeHandler()}
-                          onTouchStart={header.getResizeHandler()}
-                          className={`absolute right-0 top-0 h-full w-1.5 cursor-col-resize select-none z-10 ${
-                            header.column.getIsResizing() ? "bg-gray-500" : ""
-                          }`}
-                        />
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))
-            )}
-          </TableHeader>
-          {/* row cell */}
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="h-[55px]"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="font-normal text-center truncate max-w-0"
-                      style={{
-                        width: cell.column.getSize(),
-                        minWidth: cell.column.columnDef.minSize,
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                          {/* column resizing */}
+                          <div
+                            onDoubleClick={() => header.column.resetSize()}
+                            onMouseDown={header.getResizeHandler()}
+                            onTouchStart={header.getResizeHandler()}
+                            className={`absolute right-0 top-0 h-full w-1.5 cursor-col-resize select-none z-10 ${
+                              header.column.getIsResizing() ? "bg-gray-500" : ""
+                            }`}
+                          />
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))
+              )}
+            </TableHeader>
+            {/* memoized cell body; for performant column resizing 
+                only rerenders once data is added, updated, or deleted */}
+            <MemoizedTableBody table={table} tableState={table.getState()} />{" "}
+          </Table>
+        </div>
       </div>
     </div>
   );

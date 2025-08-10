@@ -17,13 +17,14 @@ import TableSettings from "./TableSettings";
 import { toast } from "sonner";
 import Dialog1 from "./TableDialog";
 import Pagination from "./Pagination";
+import { mockData1 } from "../../mockData";
 
 const DataTablePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [data, setData] = useState<Posttype[]>([]);
-  const [originalData, setOriginalData] = useState<Posttype[]>([]);
+  const [data, setData] = useState<Posttype[]>(mockData1);
+  const [originalData, setOriginalData] = useState<Posttype[]>(mockData1);
   const [editedRows, setEditedRows] = useState<Set<number>>(new Set());
   const columns = useMemo(() => getColumns(isEditing), [isEditing]); //to pass the isEditing to the column definition which is also a function
 
@@ -141,19 +142,19 @@ const DataTablePage = () => {
   };
 
   // getting the data for tanstack table to render
-  useEffect(() => {
-    const getSentimentData = async () => {
-      try {
-        const res = await api.get("/sentimentposts/");
-        setData(res?.data);
-        setOriginalData(res?.data);
-        // console.log(res);
-      } catch (error) {
-        console.log(error.response?.data || error.message);
-      }
-    };
-    getSentimentData();
-  }, []);
+  // useEffect(() => {
+  //   const getSentimentData = async () => {
+  //     try {
+  //       const res = await api.get("/sentimentposts/");
+  //       setData(res?.data);
+  //       setOriginalData(res?.data);
+  //       // console.log(res);
+  //     } catch (error) {
+  //       console.log(error.response?.data || error.message);
+  //     }
+  //   };
+  //   getSentimentData();
+  // }, []);
 
   const postChange = async () => {
     try {
@@ -227,11 +228,7 @@ const DataTablePage = () => {
           postChange={postChange}
           handleEditOrCancel={handleEditOrCancel}
         />
-        <DataTable
-          table={table}
-          columns={columns}
-          columnFilters={columnFilters}
-        />
+        <DataTable table={table} />
         <Dialog1
           showDialog={showDialog}
           setShowDialog={setShowDialog}
