@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'authentication.apps.AuthenticationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'authentication.apps.AuthenticationConfig',
     'corsheaders',
     'drf',
     'dj_rest_auth',
@@ -153,6 +153,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = "authentication.CustomUser"
 
 SITE_ID = 1
 
@@ -163,13 +164,11 @@ REST_FRAMEWORK = {
     ]
 }
 
-REST_AUTH_SERIALIZERS = {
-    "LOGIN_SERIALIZER": "dj_rest_auth.serializers.LoginSerializer",
-}
-
 REST_AUTH = {
     "USE_JWT": True,
     "JWT_AUTH_HTTPONLY": False,
+    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
+    'REGISTER_SERIALIZER': 'authentication.serializers.CustomRegisterUserSerializer',
 }
 
 SIMPLE_JWT = {
@@ -184,10 +183,10 @@ SIMPLE_JWT = {
 
 # ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
 # ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_EMAIL_REQUIRED = False
-# ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_SIGNUP_FIELDS = ["username", "password1", "password2"]
+ACCOUNT_SIGNUP_FIELDS = ["username", "email", "password1", "password2"]
 
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True

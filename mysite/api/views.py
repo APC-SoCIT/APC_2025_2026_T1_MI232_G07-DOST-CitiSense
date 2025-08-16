@@ -37,7 +37,13 @@ def gauge_chart(request):
         neutral = Count("id", filter=Q(sentiment="Neutral")),
         total_count = Count("id") 
     )
-    gauge_percentage = ((senticounts['positive'] * 100 + senticounts['negative'] * 0 + senticounts['neutral'] * 50) / senticounts['total_count'])
+    
+    #zero division error check; fallback to 0 
+    total = senticounts['total_count']
+    if total > 0: 
+        gauge_percentage = ((senticounts['positive'] * 100 + senticounts['negative'] * 0 + senticounts['neutral'] * 50) / senticounts['total_count'])
+    else: 
+        gauge_percentage = 0
     return Response({"Gauge percentage": gauge_percentage})
 
 @api_view(['GET'])
