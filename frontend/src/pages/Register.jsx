@@ -1,6 +1,6 @@
-import { GalleryVerticalEnd } from "lucide-react"
-import { RegisterForm } from "../components/register-form"
-import { Link } from "react-router-dom"
+import { GalleryVerticalEnd } from "lucide-react";
+import { RegisterForm } from "../components/register-form";
+import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
   return (
@@ -28,11 +28,10 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // import RegisterForm from "../components/RegisterForm";
-
 
 // function Register() {
 //     return(
@@ -41,8 +40,8 @@ export default function RegisterPage() {
 //                 <RegisterForm route="/api/auth/register/"/>
 //             </div>
 //         </main>
-//     ) 
-    
+//     )
+
 // }
 
 // export default Register;

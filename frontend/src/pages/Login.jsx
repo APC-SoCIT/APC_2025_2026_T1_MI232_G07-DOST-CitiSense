@@ -1,6 +1,6 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { Link } from "react-router-dom";
-import { LoginForm1 } from "@/components/login-form";
+import { LoginForm1 } from "../components/login-form";
 
 export default function LoginPage() {
   return (
@@ -17,18 +17,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-// import LoginForm from "../components/LoginForm";
-
-// function Login() {
-//     return(
-//         <main className="flex flex-col items-center">
-//             <div className="mt-5 justify-center">
-//                 <LoginForm route="/api/auth/token/"/>
-//             </div>
-//         </main>
-//     )
-
-// }
-
-// export default Login;
