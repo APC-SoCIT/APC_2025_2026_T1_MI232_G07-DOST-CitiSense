@@ -2,7 +2,11 @@ import React from "react";
 import { TableBody, TableCell, TableRow } from "../ui/table";
 import { flexRender } from "@tanstack/react-table";
 
-const CustomTableBody = ({ table, tableState }) => {
+type CustomTableBodyProps = {
+  table: any;
+};
+
+const CustomTableBody = ({ table }: CustomTableBodyProps) => {
   return (
     <TableBody>
       {table.getRowModel().rows?.length ? (
@@ -39,9 +43,10 @@ const CustomTableBody = ({ table, tableState }) => {
   );
 };
 
+export default CustomTableBody;
 //memoizes the cells in the table body; doesn't rerender if pagination, filtering, visibility, and resizing happens.
 //only rerenders once data is added, updated, or deleted.
 export const MemoizedTableBody = React.memo(
   CustomTableBody,
-  (prev, next) => prev.tableState === next.tableState
+  (prev, next) => prev.table.options.data === next.table.options.data
 ) as typeof CustomTableBody;

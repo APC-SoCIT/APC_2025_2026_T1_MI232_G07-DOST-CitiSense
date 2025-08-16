@@ -9,12 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import FilterDropdown from "./FilterDropdown";
-import Pagination from "./Pagination";
+import React, { useEffect, useMemo } from "react";
 import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
-import { MemoizedTableBody } from "./TableBody";
+import CustomTableBody, { MemoizedTableBody } from "./TableBody";
 
 export function DataTable({ table }) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
@@ -118,7 +116,11 @@ export function DataTable({ table }) {
             </TableHeader>
             {/* memoized cell body; for performant column resizing 
                 only rerenders once data is added, updated, or deleted */}
-            <MemoizedTableBody table={table} tableState={table.getState()} />{" "}
+            {table.getState().columnSizingInfo.isResizingColumn ? (
+              <MemoizedTableBody table={table} />
+            ) : (
+              <CustomTableBody table={table} />
+            )}
           </Table>
         </div>
       </div>
