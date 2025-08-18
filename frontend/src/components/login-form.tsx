@@ -16,7 +16,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import api from "../api";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import z from "zod";
-import { appendErrors, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 //zod schema for login form validation

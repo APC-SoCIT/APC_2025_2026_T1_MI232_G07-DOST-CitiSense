@@ -178,7 +178,8 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
     "SIGNING_KEY": os.getenv("JWT_SIGNING_KEY"),
-    "ALGORITHM": "HS512",
+    "ALGORITHM": "HS512",   
+    "LEEWAY": 1,
 }
 
 # # ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]

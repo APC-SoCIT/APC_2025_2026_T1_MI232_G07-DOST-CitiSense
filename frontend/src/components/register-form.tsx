@@ -38,6 +38,7 @@ export function RegisterForm({ className, route, ...props }) {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
+    trigger,
   } = useForm<SignUpFieldProps>({
     //hook up the zod schema to react hook form, outsource validation to zod
     resolver: zodResolver(signUpSchema),
@@ -146,6 +147,7 @@ export function RegisterForm({ className, route, ...props }) {
               className=""
               {...register("password2")}
               type={showPassword2 ? "text" : "password"}
+              onBlur={() => trigger("password2")}
             />
             <Button
               type="button"
