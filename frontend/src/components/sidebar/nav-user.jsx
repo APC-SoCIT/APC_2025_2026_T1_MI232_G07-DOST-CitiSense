@@ -33,17 +33,20 @@ export function NavUser() {
   const { isMobile } = useSidebar();
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState(null);
-
+  const [avatar, setAvatar] = useState(null);
   useEffect(() => {
     const getUser = async () => {
       try {
         const res = await api.get("/api/auth/user/");
+        console.log(res);
         setUser(res.data.username);
         setEmail(res.data.email);
+        setAvatar(res.data.picture);
       } catch (error) {
         console.log(error);
         setUser(null);
         setEmail(null);
+        setAvatar(null);
       }
     };
     getUser();
@@ -58,8 +61,8 @@ export function NavUser() {
               size="lg"
               className="flex items-center data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:w-full"
             >
-              <Avatar className="justify-center h-8 w-8 rounded-lg shrink-0 group-data-[collapsible=icon]:w-10 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:rounded-full">
-                {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+              <Avatar className="justify-center h-7 w-7 rounded-lg shrink-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:rounded-full">
+                <AvatarImage src={avatar} alt={user} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
@@ -77,8 +80,8 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+                <Avatar className="h-7 w-7 rounded-lg">
+                  <AvatarImage src={avatar} alt={user} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
