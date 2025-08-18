@@ -12,6 +12,7 @@ import DashboardPage1 from "./pages/Dashboard1";
 import Layout from "./pages/Layout.jsx";
 import DashboardPage from "./pages/Dashboard.jsx";
 import DataTablePage from "./components/table/DataTablePage.js";
+import AuthCallback from "./components/AuthCallback.js";
 
 const Logout = () => {
   localStorage.clear();
@@ -47,6 +48,7 @@ const router = createBrowserRouter([
   { path: "/register", element: <RegisterAndLogout /> },
   { path: "/logout", element: <Logout /> },
   { path: "*", element: <NotFound /> },
+  { path: "/accounts/google/login/callback", element: <AuthCallback /> },
   { path: "/dashboard1", element: <DashboardPage1 /> },
 ]);
 

@@ -10,7 +10,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'email']
+        fields = ['id','username', 'email', 'picture']
 
 class CustomRegisterUserSerializer(RegisterSerializer):
     #unique validator with a message

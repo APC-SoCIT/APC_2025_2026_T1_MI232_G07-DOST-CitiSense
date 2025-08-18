@@ -4,3 +4,4 @@ from django.db import models
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, error_messages={"unique": "A user with this email already exists."})
+    picture = models.URLField(null=True, blank=True)

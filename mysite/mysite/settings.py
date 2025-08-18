@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'corsheaders',
+    'allauth.socialaccount.providers.google',
+    'corsheaders',  
     'drf',
     'dj_rest_auth',
     'dj_rest_auth.registration',
@@ -62,12 +63,10 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'allauth.account.middleware.AccountMiddleware',
     
 ]
@@ -169,6 +168,7 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'REGISTER_SERIALIZER': 'authentication.serializers.CustomRegisterUserSerializer',
+    'USER_DETAILS_SERIALIZER': 'authentication.serializers.UserSerializer'
 }
 
 SIMPLE_JWT = {
@@ -181,17 +181,40 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS512",
 }
 
-# ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
-# ACCOUNT_LOGIN_METHODS = {"email"}
+# # ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
+# # ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_SIGNUP_FIELDS = ["username", "email", "password1", "password2"]
 
+#fix for duplicate social emails: https://stackoverflow.com/a/78722151
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+    }
+}
+
+
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000/",
-        "http://127.0.0.1:3000/",
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
     ]

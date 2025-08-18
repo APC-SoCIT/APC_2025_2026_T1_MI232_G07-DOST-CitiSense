@@ -3,6 +3,7 @@ from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView, LogoutView, UserDetailsView
 from django.urls import path
 from rest_framework_simplejwt.views import TokenVerifyView, TokenObtainPairView
+from authentication.views import GoogleLogin
 
 urlpatterns = [
     path("register/", RegisterView.as_view(), name="rest_register"),
@@ -12,4 +13,5 @@ urlpatterns = [
     path("token/", TokenObtainPairView.as_view(), name="get_token"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
     path("token/refresh/", get_refresh_view().as_view(), name="token_refresh"),
+    path("google/", GoogleLogin.as_view(), name="google_login"),
 ]
