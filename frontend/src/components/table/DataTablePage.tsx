@@ -221,7 +221,7 @@ const DataTablePage = () => {
   }, [editedRows]);
 
   return (
-    <div className="scale-80 origin-top mt-10">
+    <div className="scale-90 origin-top mt-10">
       <div className="flex flex-col">
         <TableSettings
           table={table}

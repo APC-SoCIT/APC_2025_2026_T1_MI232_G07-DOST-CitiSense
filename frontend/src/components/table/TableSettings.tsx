@@ -98,7 +98,7 @@ const TableSettings = ({
               <h4 className="text-sm font-medium mb-3">Table Settings</h4>
               <Button
                 size="sm"
-                className="h-5 w-5"
+                className="h-6 w-6"
                 variant="destructive"
                 onClick={(e: Event) => {
                   table.resetColumnFilters();

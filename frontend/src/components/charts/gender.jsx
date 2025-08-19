@@ -47,7 +47,6 @@ const Gender = () => {
       );
 
       setGenderValue(genderSeries);
-      
     } catch (error) {
       console.error("Error fetching Gender chart data:", error);
       setGenderValue([]);
@@ -66,6 +65,10 @@ const Gender = () => {
       },
     },
     title: {
+      style: {
+        fontSize: "20px",
+        fontWeight: 600,
+      },
       text: "Sentiment by Gender",
     },
     xaxis: {
@@ -83,7 +86,41 @@ const Gender = () => {
     fill: {
       opacity: 1,
     },
-    colors: ["#EA4228", "#F5CD19", "#5BE12C"],
+    colors: ["#EA4228", "#d4ab57ff", "#4CAF50"],
+    legend: {
+      fontSize: "18px",
+      fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif",
+      fontWeight: 500,
+      markers: {
+        size: 8,
+        offsetX: -5,
+        offsetY: 0,
+      },
+      itemMargin: {
+        horizontal: 10,
+      },
+    },
+    dataLabels: {
+      formatter: function (val) {
+        return val.toFixed(1) + "%"; // show the 1st decimal
+      },
+      style: {
+        fontSize: "15px",
+        fontWeight: 530,
+      },
+    },
+    states: {
+      hover: {
+        filter: {
+          type: "none",
+        },
+      },
+    },
+    tooltip: {
+      style: {
+        fontSize: "12px",
+      },
+    },
   };
 
   return (

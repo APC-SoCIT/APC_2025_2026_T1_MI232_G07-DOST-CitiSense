@@ -9,7 +9,7 @@ import Register from "./pages/Register.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Home from "./pages/Home.jsx";
 import Layout from "./pages/Layout.jsx";
-import DashboardPage from "./pages/Dashboard.jsx";
+import DashboardPage from "./pages/Dashboard.js";
 import DataTablePage from "./components/table/DataTablePage.js";
 import AuthCallback from "./components/AuthCallback.js";
 
