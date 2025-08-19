@@ -23,8 +23,10 @@ const DataTablePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [data, setData] = useState<Posttype[]>(mockData1);
-  const [originalData, setOriginalData] = useState<Posttype[]>(mockData1);
+  // const [data, setData] = useState<Posttype[]>(mockData1);
+  const [data, setData] = useState<Posttype[]>([]);
+  const [originalData, setOriginalData] = useState<Posttype[]>([]);
+  // const [originalData, setOriginalData] = useState<Posttype[]>(mockData1);
   const [editedRows, setEditedRows] = useState<Set<number>>(new Set());
   const columns = useMemo(() => getColumns(isEditing), [isEditing]); //to pass the isEditing to the column definition which is also a function
 
@@ -142,19 +144,19 @@ const DataTablePage = () => {
   };
 
   // getting the data for tanstack table to render
-  // useEffect(() => {
-  //   const getSentimentData = async () => {
-  //     try {
-  //       const res = await api.get("/sentimentposts/");
-  //       setData(res?.data);
-  //       setOriginalData(res?.data);
-  //       // console.log(res);
-  //     } catch (error) {
-  //       console.log(error.response?.data || error.message);
-  //     }
-  //   };
-  //   getSentimentData();
-  // }, []);
+  useEffect(() => {
+    const getSentimentData = async () => {
+      try {
+        const res = await api.get("/sentimentposts/");
+        setData(res?.data);
+        setOriginalData(res?.data);
+        // console.log(res);
+      } catch (error) {
+        console.log(error.response?.data || error.message);
+      }
+    };
+    getSentimentData();
+  }, []);
 
   const postChange = async () => {
     try {

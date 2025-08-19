@@ -8,7 +8,6 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Home from "./pages/Home.jsx";
-import DashboardPage1 from "./pages/Dashboard1";
 import Layout from "./pages/Layout.jsx";
 import DashboardPage from "./pages/Dashboard.jsx";
 import DataTablePage from "./components/table/DataTablePage.js";
@@ -49,7 +48,6 @@ const router = createBrowserRouter([
   { path: "/logout", element: <Logout /> },
   { path: "*", element: <NotFound /> },
   { path: "/accounts/google/login/callback", element: <AuthCallback /> },
-  { path: "/dashboard1", element: <DashboardPage1 /> },
 ]);
 
 createRoot(document.getElementById("root")).render(
