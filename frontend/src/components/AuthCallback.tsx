@@ -14,6 +14,7 @@ const AuthCallback = () => {
         const code = params.get("code");
 
         const response = await api.post("/api/auth/google/", { code });
+        console.log("This is the code", { code });
         localStorage.setItem(ACCESS_TOKEN, response.data.access);
         localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
         navigate("/");
