@@ -170,13 +170,7 @@ export function RegisterForm({ className, route, ...props }) {
           </div>
         </div>
 
-        <Button
-          size=""
-          type="submit"
-          className="w-full"
-          disabled={isSubmitting}
-          variant=""
-        >
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
           Register
         </Button>
       </div>

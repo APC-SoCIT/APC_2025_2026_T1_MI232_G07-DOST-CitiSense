@@ -37,7 +37,7 @@ const TableSettings = ({
         {/* Filter column by visibility */}
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button className="" variant="outline" size="">
+            <Button className="" variant="outline">
               Filter Columns
               <ChevronDown />
             </Button>
@@ -68,7 +68,6 @@ const TableSettings = ({
       <div className="flex justify-between py-2 ">
         <Button
           className="mr-2"
-          size=""
           variant={isEditing ? "destructive" : "bluedefault"}
           onClick={handleEditOrCancel}
         >
@@ -76,7 +75,6 @@ const TableSettings = ({
         </Button>
         <Button
           className="mr-2"
-          size=""
           variant="default"
           onClick={() => {
             postChange?.();
@@ -89,7 +87,7 @@ const TableSettings = ({
         {/* Table settings for unified reset of table state */}
         <Popover>
           <PopoverTrigger asChild>
-            <Button size="" className="" variant="outline">
+            <Button className="" variant="outline">
               <Settings className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
@@ -100,7 +98,7 @@ const TableSettings = ({
                 size="sm"
                 className="h-6 w-6"
                 variant="destructive"
-                onClick={(e: Event) => {
+                onClick={(e) => {
                   table.resetColumnFilters();
                   localStorage.removeItem("filterValue");
                   table.resetColumnVisibility();
@@ -115,9 +113,8 @@ const TableSettings = ({
             <div className="grid gap-2">
               <Button
                 className="justify-start"
-                size=""
                 variant="outline"
-                onClick={(e: Event) => {
+                onClick={(e) => {
                   e.preventDefault();
                   table.resetColumnFilters();
                   localStorage.removeItem("filterValue");
@@ -129,9 +126,8 @@ const TableSettings = ({
 
               <Button
                 className="justify-start"
-                size=""
                 variant="outline"
-                onClick={(e: Event) => {
+                onClick={(e) => {
                   e.preventDefault();
                   table.resetColumnVisibility();
                   localStorage.removeItem("columnVisibility");
@@ -143,7 +139,6 @@ const TableSettings = ({
 
               <Button
                 className="justify-start"
-                size=""
                 variant="outline"
                 onClick={(e) => {
                   e.preventDefault();

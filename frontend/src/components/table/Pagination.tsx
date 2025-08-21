@@ -33,7 +33,7 @@ const Pagination = ({ table }) => {
           <span className="mr-2">Rows per page</span>
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-              <Button className="" variant="outline" size="">
+              <Button className="" variant="outline">
                 {table.getState().pagination.pageSize}
                 <ChevronDown />
               </Button>
@@ -49,7 +49,7 @@ const Pagination = ({ table }) => {
                   localStorage.setItem("pageSize", String(e));
                 }}
               >
-                {[7, 10, 20, 30, 40, 50, 100, 500, 1000].map((pageSize) => (
+                {[7, 10, 20, 30, 40, 50, 100, 500].map((pageSize) => (
                   <DropdownMenuRadioItem
                     key={pageSize}
                     className="text-mono"
@@ -67,7 +67,6 @@ const Pagination = ({ table }) => {
         <Button
           variant="outline"
           className="mr-1"
-          size=""
           onClick={() => table.firstPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -76,7 +75,6 @@ const Pagination = ({ table }) => {
         <Button
           variant="outline"
           className="mr-1"
-          size=""
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -85,7 +83,6 @@ const Pagination = ({ table }) => {
         <Button
           variant="outline"
           className="mr-1"
-          size=""
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
@@ -94,7 +91,6 @@ const Pagination = ({ table }) => {
         <Button
           variant="outline"
           className=""
-          size=""
           onClick={() => table.lastPage()}
           disabled={!table.getCanNextPage()}
         >

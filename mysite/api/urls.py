@@ -8,5 +8,7 @@ urlpatterns = [
     path("sentimentposts/count/", sentiment_count, name="senticount"),
     path("sentimentposts/gauge/", gauge_chart, name="sentigauge"),
     path("sentimentposts/gen/", gender_chart, name="sentigender"),
-    path("sentimentposts/service/", service_chart, name="sentiservice")
+    path("sentimentposts/service/", service_chart, name="sentiservice"),
+    path("archive/", views.ArchivePostListCreate.as_view(), name="archiveposts"),
+    path("archive/<int:pk>/", views.ArchivePostListUpdate.as_view(),  name="archivepost-update"),
 ]

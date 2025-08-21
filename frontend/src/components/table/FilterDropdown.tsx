@@ -57,7 +57,6 @@ const FilterDropdown = ({
         <Button
           className="p-1 rounded hover:bg-sky-100 scale-70"
           variant="outline"
-          size=""
         >
           {columnName}
           <Funnel />

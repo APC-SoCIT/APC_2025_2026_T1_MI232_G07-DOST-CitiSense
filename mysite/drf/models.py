@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+User = get_user_model()
+
 class SentimentPost(models.Model):
 
     GENDER_CHOICES = [
@@ -22,3 +24,9 @@ class SentimentPost(models.Model):
     
     def __str__(self):
         return self.name
+    
+class ArchivePost(models.Model):
+    title = models.CharField(max_length=50, null=False, blank=False)
+    image = models.ImageField(upload_to="dashboardArchive" )
+    date_created = models.DateField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)

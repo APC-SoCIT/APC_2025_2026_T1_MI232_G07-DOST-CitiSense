@@ -1,12 +1,19 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
-from drf.models import SentimentPost
-from .serializers import SentimentSerializer
+from drf.models import SentimentPost, ArchivePost
+from .serializers import SentimentSerializer, ArchiveSerializer
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from django.db.models import Count, Q
-# # Create your views here.
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
+
+
+class IsAuthorOnly(permissions.BasePermission):
+    #this only allows the authors of the dashboard to view, and update or delete their own archive image
+    def has_object_permission(self, request, view, obj):
+        return obj.author == request.user
 
 class SentimentPostListCreate(generics.ListCreateAPIView):
     queryset = SentimentPost.objects.all()
@@ -15,6 +22,25 @@ class SentimentPostListCreate(generics.ListCreateAPIView):
 class SentimentPostUpdate(generics.RetrieveUpdateDestroyAPIView):
     queryset = SentimentPost.objects.all()
     serializer_class = SentimentSerializer
+
+class ArchivePostListCreate(generics.ListCreateAPIView):
+    queryset = ArchivePost.objects.all()
+    serializer_class = ArchiveSerializer
+    permission_classes = [IsAuthenticated]
+    
+    #only show archived images from their respective authors
+    def get_queryset(self):
+        user = self.request.user
+        return ArchivePost.objects.filter(author=user)
+    
+    #make requests on behalf of the currently logged in user
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+class ArchivePostListUpdate(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ArchivePost.objects.all()
+    serializer_class = ArchiveSerializer
+    permission_classes = [IsAuthorOnly]
 
 @api_view(['GET'])
 def sentiment_count(request):

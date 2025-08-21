@@ -15,7 +15,7 @@ const DropdownCell = ({ getValue, row, column, table }) => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button className="w-30 focus-visible:ring" variant="outline" size="">
+        <Button className="w-30 focus-visible:ring" variant="outline">
           {sentiment}
         </Button>
       </DropdownMenuTrigger>

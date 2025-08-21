@@ -48,7 +48,7 @@ function DashboardPage() {
   return (
     <div className="w-full">
       <div className="flex justify-end mr-20">
-        <Button className="" size="" variant="outline" onClick={handleCapture}>
+        <Button className="" variant="outline" onClick={handleCapture}>
           Capture Dashboard
         </Button>
       </div>

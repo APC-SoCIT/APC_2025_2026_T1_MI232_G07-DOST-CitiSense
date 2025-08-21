@@ -12,6 +12,7 @@ import Layout from "./pages/Layout.jsx";
 import DashboardPage from "./pages/Dashboard.js";
 import DataTablePage from "./components/table/DataTablePage.js";
 import AuthCallback from "./components/AuthCallback.js";
+import Archive from "./pages/Archive.js";
 
 const Logout = () => {
   localStorage.clear();
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/archive",
-        element: <NotFound />,
+        element: <Archive />,
       },
     ],
   },

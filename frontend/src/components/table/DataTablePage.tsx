@@ -30,7 +30,7 @@ const DataTablePage = () => {
   const [editedRows, setEditedRows] = useState<Set<number>>(new Set());
   const columns = useMemo(() => getColumns(isEditing), [isEditing]); //to pass the isEditing to the column definition which is also a function
 
-  //local storage for persistence of user preference in the table component
+  //put table settings in local storage for persistence of user preference in the table component
 
   //gets and initializes the column sizing from localstorage so user preference persists after reload
   const [columnSizing, setColumnSizing] = useState(() => {
@@ -158,6 +158,7 @@ const DataTablePage = () => {
     getSentimentData();
   }, []);
 
+  //handles the posting of updated table data to the backend
   const postChange = async () => {
     try {
       //filter rows depending if the value in the editedRows set matches the index id in the data array
