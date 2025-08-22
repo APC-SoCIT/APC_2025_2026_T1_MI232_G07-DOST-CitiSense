@@ -7,12 +7,11 @@ import { Navigate } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import Home from "./pages/Home.jsx";
 import Layout from "./pages/Layout.jsx";
-import DashboardPage from "./pages/Dashboard.js";
 import DataTablePage from "./components/table/DataTablePage.js";
 import AuthCallback from "./components/AuthCallback.js";
-import Archive from "./pages/Archive.js";
+import Archive from "./components/dashboard/Archive.js";
+import DashboardPage from "./components/dashboard/Dashboard.js";
 
 const Logout = () => {
   localStorage.clear();
@@ -51,7 +50,7 @@ const router = createBrowserRouter([
   { path: "/accounts/google/login/callback", element: <AuthCallback /> },
 ]);
 
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>

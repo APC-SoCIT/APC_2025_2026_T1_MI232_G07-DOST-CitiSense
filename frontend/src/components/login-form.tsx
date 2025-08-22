@@ -124,7 +124,6 @@ export function LoginForm1({ className, route, ...props }) {
                 <Button
                   type="submit"
                   variant="default"
-                  size=""
                   className="w-full"
                   disabled={isSubmitting}
                 >
@@ -138,7 +137,6 @@ export function LoginForm1({ className, route, ...props }) {
               </div>
               <div className="flex flex-col gap-4">
                 <Button
-                  size=""
                   variant="outline"
                   className="w-full"
                   onClick={() => handleGoogle()}

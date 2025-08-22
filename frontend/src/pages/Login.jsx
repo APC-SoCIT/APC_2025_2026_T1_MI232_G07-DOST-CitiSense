@@ -1,5 +1,4 @@
 import { GalleryVerticalEnd } from "lucide-react";
-import { Link } from "react-router-dom";
 import { LoginForm1 } from "../components/login-form";
 
 export default function LoginPage() {

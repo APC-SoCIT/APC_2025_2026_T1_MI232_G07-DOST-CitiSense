@@ -49,7 +49,7 @@ const Dialog1 = ({ showDialog, setShowDialog, text }: DialogProps) => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="" size="" variant="default">
+            <Button className="" variant="default">
               Okay, got it
             </Button>
           </DialogClose>

@@ -1,14 +1,17 @@
-import Gauge from "../components/charts/gauge";
-import Service from "../components/charts/service";
-import Gender from "../components/charts/gender";
-import { Button } from "../components/ui/button";
+import Gauge from "../charts/gauge";
+import Service from "../charts/service";
+import Gender from "../charts/gender";
+import { Button } from "../ui/button";
 import { useRef, useState } from "react";
 import html2canvas from "html2canvas-pro";
 import DashboardDialog from "./DashboardDialog";
+import { toast } from "sonner";
+import api from "../../api";
 
 function DashboardPage() {
-  const [preview, setPreview] = useState<string>("");
+  const [preview, setPreview] = useState<string>(""); //state for the current url of the image just downloaded from the browser
   const [isSaving, setIsSaving] = useState(false);
+  const [fileName, setFileName] = useState("dashboard.png"); //state for the name of the image to be downloaded; default to dashboard.png
   const cardRef = useRef<HTMLElement | null>(null);
 
   //for capturing the dashboard page and saving to png
@@ -42,6 +45,37 @@ function DashboardPage() {
       cardElement.classList.add("scale-85");
     } finally {
       cardElement.classList.add("scale-85");
+    }
+  };
+
+  const handleArchiveSubmit = async () => {
+    //get the url of the image
+    const response = await fetch(preview);
+    //convert the url to binary
+    const blob = await response.blob();
+
+    //check if the filename ends with an extension ".png" or ".jpg"
+    const fileNameEnd = fileName.endsWith(".png") || fileName.endsWith(".jpg");
+
+    let finalFileName = fileName;
+    //if file name doesn't include a file extension, then append ".png" to it
+    if (!fileNameEnd) {
+      finalFileName += ".png";
+    }
+
+    //create a form data and append the image and the fileName to the formData
+    const formData = new FormData();
+    formData.append("image", blob, finalFileName);
+    formData.append("title", finalFileName);
+
+    try {
+      //post the formData to the backend
+      await api.post("/archive/", formData);
+      setIsSaving(false);
+      toast.success("Successfully archived image!");
+    } catch (error) {
+      console.log("this is the error", error.response?.data);
+      alert("error");
     }
   };
 
@@ -79,10 +113,18 @@ function DashboardPage() {
           </div>
         </div>
       </main>
+
       <DashboardDialog
         image={preview}
-        isSaving={isSaving}
-        setIsSaving={setIsSaving}
+        isOpen={isSaving}
+        setIsOpen={setIsSaving}
+        fileName={fileName}
+        setFileName={setFileName}
+        onCancel={() => setIsSaving(false)}
+        onConfirm={() => handleArchiveSubmit()}
+        dialogTitle="Preview image"
+        descriptionText="Please enter a name for the file to be downloaded"
+        buttonText="Redo?"
       />
     </div>
   );

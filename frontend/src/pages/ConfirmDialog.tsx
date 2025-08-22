@@ -1,4 +1,3 @@
-import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,13 +7,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
 const ConfirmDialog = ({
   confirmDelete,
   setConfirmDelete,
   onConfirm,
-  description,
+  descriptionText,
   title,
   actionText,
 }) => {
@@ -25,7 +23,7 @@ const ConfirmDialog = ({
           <AlertDialogHeader>
             <AlertDialogTitle>{title}</AlertDialogTitle>
             <AlertDialogDescription className="font-medium">
-              {description}
+              {descriptionText}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
