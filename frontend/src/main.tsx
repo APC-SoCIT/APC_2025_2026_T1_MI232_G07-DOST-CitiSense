@@ -9,14 +9,12 @@ import Register from "./pages/Register.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Layout from "./pages/Layout.jsx";
 import DataTablePage from "./components/table/DataTablePage.js";
-import AuthCallback from "./components/AuthCallback.js";
+import AuthCallback from "./authentication/AuthCallback.js";
 import Archive from "./components/dashboard/Archive.js";
 import DashboardPage from "./components/dashboard/Dashboard.js";
-
-const Logout = () => {
-  localStorage.clear();
-  return <Navigate to="/login" />;
-};
+import { AuthenticationProvider } from "./context/AuthenticationContext.js";
+import AnalystRoute from "./routes/AnalystRoute.js";
+import Logout from "./pages/Logout.js";
 
 const RegisterAndLogout = () => {
   localStorage.clear();
@@ -30,28 +28,36 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DataTablePage />,
+        element: <DashboardPage />,
       },
       {
-        path: "/dashboard",
-        element: <DashboardPage />,
+        path: "/table",
+        element: <AnalystRoute />,
+        children: [
+          {
+            index: true,
+            element: <DataTablePage />,
+          },
+        ],
       },
       {
         path: "/archive",
         element: <Archive />,
       },
+      { path: "*", element: <NotFound /> },
     ],
   },
 
   { path: "/login", element: <Login /> },
   { path: "/register", element: <RegisterAndLogout /> },
   { path: "/logout", element: <Logout /> },
-  { path: "*", element: <NotFound /> },
   { path: "/accounts/google/login/callback", element: <AuthCallback /> },
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthenticationProvider>
+      <RouterProvider router={router} />
+    </AuthenticationProvider>
   </StrictMode>
 );

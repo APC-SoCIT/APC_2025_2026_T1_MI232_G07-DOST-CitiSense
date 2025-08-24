@@ -33,6 +33,11 @@ api.interceptors.response.use(
     //get the config of the request
     const originalRequest = error.config;
 
+    //to prevent from rerendering the login component after submitting invalid login credentials
+    if (originalRequest.url.includes("/api/auth/token/")) {
+      return Promise.reject(error);
+    }
+
     //if the error is a 401 (unauthorized) and we already haven't tried a refresh for the expired access token, then refresh the access token
     //the !originalRequest.sent will prevent infinite looping of attempting to refresh token with an expired refresh token
     if (error.response.status === 401 && !originalRequest.sent) {

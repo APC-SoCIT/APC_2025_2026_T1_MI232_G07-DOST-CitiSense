@@ -12,12 +12,11 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
-import api from "../api";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useAuth from "../hooks/useAuth";
 
 //zod schema for login form validation
 const signInSchema = z.object({
@@ -26,11 +25,12 @@ const signInSchema = z.object({
 });
 
 //follow the schema of zod
-type SignInProps = z.infer<typeof signInSchema>;
+export type SignInProps = z.infer<typeof signInSchema>;
 
 export function LoginForm1({ className, route, ...props }) {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { Login, socialAuthError } = useAuth();
   const {
     register,
     handleSubmit,
@@ -40,17 +40,16 @@ export function LoginForm1({ className, route, ...props }) {
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: SignInProps) => {
     try {
-      const res = await api.post(route, data);
-      localStorage.setItem(ACCESS_TOKEN, res.data.access);
-      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+      await Login(data); //call the usecontext function
       navigate("/");
     } catch (error) {
       setError("root", { message: "Invalid credentials. Please try again." });
     }
   };
 
+  //navigate the user to the google endpoint to get the access token
   const handleGoogle = async () => {
     window.location.replace(
       `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${
@@ -60,6 +59,10 @@ export function LoginForm1({ className, route, ...props }) {
       }&scope=openid%20email%20profile&access_type=offline`
     );
   };
+
+  //used for displaying the error in the card div; either the social auth error, or the normal username and password login
+  const displayError = socialAuthError || errors.root?.message;
+
   return (
     <div
       className="flex flex-col gap-6 scale-80 -mt-10 2xl:mt-5 2xl:scale-100"
@@ -67,9 +70,9 @@ export function LoginForm1({ className, route, ...props }) {
     >
       <Card className="">
         <CardHeader className="text-center">
-          {errors.root && (
+          {displayError && (
             <CardDescription className="text-left bg-red-100 text-red px-4 py-3 mb-5 rounded-lg text-red-600">
-              {errors.root?.message}
+              {displayError}
             </CardDescription>
           )}
 

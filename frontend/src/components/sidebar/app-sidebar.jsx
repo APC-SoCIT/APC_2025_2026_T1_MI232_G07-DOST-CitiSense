@@ -24,7 +24,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/",
+      url: "/table",
       icon: SquareTerminal,
     },
     {
@@ -34,7 +34,7 @@ const data = {
       items: [
         {
           title: "Dashboard",
-          url: "/dashboard",
+          url: "/",
         },
         {
           title: "Archive",

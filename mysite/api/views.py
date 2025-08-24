@@ -6,7 +6,7 @@ from .serializers import SentimentSerializer, ArchiveSerializer
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from django.db.models import Count, Q
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework import permissions
 
 
@@ -15,13 +15,20 @@ class IsAuthorOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.author == request.user
 
+class IsAnalyst(permissions.BasePermission):
+    #only show the data and allow edit updates to it, if the user is an analyst
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name="analyst").exists()
+    
 class SentimentPostListCreate(generics.ListCreateAPIView):
     queryset = SentimentPost.objects.all()
     serializer_class = SentimentSerializer
+    permission_classes = [IsAuthenticated, IsAnalyst]  
 
 class SentimentPostUpdate(generics.RetrieveUpdateDestroyAPIView):
     queryset = SentimentPost.objects.all()
     serializer_class = SentimentSerializer
+    permission_classes = [IsAuthenticated, IsAnalyst]
 
 class ArchivePostListCreate(generics.ListCreateAPIView):
     queryset = ArchivePost.objects.all()

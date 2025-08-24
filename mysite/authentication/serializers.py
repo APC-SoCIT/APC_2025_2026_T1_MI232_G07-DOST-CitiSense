@@ -8,9 +8,10 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    groups = serializers.StringRelatedField(many=True) #convert the integer to a string representation of the role
     class Meta:
         model = User
-        fields = ['id','username', 'email', 'picture']
+        fields = ['id','username', 'email', 'picture', 'groups']
 
 class CustomRegisterUserSerializer(RegisterSerializer):
     #unique validator with a message
