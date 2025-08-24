@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import { toast } from "sonner";
 
 const AuthCallback = () => {
   const navigate = useNavigate();

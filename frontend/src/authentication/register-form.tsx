@@ -3,7 +3,6 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import api from "../api";
 import { CircleAlert, EyeIcon, EyeOff, EyeOffIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -44,13 +43,17 @@ export function RegisterForm({ className, route, ...props }) {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: SignUpFieldProps) => {
     try {
       await api.post(route, data);
       navigate("/login");
     } catch (error) {
-      setError("username", { message: error.response.data.username });
-      setError("email", { message: error.response.data.email });
+      if (error.response?.data?.username) {
+        setError("username", { message: error.response.data.username });
+      }
+      if (error.response?.data.email) {
+        setError("email", { message: error.response.data.email });
+      }
     }
   };
 

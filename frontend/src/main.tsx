@@ -2,7 +2,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Navigate } from "react-router-dom";
 
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -15,11 +14,6 @@ import DashboardPage from "./components/dashboard/Dashboard.js";
 import { AuthenticationProvider } from "./context/AuthenticationContext.js";
 import AnalystRoute from "./routes/AnalystRoute.js";
 import Logout from "./pages/Logout.js";
-
-const RegisterAndLogout = () => {
-  localStorage.clear();
-  return <Register />;
-};
 
 const router = createBrowserRouter([
   {
@@ -49,7 +43,7 @@ const router = createBrowserRouter([
   },
 
   { path: "/login", element: <Login /> },
-  { path: "/register", element: <RegisterAndLogout /> },
+  { path: "/register", element: <Register /> },
   { path: "/logout", element: <Logout /> },
   { path: "/accounts/google/login/callback", element: <AuthCallback /> },
 ]);

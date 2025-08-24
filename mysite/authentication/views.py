@@ -6,7 +6,7 @@ from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.contrib.auth import get_user_model
-import os
+
 User = get_user_model()
 
 #fix for "OAuth2Client.__init__() got multiple values for argument 'scope_delimiter'" error

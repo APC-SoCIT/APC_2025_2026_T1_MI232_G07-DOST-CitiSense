@@ -6,8 +6,8 @@ function NotFound() {
     <div>
       <main class="grid min-h-screen place-items-center px-6 py-24 sm:py-32 lg:px-8">
         <div class="flex-col text-center justify-center items-center flex">
-          <p class="text-base font-semibold text-indigo-400">404</p>
-          <h1 class="mt-4 text-5xl font-semibold tracking-tight text-balance sm:text-7xl">
+          <p class="text-8xl font-semibold text-indigo-400">404</p>
+          <h1 class="mt-4 text-5xl font-semibold tracking-tight text-balance sm:text-5xl">
             Page not found
           </h1>
           <p class="mt-6 text-lg font-medium text-pretty text-gray-400 sm:text-xl/8">

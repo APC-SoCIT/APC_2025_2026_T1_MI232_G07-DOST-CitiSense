@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
 import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import { SignInProps } from "../authentication/login-form";
 
 type User = {
@@ -28,42 +27,48 @@ export const AuthenticationContext = createContext<AuthContextProps | null>(
 export const AuthenticationProvider = ({ children }) => {
   const [user, setUser] = useState<User | null>(null); //store the current logged in user
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [socialAuthError, setSocialAuthError] = useState<string>("");
+  const [socialAuthError, setSocialAuthError] = useState<string>(""); //for the error message of the when social login attempt failed
 
-  //fetch the user details on mount
+  //auth endpoints to skip auth checks
+  const authEndpoint =
+    window.location.href.includes("/login") ||
+    window.location.href.includes("/register");
+
+  //fetch the user details on mount and for automatically refreshing the access token of the user
   useEffect(() => {
-    const getUser = async () => {
-      const token = localStorage.getItem(ACCESS_TOKEN);
-      // if no token setAuthorize to false
-      if (!token) {
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
+    //check for the auth status; if there is no details, the refresh the access token.
 
+    //skip auth checks for auth endpoints
+    if (authEndpoint) {
+      setIsLoading(false);
+      return;
+    }
+    const checkAuthStatus = async () => {
       try {
-        const res = await api.get("/api/auth/user/");
-        console.log(res);
-        setUser(res.data);
-        setIsLoading(false);
+        const userDetails = await api.get("/api/auth/user/");
+        setUser(userDetails.data);
       } catch (error) {
-        console.log(error);
         setUser(null);
+        console.log("failed to verify and refresh token");
       } finally {
         setIsLoading(false);
       }
     };
-    getUser();
+    checkAuthStatus();
+
+    //set interval for automatically refreshing user every 9 minutes before the token expires;
+    //this is for when a user is not actively accessing api endpoints
+    const interval = setInterval(checkAuthStatus, 540000);
+
+    //clear the interval to prevent it from running after a component unmounts
+    return () => clearInterval(interval);
   }, []);
 
   const Login = async (data: SignInProps) => {
     setSocialAuthError(""); //clear the current social error; if user goes to login after a failed social login attempt
     try {
       //post the token to the token user data submitted from the login form to get access and refresh tokens
-      const res = await api.post("/api/auth/token/", data);
-      localStorage.setItem(ACCESS_TOKEN, res.data.access);
-      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-
+      await api.post("/api/auth/login/", data);
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
@@ -79,11 +84,8 @@ export const AuthenticationProvider = ({ children }) => {
   const SocialLogin = async (code: string) => {
     try {
       //post the code from the url parameters given by google to the /api/auth/google endpoint to get the access and refresh tokens
-      const response = await api.post("/api/auth/google/", { code });
+      await api.post("/api/auth/google/", { code });
       console.log("This is the code", { code });
-      localStorage.setItem(ACCESS_TOKEN, response.data.access);
-      localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
@@ -95,9 +97,10 @@ export const AuthenticationProvider = ({ children }) => {
     }
   };
 
-  const Logout = () => {
-    localStorage.clear();
+  const Logout = async () => {
+    await api.post("/api/auth/logout/");
     setUser(null);
+    setSocialAuthError("");
   };
 
   return (

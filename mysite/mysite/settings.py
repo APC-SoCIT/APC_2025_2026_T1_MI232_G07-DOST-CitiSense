@@ -163,27 +163,32 @@ AUTH_USER_MODEL = "authentication.CustomUser"
 SITE_ID = 1
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': None,
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ]
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication", 
+    ],
 }
+
 
 REST_AUTH = {
     "USE_JWT": True,
-    "JWT_AUTH_HTTPONLY": False,
+    "JWT_AUTH_HTTPONLY": True,
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'REGISTER_SERIALIZER': 'authentication.serializers.CustomRegisterUserSerializer',
-    'USER_DETAILS_SERIALIZER': 'authentication.serializers.UserSerializer'
+    'USER_DETAILS_SERIALIZER': 'authentication.serializers.UserSerializer',
+    'JWT_AUTH_COOKIE': 'access',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh',
+    'JWT_AUTH_REFRESH_COOKIE_PATH': '/',
+    'JWT_AUTH_SECURE': True,
+    'JWT_AUTH_SAMESITE': 'None',
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),    
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": True,
-    "SIGNING_KEY": os.getenv("JWT_SIGNING_KEY"),
+    "SIGNING_KEY": os.getenv("JWT_SIGNING_KEY", SECRET_KEY),
     "ALGORITHM": "HS512",   
     "LEEWAY": 1,
 }
@@ -216,7 +221,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-
+CORS_ALLOW_CREDENTIALS = True
+    
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:

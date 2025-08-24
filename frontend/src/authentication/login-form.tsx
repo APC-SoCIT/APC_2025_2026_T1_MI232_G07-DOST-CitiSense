@@ -43,7 +43,8 @@ export function LoginForm1({ className, route, ...props }) {
   const onSubmit = async (data: SignInProps) => {
     try {
       await Login(data); //call the usecontext function
-      navigate("/");
+      navigate("/", { replace: true });
+      console.log("hello world");
     } catch (error) {
       setError("root", { message: "Invalid credentials. Please try again." });
     }
