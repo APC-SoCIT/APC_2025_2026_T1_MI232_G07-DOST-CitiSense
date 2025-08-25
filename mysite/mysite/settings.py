@@ -43,13 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    
+
+    'django_cleanup.apps.CleanupConfig',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'corsheaders',  
-    'drf',
+    'drf.apps.DrfConfig',
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'rest_framework',
@@ -163,6 +164,8 @@ AUTH_USER_MODEL = "authentication.CustomUser"
 SITE_ID = 1
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication", 
     ],

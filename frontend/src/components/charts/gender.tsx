@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import api from "../../api";
+import { ApexOptions } from "apexcharts";
 
+type GenderSeriesProps = {
+  name: string;
+  data: number[];
+};
 //fallback for the chart data if no data is fetched or if data is undefined
 const fallbackSeries = [
   { name: "Negative", data: [0, 0] },
@@ -9,16 +14,16 @@ const fallbackSeries = [
   { name: "Positive", data: [0, 0] },
 ];
 
-const Gender = () => {
-  const [genderValue, setGenderValue] = useState([]);
+const Gender = ({ filterParams }) => {
+  const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
 
   useEffect(() => {
     getGender();
-  }, []);
+  }, [filterParams]);
 
   const getGender = async () => {
     try {
-      const res = await api.get("/sentimentposts/gen/");
+      const res = await api.get(`/sentimentposts/gen/?${filterParams}`);
       const resData = res.data.genderCount;
 
       //temporary holder for sentiment counts per gender, this will hold the array for the series for the chart's y-axis
@@ -52,7 +57,7 @@ const Gender = () => {
       setGenderValue([]);
     }
   };
-  const options = {
+  const options: ApexOptions = {
     chart: {
       type: "bar",
       height: 350,
@@ -101,7 +106,7 @@ const Gender = () => {
       },
     },
     dataLabels: {
-      formatter: function (val) {
+      formatter: function (val: number) {
         return val.toFixed(1) + "%"; // show the 1st decimal
       },
       style: {

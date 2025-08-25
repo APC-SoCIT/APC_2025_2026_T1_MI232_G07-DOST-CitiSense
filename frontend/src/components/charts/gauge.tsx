@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import GaugeComponent from "react-gauge-component";
 import api from "../../api";
 
-const Gauge = () => {
+const Gauge = ({ filterParams }) => {
   const [gaugeValue, setGaugeValue] = useState(0);
 
   useEffect(() => {
     getGauge();
-  }, []);
+  }, [filterParams]);
 
   const getGauge = async () => {
     try {
-      const res = await api.get("/sentimentposts/gauge/");
+      const res = await api.get(`/sentimentposts/gauge/?${filterParams}`);
       const resData = res.data?.["Gauge percentage"]; // optional chaining proceeds through if res.data is not undefined
       if (typeof resData === "number") {
         //check if the value is a number

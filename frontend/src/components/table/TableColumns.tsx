@@ -19,9 +19,10 @@ export const senArray: SentimentOption[] = [
   { label: "Negative", color: "bg-red-500" },
 ];
 
-export type Posttype = {
+export type SentimentPostType = {
   id: number;
   name: string;
+  session: string;
   service: string;
   gender: Gender;
   feedback: string;
@@ -29,12 +30,26 @@ export type Posttype = {
 };
 
 //column definition array initialization, this is where tanstack is referencing from
-export const getColumns = (isEditing: boolean): ColumnDef<Posttype, any>[] => [
+export const getColumns = (
+  isEditing: boolean
+): ColumnDef<SentimentPostType, any>[] => [
   {
     accessorKey: "name",
     header: () => <span>Name</span>,
     cell: (info) => info.getValue(),
+    filterFn: "arrIncludesSome",
     enableColumnFilter: false,
+  },
+  {
+    accessorKey: "session",
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Date
+        <FilterDropdown column={column} />
+      </div>
+    ),
+    cell: (info) => info.getValue(),
+    filterFn: "arrIncludesSome",
   },
   {
     accessorKey: "service",

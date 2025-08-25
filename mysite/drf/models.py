@@ -17,6 +17,7 @@ class SentimentPost(models.Model):
         ("Library Tour","Library Tour")
     ]
     name = models.TextField(max_length=100)
+    session = models.TextField()
     service = models.CharField(max_length=100, choices=SERVICE_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     feedback = models.TextField(max_length=100)

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { DataTable } from "./DataTable";
 import { getColumns } from "./TableColumns";
-import { Posttype } from "./TableColumns";
+import { SentimentPostType } from "./TableColumns";
 import api from "../../api";
 import {
   useReactTable,
@@ -24,8 +24,8 @@ const DataTablePage = () => {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
   // const [data, setData] = useState<Posttype[]>(mockData1);
-  const [data, setData] = useState<Posttype[]>([]);
-  const [originalData, setOriginalData] = useState<Posttype[]>([]);
+  const [data, setData] = useState<SentimentPostType[]>([]);
+  const [originalData, setOriginalData] = useState<SentimentPostType[]>([]);
   // const [originalData, setOriginalData] = useState<Posttype[]>(mockData1);
   const [editedRows, setEditedRows] = useState<Set<number>>(new Set());
   const columns = useMemo(() => getColumns(isEditing), [isEditing]); //to pass the isEditing to the column definition which is also a function
@@ -148,8 +148,8 @@ const DataTablePage = () => {
     const getSentimentData = async () => {
       try {
         const res = await api.get("/sentimentposts/");
-        setData(res?.data);
-        setOriginalData(res?.data);
+        setData(res?.data.results);
+        setOriginalData(res?.data.results);
         // console.log(res);
       } catch (error) {
         console.log(error.response?.data || error.message);

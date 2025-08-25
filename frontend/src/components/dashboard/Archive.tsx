@@ -74,7 +74,7 @@ const Archive = () => {
       try {
         const res = await api.get("/archive/");
         console.log(res);
-        setData(res.data);
+        setData(res.data.results);
       } catch (error) {
         console.log(error);
       }

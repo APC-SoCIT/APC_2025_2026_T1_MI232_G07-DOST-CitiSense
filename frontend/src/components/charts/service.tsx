@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import serviceData from "../../mockdata/service.json";
 import api from "../../api";
+import { ApexOptions } from "apexcharts";
 
+type ServiceSeriesProps = {
+  name: string;
+  data: number[];
+};
 //fallback data for chart, if no data fetched or undefined
 const fallbackSeries = [
   { name: "Negative", data: [0, 0, 0, 0] },
@@ -18,16 +23,16 @@ const serviceMap = {
   "Library Tour": 3,
 };
 
-const Service = () => {
-  const [serviceValue, setServiceValue] = useState([]);
+const Service = ({ filterParams }) => {
+  const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
 
   useEffect(() => {
     getService();
-  }, []);
+  }, [filterParams]);
 
   const getService = async () => {
     try {
-      const res = await api.get("/sentimentposts/service/");
+      const res = await api.get(`/sentimentposts/service/?${filterParams}`);
       const resData = res.data.serviceCount;
 
       //used to temporarily store the current object needed for the chart data
@@ -62,7 +67,7 @@ const Service = () => {
     }
   };
 
-  const options = {
+  const options: ApexOptions = {
     chart: {
       type: "bar",
       height: 350,
@@ -116,7 +121,7 @@ const Service = () => {
       },
     },
     dataLabels: {
-      formatter: function (val) {
+      formatter: function (val: number) {
         return val.toFixed(1) + "%"; // show the 1st decimal
       },
       style: {

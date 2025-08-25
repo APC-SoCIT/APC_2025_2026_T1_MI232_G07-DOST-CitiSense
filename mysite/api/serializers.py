@@ -4,7 +4,7 @@ from rest_framework import serializers
 class SentimentSerializer(serializers.ModelSerializer):
     class Meta:
         model = SentimentPost
-        fields = ['id','name','service','gender','feedback','sentiment']
+        fields = ['id','name','session', 'service','gender','feedback','sentiment']
 
 class ArchiveSerializer(serializers.ModelSerializer):
     class Meta:

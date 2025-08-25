@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework import permissions
 
 
+
 class IsAuthorOnly(permissions.BasePermission):
     #this only allows the authors of the dashboard to view, and update or delete their own archive image
     def has_object_permission(self, request, view, obj):
@@ -19,16 +20,12 @@ class IsAnalyst(permissions.BasePermission):
     #only show the data and allow edit updates to it, if the user is an analyst
     def has_permission(self, request, view):
         return request.user.groups.filter(name="analyst").exists()
-    
-class SentimentPostListCreate(generics.ListCreateAPIView):
-    queryset = SentimentPost.objects.all()
-    serializer_class = SentimentSerializer
-    permission_classes = [IsAuthenticated, IsAnalyst]  
+
 
 class SentimentPostUpdate(generics.RetrieveUpdateDestroyAPIView):
     queryset = SentimentPost.objects.all()
     serializer_class = SentimentSerializer
-    permission_classes = [IsAuthenticated, IsAnalyst]
+    # permission_classes = [IsAuthenticated, IsAnalyst]
 
 class ArchivePostListCreate(generics.ListCreateAPIView):
     queryset = ArchivePost.objects.all()
@@ -49,10 +46,31 @@ class ArchivePostListUpdate(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ArchiveSerializer
     permission_classes = [IsAuthorOnly]
 
+
+def filter_sentiment_queryset(request):
+    queryset = SentimentPost.objects.all()
+    #get the query parameter from the url named session
+    session = request.query_params.getlist("session")
+
+    #if the session is greater than 0, then return the filtered queryset based on the session; else return the queryset containing every sentiment feedback
+    if len(session) > 0 :
+        queryset = queryset.filter(session__in=session)
+    return queryset
+
+class SentimentPostListCreate(generics.ListCreateAPIView):
+    queryset = SentimentPost.objects.all()
+    serializer_class = SentimentSerializer
+    # permission_classes = [IsAuthenticated, IsAnalyst]  
+
+    def get_queryset(self):
+        return filter_sentiment_queryset(self.request)
+   
+    
 @api_view(['GET'])
 def sentiment_count(request):
-    sentimentcount = SentimentPost.objects.values('sentiment').annotate(sencount=Count('sentiment'))
-    senticounts = SentimentPost.objects.aggregate(
+    queryset = filter_sentiment_queryset(request)
+    sentimentcount = queryset.values('sentiment').annotate(sencount=Count('sentiment'))
+    senticounts = queryset.aggregate(
         positive = Count("id", filter=Q(sentiment="Positive")),
         negative =Count("id", filter=Q(sentiment="Negative")),
         neutral = Count("id", filter=Q(sentiment="Neutral")),
@@ -64,7 +82,8 @@ def sentiment_count(request):
 
 @api_view(['GET'])
 def gauge_chart(request):
-    senticounts = SentimentPost.objects.aggregate(
+    queryset = filter_sentiment_queryset(request)
+    senticounts = queryset.aggregate(
         positive = Count("id", filter=Q(sentiment="Positive")),
         negative =Count("id", filter=Q(sentiment="Negative")),
         neutral = Count("id", filter=Q(sentiment="Neutral")),
@@ -81,12 +100,14 @@ def gauge_chart(request):
 
 @api_view(['GET'])
 def gender_chart(request): 
-    gendercount = SentimentPost.objects.values('gender','sentiment').annotate(sencount=Count('sentiment'))
+    queryset = filter_sentiment_queryset(request)
+    gendercount = queryset.values('gender','sentiment').annotate(sencount=Count('sentiment'))
     return Response({"genderCount" : gendercount})
 
 @api_view(['GET'])
 def service_chart(request):
-    servicecount = SentimentPost.objects.values('service', 'sentiment').annotate(sencount=Count('sentiment'))
+    queryset = filter_sentiment_queryset(request)
+    servicecount = queryset.values('service', 'sentiment').annotate(sencount=Count('sentiment'))
     return Response({"serviceCount": servicecount})
 
 # class BlogPostListCreate(generics.ListCreateAPIView):
