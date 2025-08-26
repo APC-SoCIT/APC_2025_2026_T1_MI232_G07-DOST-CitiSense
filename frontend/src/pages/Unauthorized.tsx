@@ -19,7 +19,7 @@ export function UnauthorizedPage({
       )}
       {...props}
     >
-      <Card className="overflow-hidden p-0 max-w-4xl w-full min-h-[400px]">
+      <Card className="overflow-hidden p-0 max-w-4xl w-full min-h-[400px] border-gray-400">
         <CardContent className="grid p-0 md:grid-cols-2 min-h-[500px]">
           <div className="bg-muted relative hidden md:block">
             <img

@@ -2,16 +2,19 @@ import React, { createContext, useEffect, useState } from "react";
 import api from "../api";
 import { SignInProps } from "../authentication/login-form";
 
-type User = {
+export type User = {
   id: number;
   username: string;
   email: string;
   picture?: string;
   groups: string[];
+  first_name?: string;
+  last_name?: string;
 };
 
 type AuthContextProps = {
   user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   Login: (data: SignInProps) => Promise<void>;
   SocialLogin: (code: string) => Promise<void>;
   Logout: () => void;
@@ -55,7 +58,7 @@ export const AuthenticationProvider = ({ children }) => {
       }
     };
     checkAuthStatus();
-
+    console.log("This is run");
     //set interval for automatically refreshing user every 9 minutes before the token expires;
     //this is for when a user is not actively accessing api endpoints
     const interval = setInterval(checkAuthStatus, 540000);
@@ -105,7 +108,15 @@ export const AuthenticationProvider = ({ children }) => {
 
   return (
     <AuthenticationContext.Provider
-      value={{ user, isLoading, Login, SocialLogin, Logout, socialAuthError }}
+      value={{
+        user,
+        setUser,
+        isLoading,
+        Login,
+        SocialLogin,
+        Logout,
+        socialAuthError,
+      }}
     >
       {children}
     </AuthenticationContext.Provider>

@@ -13,7 +13,7 @@ def save_google_picture(sender, request, sociallogin, **kwargs):
     
     # get the current picture url from google
     if picture_url:
-        user.picture = picture_url
+        user.picture_url = picture_url
         
     # set username if missing
     if not user.username:

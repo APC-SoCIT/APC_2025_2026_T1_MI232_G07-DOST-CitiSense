@@ -14,6 +14,7 @@ import DashboardPage from "./components/dashboard/Dashboard.js";
 import { AuthenticationProvider } from "./context/AuthenticationContext.js";
 import AnalystRoute from "./routes/AnalystRoute.js";
 import Logout from "./pages/Logout.js";
+import Home from "./pages/Home.js";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
         element: <Archive />,
       },
       { path: "*", element: <NotFound /> },
+      { path: "/home", element: <Home /> },
     ],
   },
 

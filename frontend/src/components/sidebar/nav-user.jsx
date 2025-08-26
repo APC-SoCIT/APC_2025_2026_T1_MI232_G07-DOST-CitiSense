@@ -20,12 +20,14 @@ import {
 } from "@/components/ui/sidebar";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import ConfirmDialog from "../../pages/ConfirmDialog";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
   const { user, Logout } = useAuth();
-
+  const [confirmLogout, setConfirmLogout] = useState(false);
   return (
     <div>
       <SidebarMenu>
@@ -37,7 +39,11 @@ export function NavUser() {
                 className="flex items-center data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:w-full"
               >
                 <Avatar className="justify-center h-7 w-7 rounded-lg shrink-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:rounded-full">
-                  <AvatarImage src={user?.picture} alt={user?.username} />
+                  <AvatarImage
+                    src={user?.picture}
+                    alt={user?.username}
+                    className="object-cover"
+                  />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
@@ -56,7 +62,11 @@ export function NavUser() {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-7 w-7 rounded-lg">
-                    <AvatarImage src={user?.picture} alt={user?.username} />
+                    <AvatarImage
+                      src={user?.picture}
+                      alt={user?.username}
+                      className="object-cover"
+                    />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -69,22 +79,13 @@ export function NavUser() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/home")}>
                   <BadgeCheck />
                   Account
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell />
-                  Notifications
-                </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  Logout();
-                  navigate("/login");
-                }}
-              >
+              <DropdownMenuItem onClick={() => setConfirmLogout(true)}>
                 <LogOut />
                 Log out
               </DropdownMenuItem>
@@ -92,6 +93,17 @@ export function NavUser() {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
+      <ConfirmDialog
+        confirmDelete={confirmLogout}
+        setConfirmDelete={setConfirmLogout}
+        title="Do you want to logout?"
+        descriptionText=""
+        actionText="Logout"
+        onConfirm={() => {
+          Logout();
+          navigate("/login");
+        }}
+      />
     </div>
   );
 }
