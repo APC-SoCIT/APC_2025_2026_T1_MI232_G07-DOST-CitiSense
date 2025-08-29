@@ -19,8 +19,12 @@ const DashboardDialog = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="min-w-5xl">
         <DialogTitle className="text-2xl">{dialogTitle}</DialogTitle>
-        <div>
-          <img src={image} alt="Dashboard Preview" />{" "}
+        <div className="max-h-[80vh] overflow-x-auto overflow-y-auto">
+          <img
+            src={image}
+            alt="Dashboard Preview"
+            className="max-w-full h-auto"
+          />{" "}
           <h1 className="text-black text-md mb-2">{descriptionText}</h1>
           <Input
             type="text"
@@ -30,16 +34,15 @@ const DashboardDialog = ({
               setFileName(e.target.value)
             }
           />
+          <DialogFooter className="mt-2">
+            <Button className="" variant="destructive" onClick={onCancel}>
+              {buttonText}
+            </Button>
+            <Button className="" variant="greendefault" onClick={onConfirm}>
+              Save
+            </Button>
+          </DialogFooter>
         </div>
-
-        <DialogFooter>
-          <Button className="" variant="destructive" onClick={onCancel}>
-            {buttonText}
-          </Button>
-          <Button className="" variant="greendefault" onClick={onConfirm}>
-            Save
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

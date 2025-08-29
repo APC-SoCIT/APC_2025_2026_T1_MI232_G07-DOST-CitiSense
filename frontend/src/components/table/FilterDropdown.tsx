@@ -24,7 +24,12 @@ const FilterDropdown = ({
   columnFilters,
   columnName,
 }: FilterDropdownProps) => {
-  const columnFilterValue = column.getFilterValue() ?? []; //fallback array if user hasn't filtered anything yet
+  //memoize the unique values so it doesn't recompute every render, only recomputes when a unique row value is added
+  const uniqueRows = useMemo(() => {
+    return Array.from(column.getFacetedUniqueValues().keys()); //get the unique values from each column, and convert them into an array
+  }, [column.getFacetedUniqueValues()]);
+
+  const columnFilterValue = column.getFilterValue() ?? uniqueRows; //on render start with a full list of the unique values from the rows
 
   // transform unique values into an key, value pairs
   // only get the first 5,000 and only recalculate if not if unique values changed
@@ -77,7 +82,7 @@ const FilterDropdown = ({
             className=""
             checked={columnFilterValue.includes(value)}
             onCheckedChange={() => handleSelectChange(value)}
-            onSelect={(e) => e.preventDefault()}
+            onSelect={(e: Event) => e.preventDefault()}
           >
             <div className="flex items-center w-full justify-between">
               <span className="text-sm text-gray-800">{value}</span>

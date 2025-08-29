@@ -92,6 +92,7 @@ export const AuthenticationProvider = ({ children }) => {
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
+      setIsLoading(false);
     } catch (error) {
       setSocialAuthError("Failed to login with Google");
       throw new Error(); //give the erorr to the social form
