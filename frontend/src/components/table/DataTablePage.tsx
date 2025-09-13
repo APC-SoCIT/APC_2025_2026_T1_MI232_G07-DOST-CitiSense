@@ -1,23 +1,27 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "./DataTable";
 import { getColumns } from "./TableColumns";
-import { SentimentPostType } from "./TableColumns";
+import type { SentimentPostType } from "./TableColumns";
 import api from "../../api";
 import {
   useReactTable,
-  ColumnFiltersState,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
+} from "@tanstack/react-table";
+import type {
+  ColumnFiltersState,
   VisibilityState,
 } from "@tanstack/react-table";
+
 import TableSettings from "./TableSettings";
 import { toast } from "sonner";
 import Dialog1 from "./TableDialog";
 import Pagination from "./Pagination";
 import { mockData1 } from "../../mockData";
+import axios from "axios";
 
 const DataTablePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -152,7 +156,12 @@ const DataTablePage = () => {
         setOriginalData(res?.data.results);
         // console.log(res);
       } catch (error) {
-        console.log(error.response?.data || error.message);
+        // check if the error came from axios
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data || error.message);
+        } else {
+          console.log(error);
+        }
       }
     };
     getSentimentData();
@@ -202,13 +211,18 @@ const DataTablePage = () => {
         setOriginalData(data);
       }
     } catch (error) {
-      console.log(error.response?.data || error.message);
+      //check if the error came from axios or not
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data || error.message);
+      } else {
+        console.log(error);
+      }
     }
   };
 
   //prevents user from exiting the tab when table editing is happening
   useEffect(() => {
-    const handleClose = (event) => {
+    const handleClose = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = "";
     };

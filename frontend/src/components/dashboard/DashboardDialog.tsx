@@ -1,7 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+
+type DashboardDialogProps = {
+  image: string;
+  isOpen: boolean;
+  setIsOpen: () => void;
+  fileName: string;
+  setFileName: (fileName: string) => void;
+  onCancel: () => void;
+  onConfirm: () => void;
+  dialogTitle: string;
+  descriptionText: string;
+  buttonText: string;
+};
 
 const DashboardDialog = ({
   image,
@@ -14,7 +27,7 @@ const DashboardDialog = ({
   dialogTitle,
   descriptionText,
   buttonText,
-}) => {
+}: DashboardDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="min-w-5xl">

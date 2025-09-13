@@ -1,12 +1,9 @@
 import React from "react";
 import { TableBody, TableCell, TableRow } from "../ui/table";
 import { flexRender } from "@tanstack/react-table";
+import { TableProps } from "./TableColumns";
 
-type CustomTableBodyProps = {
-  table: any;
-};
-
-const CustomTableBody = ({ table }: CustomTableBodyProps) => {
+const CustomTableBody = ({ table }: TableProps) => {
   return (
     <TableBody>
       {table.getRowModel().rows?.length ? (

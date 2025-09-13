@@ -1,9 +1,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
 import Dialog1 from "./TableDialog";
-import { Button } from "../ui/button";
-import { ArrowUpDown } from "lucide-react";
 import FilterDropdown from "./FilterDropdown";
+import { Table } from "@tanstack/react-table";
+
+export type TableProps = {
+  table: Table<SentimentPostType>;
+};
 
 type Gender = "M" | "F";
 type Sentiment = "Positive" | "Negative" | "Neutral";
@@ -101,5 +104,6 @@ export const getColumns = (
     ),
     filterFn: "arrIncludesSome",
     minSize: 77,
+    enableResizing: false,
   },
 ];

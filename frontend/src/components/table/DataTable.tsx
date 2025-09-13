@@ -13,8 +13,9 @@ import React, { useEffect, useMemo } from "react";
 import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
 import CustomTableBody, { MemoizedTableBody } from "./TableBody";
+import { TableProps } from "./TableColumns";
 
-export function DataTable({ table }) {
+export function DataTable({ table }: TableProps) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
 
   //scroll to top whenever page index resets, based on pagination
@@ -44,8 +45,8 @@ export function DataTable({ table }) {
   }, [table.getState().columnSizing, table.getState().columnSizingInfo]);
 
   return (
-    <div className={state === "collapsed" ? "min-w-7xl" : "min-w-5xl"}>
-      <div className="rounded-md border">
+    <div>
+      <div className="rounded-md border overflow-x-auto w-full">
         <div
           className="divTable"
           style={{

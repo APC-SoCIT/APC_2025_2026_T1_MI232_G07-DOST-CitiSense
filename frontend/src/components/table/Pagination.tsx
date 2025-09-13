@@ -13,13 +13,14 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import type { TableProps } from "./TableColumns";
 
-const Pagination = ({ table }) => {
+const Pagination = ({ table }: TableProps) => {
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="flex flex-wrap w-full items-center justify-between">
       {/* page count */}
-      <span className="flex justify-center text-center items-center gap-1 text-muted-foreground">
-        <span>Page</span>
+      <span className="flex justify-center gap-1 text-muted-foreground">
+        <span>Page </span>
         <span>
           {table.getPageCount() === 0
             ? 1
