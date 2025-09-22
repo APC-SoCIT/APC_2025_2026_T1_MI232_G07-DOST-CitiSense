@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
 import api from "../api";
 import { SignInProps } from "../authentication/login-form";
 
@@ -22,12 +22,15 @@ type AuthContextProps = {
   socialAuthError: string;
 };
 
+type AuthProviderProps = {
+  children: ReactNode;
+};
 //create a context where components can use it to render
 export const AuthenticationContext = createContext<AuthContextProps | null>(
   null
 );
 
-export const AuthenticationProvider = ({ children }) => {
+export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null); //store the current logged in user
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [socialAuthError, setSocialAuthError] = useState<string>(""); //for the error message of the when social login attempt failed

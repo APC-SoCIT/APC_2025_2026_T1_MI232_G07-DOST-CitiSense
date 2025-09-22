@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
+import {
+  ChartProps,
+  ResDataProps,
+  ServiceDataProps,
+} from "../components/charts/chartprops";
 
 type GenderSeries = {
   name: string;
@@ -13,7 +18,7 @@ type ServiceSeries = {
 
 //TO BE REUSED OR DELETED SOMETIME IDK TBH
 
-const useDashboardData = ({ filterParams }) => {
+const useDashboardData = ({ filterParams }: ChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeries[]>([]);
   const [serviceValue, setServiceValue] = useState<ServiceSeries[]>([]);
   const [gaugeValue, setGaugeValue] = useState<number>(0);
@@ -49,7 +54,7 @@ const useDashboardData = ({ filterParams }) => {
         };
 
         // if the gender is "F" set index to 0; otherwise 1 ("M")
-        resData.forEach((item) => {
+        resData.forEach((item: ResDataProps) => {
           const index = item.gender === "F" ? 0 : 1;
 
           //get the current sentiment in the loop and determine the gender index
@@ -86,7 +91,7 @@ const useDashboardData = ({ filterParams }) => {
 
         //loop for updating the serviceCounts based on the serviceMap
         //looks for the value pair of the current index and assigns it as the current index
-        resData.forEach((item) => {
+        resData.forEach((item: ServiceDataProps) => {
           const index = serviceMap[item.service];
           if (index !== undefined) {
             serviceCounts[item.sentiment][index] = item.sencount;

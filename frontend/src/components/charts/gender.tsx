@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
+import { ChartProps, ResDataProps } from "./chartprops";
 
 type GenderSeriesProps = {
   name: string;
@@ -14,7 +15,7 @@ const fallbackSeries = [
   { name: "Positive", data: [0, 0] },
 ];
 
-const Gender = ({ filterParams }) => {
+const Gender = ({ filterParams }: ChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ const Gender = ({ filterParams }) => {
       };
 
       // if the gender is "F" set index to 0; otherwise 1 ("M")
-      resData.forEach((item) => {
+      resData.forEach((item: ResDataProps) => {
         const index = item.gender === "F" ? 0 : 1;
 
         //get the current sentiment in the loop and determine the gender index

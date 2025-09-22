@@ -152,14 +152,14 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-DEFAULT_AVATAR_URL = "/media/profile_pictures/default_avatar.png"
+DEFAULT_AVATAR_URL = "/media/profile_picture/default_avatar.png"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 AUTH_USER_MODEL = "authentication.CustomUser"
 
