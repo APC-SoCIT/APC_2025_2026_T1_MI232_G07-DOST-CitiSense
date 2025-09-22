@@ -3,6 +3,7 @@ import ReactApexChart from "react-apexcharts";
 import serviceData from "../../mockdata/service.json";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
+import { ChartProps, ResDataProps, ServiceDataProps } from "./chartprops";
 
 type ServiceSeriesProps = {
   name: string;
@@ -23,7 +24,7 @@ const serviceMap = {
   "Library Tour": 3,
 };
 
-const Service = ({ filterParams }) => {
+const Service = ({ filterParams }: ChartProps) => {
   const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const Service = ({ filterParams }) => {
 
       //loop for updating the serviceCounts based on the serviceMap
       //looks for the value pair of the current index and assigns it as the current index
-      resData.forEach((item) => {
+      resData.forEach((item: ServiceDataProps) => {
         const index = serviceMap[item.service];
         if (index !== undefined) {
           serviceCounts[item.sentiment][index] = item.sencount;

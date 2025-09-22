@@ -10,6 +10,7 @@ import api from "../../api";
 import DashboardDropdown from "./DashboardDropdown";
 import { SentimentPostType } from "../table/TableColumns";
 import { Camera } from "lucide-react";
+import axios from "axios";
 
 function DashboardPage() {
   const [preview, setPreview] = useState<string>(""); //state for the current url of the image just downloaded from the browser
@@ -104,8 +105,11 @@ function DashboardPage() {
       setIsSaving(false);
       toast.success("Successfully archived image!");
     } catch (error) {
-      console.log("this is the error", error.response?.data);
-      alert("error");
+      if (axios.isAxiosError(error)) {
+        console.error("this is the error", error.response?.data);
+      } else {
+        console.error("Error encountered", error);
+      }
     }
   };
 
@@ -126,9 +130,12 @@ function DashboardPage() {
       const sessionArray = [...sessions].sort((a, b) => a.localeCompare(b));
       setSession(sessionArray);
     } catch (error) {
-      console.log(error.response.message);
-      console.error(error.response);
-      console.error(error);
+      if (axios.isAxiosError(error)) {
+        console.error(error.response?.data);
+        console.error(error.response);
+      } else {
+        console.error("Error encountered", error);
+      }
     }
   };
 

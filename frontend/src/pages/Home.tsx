@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, CircleAlert, Pencil, User } from "lucide-react";
 import { toast } from "sonner";
+import axios from "axios";
 
 function Home() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -70,14 +71,18 @@ function Home() {
       setUser(res.data);
       setIsEditing(false);
     } catch (error) {
-      console.error(error.response.data);
+      if (axios.isAxiosError(error)) {
+        console.error(error.response?.data);
 
-      //set the error from RHF to pass onto to the errors in the input forms; primarily for username and email uniqueness check from backend
-      if (error.response?.data?.email) {
-        setError("email", { message: error.response.data.email });
-      }
-      if (error.response?.data?.username) {
-        setError("username", { message: error.response.data.username });
+        //set the error from RHF to pass onto to the errors in the input forms; primarily for username and email uniqueness check from backend
+        if (error.response?.data?.email) {
+          setError("email", { message: error.response.data.email });
+        }
+        if (error.response?.data?.username) {
+          setError("username", { message: error.response.data.username });
+        }
+      } else {
+        console.error("Error encountered", error);
       }
     }
   };
@@ -108,6 +113,15 @@ function Home() {
       setPreviewImage(URL.createObjectURL(fetchImage));
     }
   };
+
+  //cleanup use effect
+  useEffect(() => {
+    return () => {
+      if (previewImage) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
 
   return (
     <main className="flex flex-col items-center justify-center border border-gray-500 rounded-2xl shadow-xl w-[700px] h-[770px] mx-auto mt-10 relative">
@@ -146,12 +160,9 @@ function Home() {
 
             {isEditing ? (
               <Input
-                {...register("image")}
+                {...register("image", { onChange: (e) => imagePreview(e) })}
                 className="m-5 hidden"
                 type="file"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  imagePreview(e);
-                }}
               />
             ) : null}
           </label>
