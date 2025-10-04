@@ -151,7 +151,7 @@ const DataTablePage = () => {
   useEffect(() => {
     const getSentimentData = async () => {
       try {
-        const res = await api.get("/sentimentposts/");
+        const res = await api.get("sentimentposts/");
         setData(res?.data.results);
         setOriginalData(res?.data.results);
         // console.log(res);

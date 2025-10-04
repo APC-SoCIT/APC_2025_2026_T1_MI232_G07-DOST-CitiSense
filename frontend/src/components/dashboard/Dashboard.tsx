@@ -31,7 +31,7 @@ function DashboardPage() {
       (session) => !filterValue.includes(session)
     );
     return new URLSearchParams(
-      shownSession.map((session) => ["session", session])
+      shownSession.map((session) => ["quarter", session])
     ).toString();
   }, [filterValue, session]);
   console.log(filterParams);
@@ -116,14 +116,14 @@ function DashboardPage() {
   //fetches the session part of the sentiment post
   const fetchSession = async () => {
     try {
-      const res = await api.get("/sentimentposts/");
+      const res = await api.get("sentimentposts/");
 
-      //maps through the array and just gets the session part of the response
+      //maps through the array and just gets the quarter part of the response
       const resSession = res.data.results.map(
-        (item: SentimentPostType) => item.session
+        (item: SentimentPostType) => item.quarter
       );
 
-      //convet the session array to set; this is so that the array only contain the unique values
+      //convert the session array to set; this is so that the array only contain the unique values
       const sessions: Set<string> = new Set(resSession);
 
       //converts the session set back to array to be sorted and also to be put into session state

@@ -1,13 +1,23 @@
-from drf.models import SentimentPost, ArchivePost
+from drf.models import cleaned_feedback, labeled_feedback
 from rest_framework import serializers
 
-class SentimentSerializer(serializers.ModelSerializer):
+class CleanedFeedbackSerializer(serializers.ModelSerializer):
+    sentiment = serializers.SerializerMethodField()
+    
     class Meta:
-        model = SentimentPost
-        fields = ['id','name','session', 'service','gender','feedback','sentiment']
-
-class ArchiveSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ArchivePost
+        model = cleaned_feedback
         fields = '__all__'
-        read_only_fields = ['author']
+
+    def get_sentiment(self, obj):
+        """Get the sentiment of the current feedback instance from the labeled_feedback model"""
+        try:
+            sentiment = labeled_feedback.objects.get(feedback_id=obj.id).sentiment
+        except:
+            return None
+        
+        return sentiment
+
+class LabeledFeedbackSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = labeled_feedback
+        fields = ['id','sentiment']

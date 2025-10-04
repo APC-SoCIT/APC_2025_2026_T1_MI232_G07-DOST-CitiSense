@@ -4,7 +4,7 @@ export type ChartProps = {
 export type Sentiment = "Positive" | "Neutral" | "Negative";
 
 export type ResDataProps = {
-  gender: "F" | "M";
+  sex: "Female" | "Male";
   sentiment: Sentiment;
   sencount: number;
 };
