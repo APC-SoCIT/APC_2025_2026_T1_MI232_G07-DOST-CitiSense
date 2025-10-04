@@ -26,7 +26,8 @@ const Gender = ({ filterParams }: ChartProps) => {
     try {
       const res = await api.get(`/sentimentposts/gen/?${filterParams}`);
       const resData = res.data.genderCount;
-
+      console.log(res);
+      console.log(resData);
       //temporary holder for sentiment counts per gender, this will hold the array for the series for the chart's y-axis
       //Index 0 = Female, Index 1 = Male
       let sentimentCounts = {
@@ -37,7 +38,7 @@ const Gender = ({ filterParams }: ChartProps) => {
 
       // if the gender is "F" set index to 0; otherwise 1 ("M")
       resData.forEach((item: ResDataProps) => {
-        const index = item.gender === "F" ? 0 : 1;
+        const index = item.sex === "Female" ? 0 : 1;
 
         //get the current sentiment in the loop and determine the gender index
         //then put the following sentiment count to the appropriate position in the sentimentCounts

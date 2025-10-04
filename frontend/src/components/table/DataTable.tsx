@@ -70,7 +70,7 @@ export function DataTable({ table }: TableProps) {
                       return (
                         <TableHead
                           key={header.id}
-                          className="border-r-2 relative text-center"
+                          className="border-r-2 relative text-center truncate"
                           colSpan={header.colSpan}
                           style={{
                             width: `calc(var(--header-${header?.id}-size) * 1px)`,
