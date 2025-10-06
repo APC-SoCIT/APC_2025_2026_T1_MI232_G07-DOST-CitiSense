@@ -19,7 +19,9 @@ export default function DOSTCitiSenseLogin() {
 
     if (email === validEmail && password === validPassword) {
       toast.success("Login successful!");
-      navigate("/dashboard");
+      setTimeout(() => {
+        navigate("/dashboard_component");
+      }, 500);
     } else {
       toast.error("Invalid email or password.");
     }

@@ -1,4 +1,3 @@
-// 2. Sentiment by Gender Component
 type ServiceType = {
   name: string;
   male: { neg: number; neu: number; pos: number };
@@ -88,4 +87,3 @@ const SentimentByGender = ({ services }: { services: ServiceType[] }) => {
 };
 
 export default SentimentByGender;
-// removed stray closing brace

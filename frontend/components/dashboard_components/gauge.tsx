@@ -1,4 +1,3 @@
-// 1. Overall Sentiment Gauge Component
 const OverallSentimentGauge = () => {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 col-span-1">

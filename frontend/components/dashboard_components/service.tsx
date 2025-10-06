@@ -1,5 +1,3 @@
-// 3. Sentiment by Service Component
-// Define ServiceType if not imported
 type ServiceType = {
   name: string;
   service: {
@@ -61,7 +59,6 @@ const SentimentByService = ({ services }: { services: ServiceType[] }) => {
       </div>
     </div>
   );
-  // removed stray closing brace
 };
 
 export default SentimentByService;
