@@ -1,3 +1,16 @@
+"use client";
+
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
 type ServiceType = {
   name: string;
   service: {
@@ -8,54 +21,57 @@ type ServiceType = {
 };
 
 const SentimentByService = ({ services }: { services: ServiceType[] }) => {
+  // Prepare data for Recharts
+  const chartData = services.map((s) => ({
+    name: s.name,
+    Negative: s.service.neg,
+    Neutral: s.service.neu,
+    Positive: s.service.pos,
+  }));
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
       <h3 className="text-lg font-semibold text-gray-800 mb-4">
         Sentiment by Service
       </h3>
-      <div className="space-y-3">
-        <div className="flex flex-wrap gap-4 text-xs">
-          <span className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded bg-red-400"></div>
-            <span className="text-gray-600">Negative</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded bg-yellow-400"></div>
-            <span className="text-gray-600">Neutral</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded bg-cyan-400"></div>
-            <span className="text-gray-600">Positive</span>
-          </span>
-        </div>
-        {services.map((service, idx) => (
-          <div key={idx} className="space-y-2">
-            <div className="text-xs text-gray-700 font-medium">
-              {service.name}
-            </div>
-            <div className="flex h-7 rounded-full overflow-hidden bg-gray-200">
-              <div
-                style={{ width: `${service.service.neg}%` }}
-                className="bg-red-400"
-              ></div>
-              <div
-                style={{ width: `${service.service.neu}%` }}
-                className="bg-yellow-400"
-              ></div>
-              <div
-                style={{ width: `${service.service.pos}%` }}
-                className="bg-cyan-400"
-              ></div>
-            </div>
-          </div>
-        ))}
-        <div className="flex justify-between text-xs text-gray-400 pt-2">
-          <span>0%</span>
-          <span>25%</span>
-          <span>50%</span>
-          <span>75%</span>
-          <span>100%</span>
-        </div>
+      <div className="w-full h-96">
+        <ResponsiveContainer>
+          <BarChart
+            data={chartData}
+            layout="vertical"
+            margin={{ top: 20, right: 30, left: 80, bottom: 20 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis
+              type="number"
+              domain={[0, 100]}
+              tick={{ fontSize: 12, fill: "#6b7280" }}
+              tickFormatter={(value) => `${value}%`}
+            />
+            <YAxis
+              dataKey="name"
+              type="category"
+              tick={{ fontSize: 12, fill: "#6b7280" }}
+              width={100}
+            />
+            <Tooltip
+              formatter={(value: number) => `${value}%`}
+              contentStyle={{
+                backgroundColor: "white",
+                border: "1px solid #e5e7eb",
+                borderRadius: "8px",
+              }}
+            />
+            <Legend
+              verticalAlign="top"
+              align="center"
+              wrapperStyle={{ fontSize: 12, marginBottom: 10 }}
+            />
+            <Bar dataKey="Negative" stackId="a" fill="#ef4444" />
+            <Bar dataKey="Neutral" stackId="a" fill="#facc15" />
+            <Bar dataKey="Positive" stackId="a" fill="#10b981" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

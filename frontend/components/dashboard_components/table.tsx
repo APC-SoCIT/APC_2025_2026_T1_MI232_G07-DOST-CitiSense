@@ -10,6 +10,7 @@ const ImprovementsTable = ({
       <h3 className="text-lg font-semibold text-gray-800 mb-6">
         Thematic Analysis of Suggested Improvements
       </h3>
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
