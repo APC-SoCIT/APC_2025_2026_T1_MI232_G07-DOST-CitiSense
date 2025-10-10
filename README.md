@@ -24,6 +24,7 @@ This project leverages NLP to:
 
 Through automation, the system aims to **reduce manual workload**, **streamline analysis**, and **enhance decision-making**, enabling DOST-STII to respond more efficiently to stakeholder feedback.
 
+---
 
 ## Project Context
 The project, titled **CitiSense**, is a **bilingual web application** developed by the **QuadThink team** in collaboration with the **Department of Science and Technology – Science and Technology Information Institute (DOST-STII)**, specifically its **Information Resource and Analysis Division (IRAD)**.  
@@ -33,3 +34,12 @@ As a division tasked with collecting and managing data that supports public scie
 **CitiSense** addresses these limitations by integrating a **fine-tuned NLP model** to automatically classify feedback as **positive, neutral,** or **negative** in both **English and Tagalog**. The processed data is then displayed through **interactive visual dashboards**, giving stakeholders real-time insights for faster, more data-driven decision-making.  
 
 Aligned with **DOST-STII’s mission** to strengthen science and technology information systems, CitiSense supports their goal of improving public engagement through modern, automated tools. By integrating seamlessly with DOST’s existing feedback forms, the system ensures an **inclusive, efficient,** and **intelligent feedback analysis process** that empowers the government agency to act quickly and effectively based on public sentiment.
+
+---
+
+## Tech Stack
+
+- **Frontend:** React  
+- **Backend:** Django  
+- **Database:** MySQL  
+- **Frontend–Backend Communication:** RESTful API  
