@@ -1,80 +1,56 @@
-"use client";
+import ReactApexChart from "react-apexcharts";
+import serviceData from "../../mockdata/service.json";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-
-type ServiceType = {
-  name: string;
-  service: {
-    neg: number;
-    neu: number;
-    pos: number;
+const Service = () => {
+  const options = {
+    chart: {
+      type: "bar",
+      height: 350,
+      stacked: true,
+      stackType: "100%",
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
+    title: {
+      text: "Sentiment by Service",
+      textSize: "20px",
+    },
+    xaxis: {
+      categories: [
+        "Hybrid Seminar",
+        "Material Requests",
+        "Online Library",
+        "Physical Library",
+      ],
+    },
+    yaxis: {
+      labels: {
+        style: {
+          fontFamily: "Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif",
+          fontSize: "13px",
+          fontWeight: 10,
+        },
+      },
+    },
+    fill: {
+      opacity: 1,
+    },
+    colors: ["#EA4228", "#F5CD19", "#5BE12C"],
   };
-};
-
-const SentimentByService = ({ services }: { services: ServiceType[] }) => {
-  // Prepare data for Recharts
-  const chartData = services.map((s) => ({
-    name: s.name,
-    Negative: s.service.neg,
-    Neutral: s.service.neu,
-    Positive: s.service.pos,
-  }));
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
-        Sentiment by Service
-      </h3>
-      <div className="w-full h-96">
-        <ResponsiveContainer>
-          <BarChart
-            data={chartData}
-            layout="vertical"
-            margin={{ top: 20, right: 30, left: 80, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis
-              type="number"
-              domain={[0, 100]}
-              tick={{ fontSize: 12, fill: "#6b7280" }}
-              tickFormatter={(value) => `${value}%`}
-            />
-            <YAxis
-              dataKey="name"
-              type="category"
-              tick={{ fontSize: 12, fill: "#6b7280" }}
-              width={100}
-            />
-            <Tooltip
-              formatter={(value: number) => `${value}%`}
-              contentStyle={{
-                backgroundColor: "white",
-                border: "1px solid #e5e7eb",
-                borderRadius: "8px",
-              }}
-            />
-            <Legend
-              verticalAlign="top"
-              align="center"
-              wrapperStyle={{ fontSize: 12, marginBottom: 10 }}
-            />
-            <Bar dataKey="Negative" stackId="a" fill="#ef4444" />
-            <Bar dataKey="Neutral" stackId="a" fill="#facc15" />
-            <Bar dataKey="Positive" stackId="a" fill="#10b981" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="h-[500px] max-w-full rounded-md shadow-lg p-10 bg-white">
+      <ReactApexChart
+        options={options}
+        series={serviceData.series}
+        type="bar"
+        height={350}
+      />
     </div>
   );
 };
 
-export default SentimentByService;
+export default Service;
