@@ -1,5 +1,5 @@
 import GaugeComponent from "react-gauge-component";
-import gaugeData from "../../mockdata/gauge.json";
+import gaugeData from "../../../mockdata/gauge.json";
 
 const Gauge = () => {
   return (
@@ -31,7 +31,7 @@ const Gauge = () => {
               },
             }}
             arc={{
-              colorArray: ["#EA4228", "#5BE12C"],
+              colorArray: ["#EA4228", "#e7c073ff", "#4CAF50"],
               subArcs: [{ limit: 33.3 }, { limit: 66.6 }, { limit: 100 }],
               padding: 0.02,
               width: 0.3,
