@@ -10,7 +10,15 @@ import {
   Archive,
   Filter,
   Download,
+  LogOut,
 } from "lucide-react";
+
+const genderServices = [
+  {
+    male: { neg: 5, neu: 15, pos: 80 },
+    female: { neg: 3, neu: 12, pos: 85 },
+  },
+];
 
 const services = [
   {
@@ -60,7 +68,7 @@ const MainDashboardLayout = () => {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid flex text-center justify-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat, idx) => (
           <div
             key={idx}
@@ -81,16 +89,19 @@ const MainDashboardLayout = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        {/* Overall Sentiment Gauge */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        {/* Overall Sentiment Gauge (left) */}
         <OverallSentimentGauge />
 
-        {/* Sentiment by Gender */}
-        <SentimentByGender services={services} />
+        {/* Sentiment by Gender (right, slightly moved right) */}
+
+        <div className="w-full">
+          <SentimentByGender />
+        </div>
       </div>
 
       {/* Sentiment by Service */}
-      <SentimentByService services={services} />
+      <SentimentByService />
 
       {/* Improvements Table */}
       <ImprovementsTable improvements={improvements} />
@@ -135,9 +146,12 @@ const App = () => {
         {/* Header (Top Nav) */}
         <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-between items-center z-10">
           <div>
-            <h1 className="text-xl font-semibold text-gray-800">
+            <h3
+              className="text-3xl text-gray-800
+"
+            >
               Sentiment Analysis Dashboard
-            </h1>
+            </h3>
           </div>
           <div className="flex space-x-3">
             <button className="flex items-center space-x-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition text-sm">
