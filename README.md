@@ -10,7 +10,7 @@ Team Members:
 - Luis Lazaro
 
 ## Project Title
-**CitiSense: A Smart City Data Integration and Visualization Platform**
+**CitiSense: A Smart Web App for Automated Multilingual Feedback Processing and Data Visualization**
 
 The **Information Resource and Analysis Division (IRAD)** of the **Department of Science and Technology – Science and Technology Information Institute (DOST-STII)** currently faces a time-consuming process of manually analyzing thousands of survey responses. These responses often come in **English, Tagalog, or a mix of both**, making manual analysis more complex and prone to inconsistencies.  
 
