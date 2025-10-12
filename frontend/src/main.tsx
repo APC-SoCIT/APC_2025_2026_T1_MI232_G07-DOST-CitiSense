@@ -3,8 +3,8 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import DOSTCitiSenseLogin from "./Authentication/Login.tsx";
-import MainDashboardLayout from "./pages/dashboard.tsx";
 import App from "./App.tsx";
+import Layout from "./Layout.tsx";
 
 //https://reactrouter.com/6.30.1/routers/create-browser-router#createbrowserrouter
 const router = createBrowserRouter([
@@ -14,11 +14,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <App />,
+    element: <Layout />,
     children: [
       {
         path: "",
-        element: <MainDashboardLayout />,
+        element: <App />,
       },
     ],
   },
