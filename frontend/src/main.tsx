@@ -13,6 +13,10 @@ const router = createBrowserRouter([
     element: <DOSTCitiSenseLogin />,
   },
   {
+    path: "/user-dashboard",
+    element: <App />,
+  },
+  {
     path: "/dashboard",
     element: <Layout />,
     children: [
