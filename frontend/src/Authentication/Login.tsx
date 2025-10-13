@@ -30,7 +30,7 @@ export default function DOSTCitiSenseLogin() {
   return (
     <div className="h-screen w-screen flex">
       <div className="hidden md:flex w-80 bg-blue-900 flex-col items-center justify-center text-white p-8">
-        <h1 className="text-xs font-semibold leading-snug tracking-wide text-center">
+        <h1 className="text-3xl font-semibold leading-snug tracking-wide text-center">
           Department of <br /> Science and Technology
         </h1>
       </div>
@@ -86,7 +86,7 @@ export default function DOSTCitiSenseLogin() {
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                   </button>
                 </div>
               </div>
@@ -118,7 +118,7 @@ export default function DOSTCitiSenseLogin() {
                 type="button"
                 className="flex items-center justify-center w-full border border-gray-300 rounded-lg py-2 px-4 bg-white hover:bg-gray-50 transition duration-150 ease-in-out shadow-sm"
               >
-                <span className="text-sm font-medium text-white">
+                <span className="text-sm font-medium text-black">
                   Sign in with Google
                 </span>
               </button>
