@@ -1,0 +1,3 @@
+Frontend and Backend Communication:
+
+The communication between the frontend and backend was implemented using RESTful APIs to ensure efficient and structured data exchange. These APIs allowed the React.js frontend to send requests and receive responses from the Django backend in real time, facilitating smooth user interactions and dynamic content updates. Through this approach, the system maintained a clear separation between presentation and logic layers, improving scalability, maintainability, and performance.
