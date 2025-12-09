@@ -1,4 +1,3 @@
-import * as React from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 
 import {
@@ -21,7 +20,7 @@ export function SidebarTitle() {
           <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
             <span className="truncate font-medium">CitiSense</span>
             <span className="truncate text-xs">Sentiment Analysis</span>
-          </div> 
+          </div>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

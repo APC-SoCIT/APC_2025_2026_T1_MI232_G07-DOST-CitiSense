@@ -11,7 +11,7 @@ import { Camera, CircleAlert, Pencil, User } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 
-function Home() {
+function Profile() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const { user, setUser } = useAuth();
   const [previewImage, setPreviewImage] = useState<string | null>(null); //for previewing the newly uploaded image of the user before submitting formData to backend
@@ -223,7 +223,6 @@ function Home() {
             </p>
           )}
         </div>
-
         <div className="flex flex-col w-[300px] mb-15">
           <Label className="mb-3 flex items-center justify-center">
             Email{" "}
@@ -245,7 +244,7 @@ function Home() {
           <Label className="mb-2 flex items-center justify-center mr-2">
             Password:
           </Label>
-          <span className="mr-2">***********</span>
+          <span className="mr-2"></span>
           <Button
             size="sm"
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md text-sm"
@@ -267,4 +266,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Profile;

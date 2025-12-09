@@ -63,7 +63,7 @@ export function NavMain({ items }) {
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
                   <a href={item.url}>
-                    <item.icon />
+                    <item.icon className="!size-4" />
                     <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">
                       {item.title}
                     </span>

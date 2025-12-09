@@ -1,5 +1,4 @@
-import * as React from "react";
-import { Bot, GalleryVerticalEnd, SquareTerminal } from "lucide-react";
+import { Table, House, ChartColumnDecreasing } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavUser } from "@/components/sidebar/nav-user";
@@ -17,30 +16,20 @@ const data = {
   teams: [
     {
       name: "CitiSense",
-      logo: GalleryVerticalEnd,
+      logo: House,
       plan: "Sentiment Analysis",
     },
   ],
   navMain: [
     {
-      title: "Home",
+      title: "Data Table",
       url: "/table",
-      icon: SquareTerminal,
+      icon: Table,
     },
     {
-      title: "Overview",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Dashboard",
-          url: "/",
-        },
-        {
-          title: "Archive",
-          url: "/archive",
-        },
-      ],
+      title: "Dashboard",
+      url: "/",
+      icon: ChartColumnDecreasing,
     },
   ],
 };
