@@ -6,9 +6,9 @@ const useAuth = () => {
   //get the context value so you can access its properties (user data and logout function)
   const context = useContext(AuthenticationContext);
 
-  //throw an error for when accessing a page without a authprovider
+  //throw an error for when accessing a page without an authprovider
   if (!context) {
-    throw new Error("useAuth must be used within a AuthProvider");
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

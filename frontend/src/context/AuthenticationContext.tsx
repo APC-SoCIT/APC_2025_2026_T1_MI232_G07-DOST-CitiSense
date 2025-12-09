@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import api from "../api";
 import { SignInProps } from "../authentication/login-form";
+import { setLoggedIn } from "./AuthState";
 
 export type User = {
   id: number;
@@ -53,8 +54,10 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       try {
         const userDetails = await api.get("/api/auth/user/");
         setUser(userDetails.data);
+        setLoggedIn(true);
       } catch (error) {
         setUser(null);
+        setLoggedIn(false);
         console.log("failed to verify and refresh token");
       } finally {
         setIsLoading(false);
@@ -78,9 +81,11 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
+      setLoggedIn(true);
     } catch (error) {
       setUser(null);
       console.log(error);
+      setLoggedIn(false);
       throw new Error(); //give the error to the login form
     } finally {
       setIsLoading(false);
@@ -95,10 +100,12 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
+      setLoggedIn(true);
       setIsLoading(false);
     } catch (error) {
       setSocialAuthError("Failed to login with Google");
-      throw new Error(); //give the erorr to the social form
+      setLoggedIn(false);
+      throw new Error(); //give the error to the social form
     } finally {
       setIsLoading(false);
     }
@@ -108,6 +115,7 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
     await api.post("/api/auth/logout/");
     setUser(null);
     setSocialAuthError("");
+    setLoggedIn(false);
   };
 
   return (
