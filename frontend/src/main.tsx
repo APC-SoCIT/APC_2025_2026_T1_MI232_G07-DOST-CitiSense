@@ -3,10 +3,10 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
-import NotFound from "./pages/NotFound.jsx";
-import Layout from "./pages/Layout.jsx";
+import Login from "./pages/Login.js";
+import Register from "./pages/Register.js";
+import NotFound from "./pages/NotFound.js";
+import Layout from "./pages/Layout.js";
 import DataTablePage from "./components/table/DataTablePage.js";
 import AuthCallback from "./authentication/AuthCallback.js";
 import Archive from "./components/dashboard/Archive.js";
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
   { path: "/accounts/google/login/callback", element: <AuthCallback /> },
   { path: "/forgotpassword", element: <ForgotPassword /> },
   { path: "/email/forgotpassword", element: <EmailForgotPassword /> },
-  { path: "email/verification", element: <EmailVerification /> },
+  { path: "/email/verification", element: <EmailVerification /> },
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
