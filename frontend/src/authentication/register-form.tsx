@@ -9,6 +9,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
+import { AuthRouteProps } from "./auth.types";
+import axios from "axios";
 
 //zod schema for the form validation
 const signUpSchema = z
@@ -16,7 +18,7 @@ const signUpSchema = z
     username: z.string(),
     email: z.email(),
     password1: z.string().min(8, "Password must be at least 8 characters"),
-    password2: z.string(),
+    password2: z.string().min(8, "Password must be at least 8 characters"),
   })
   //checks if password1 and password2 matches
   .refine((data) => data.password1 === data.password2, {
@@ -27,7 +29,7 @@ const signUpSchema = z
 //follow the schema of the zod
 type SignUpFieldProps = z.infer<typeof signUpSchema>;
 
-export function RegisterForm({ className, route, ...props }) {
+export function RegisterForm({ route, ...props }: AuthRouteProps) {
   //for showing password
   const [showPassword1, setShowPassword1] = React.useState(false);
   const [showPassword2, setShowPassword2] = React.useState(false);
@@ -48,11 +50,14 @@ export function RegisterForm({ className, route, ...props }) {
       await api.post(route, data);
       navigate("/login");
     } catch (error) {
-      if (error.response?.data?.username) {
-        setError("username", { message: error.response.data.username });
-      }
-      if (error.response?.data.email) {
-        setError("email", { message: error.response.data.email });
+      // Handle specific Axios error
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data?.username) {
+          setError("username", { message: error.response.data.username });
+        }
+        if (error.response?.data.email) {
+          setError("email", { message: error.response.data.email });
+        }
       }
     }
   };
@@ -60,7 +65,7 @@ export function RegisterForm({ className, route, ...props }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("flex flex-col gap-6")}
       {...props}
     >
       <div className="flex flex-col items-center gap-2 text-center">

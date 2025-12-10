@@ -15,6 +15,9 @@ import { AuthenticationProvider } from "./context/AuthenticationContext.js";
 import AnalystRoute from "./routes/AnalystRoute.js";
 import Logout from "./pages/Logout.js";
 import Profile from "./pages/Profile.js";
+import ForgotPassword from "./pages/ForgotPassword.js";
+import EmailForgotPassword from "./pages/EmailForgotPassword.js";
+import EmailVerification from "./pages/EmailVerification.js";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +51,9 @@ const router = createBrowserRouter([
   { path: "/register", element: <Register /> },
   { path: "/logout", element: <Logout /> },
   { path: "/accounts/google/login/callback", element: <AuthCallback /> },
+  { path: "/forgotpassword", element: <ForgotPassword /> },
+  { path: "/email/forgotpassword", element: <EmailForgotPassword /> },
+  { path: "email/verification", element: <EmailVerification /> },
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(

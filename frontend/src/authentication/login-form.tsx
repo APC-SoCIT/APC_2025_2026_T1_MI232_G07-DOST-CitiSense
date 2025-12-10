@@ -17,6 +17,7 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAuth from "../hooks/useAuth";
+import { AuthRouteProps } from "./auth.types";
 
 //zod schema for login form validation
 const signInSchema = z.object({
@@ -27,7 +28,7 @@ const signInSchema = z.object({
 //follow the schema of zod
 export type SignInProps = z.infer<typeof signInSchema>;
 
-export function LoginForm1({ className, route, ...props }) {
+export function LoginForm1({ route, ...props }: AuthRouteProps) {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { Login, socialAuthError } = useAuth();
@@ -98,7 +99,7 @@ export function LoginForm1({ className, route, ...props }) {
                       Password
                     </Label>
                     <a
-                      href="#"
+                      href="/email/forgotpassword"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
                     >
                       Forgot your password?

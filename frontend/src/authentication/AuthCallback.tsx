@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Loader } from "lucide-react";
+import axios from "axios";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -27,7 +28,9 @@ const AuthCallback = () => {
         //on success navigate to the home
         navigate("/");
       } catch (error) {
-        console.log(error.response?.data);
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data);
+        }
         navigate("/login");
       } finally {
         setIsLoading(false);
