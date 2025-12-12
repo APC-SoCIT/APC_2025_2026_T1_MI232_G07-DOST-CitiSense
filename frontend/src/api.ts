@@ -13,7 +13,8 @@ api.interceptors.response.use(
   async (error) => {
     const authPath =
       window.location.href.includes("/login") ||
-      window.location.href.includes("/register");
+      window.location.href.includes("/register") ||
+      window.location.href.includes("/email");
 
     // Get the current state if the user is logged in or not
     const loggedIn = getLoggedIn();

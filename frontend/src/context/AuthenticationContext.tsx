@@ -2,6 +2,8 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import api from "../api";
 import { SignInProps } from "../authentication/login-form";
 import { setLoggedIn } from "./AuthState";
+import { EmailForgotPasswordProps } from "../authentication/email-forgotpassword";
+import { SignUpFieldProps } from "../authentication/register-form";
 
 export type User = {
   id: number;
@@ -21,6 +23,10 @@ type AuthContextProps = {
   Logout: () => void;
   isLoading: boolean;
   socialAuthError: string;
+  forgotPassword: (email: string) => Promise<void>;
+  forgotEmail: string;
+  Register: (data: SignUpFieldProps) => Promise<void>;
+  registerEmail: string;
 };
 
 type AuthProviderProps = {
@@ -35,11 +41,15 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null); //store the current logged in user
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [socialAuthError, setSocialAuthError] = useState<string>(""); //for the error message of the when social login attempt failed
+  const [forgotEmail, setForgotEmail] = useState<string>("");
+  const [registerEmail, setRegisterEmail] = useState<string>("");
 
   //auth endpoints to skip auth checks
   const authEndpoint =
     window.location.href.includes("/login") ||
-    window.location.href.includes("/register");
+    window.location.href.includes("/register") ||
+    window.location.href.includes("/password") ||
+    window.location.href.includes("/email");
 
   //fetch the user details on mount and for automatically refreshing the access token of the user
   useEffect(() => {
@@ -84,9 +94,8 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       setLoggedIn(true);
     } catch (error) {
       setUser(null);
-      console.log(error);
       setLoggedIn(false);
-      throw new Error(); //give the error to the login form
+      throw error; //give the error to the login form
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +114,7 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       setSocialAuthError("Failed to login with Google");
       setLoggedIn(false);
-      throw new Error(); //give the error to the social form
+      throw error; //give the error to the social form
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +127,24 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
     setLoggedIn(false);
   };
 
+  const forgotPassword = async (email: string) => {
+    try {
+      await api.post("api/auth/password/reset/", { email });
+      setForgotEmail(email);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const Register = async (data: SignUpFieldProps) => {
+    try {
+      await api.post("/api/auth/register/", data);
+      setRegisterEmail(data.email);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
   return (
     <AuthenticationContext.Provider
       value={{
@@ -128,6 +155,10 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
         SocialLogin,
         Logout,
         socialAuthError,
+        forgotPassword,
+        forgotEmail,
+        Register,
+        registerEmail,
       }}
     >
       {children}

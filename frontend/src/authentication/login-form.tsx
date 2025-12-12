@@ -12,23 +12,23 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAuth from "../hooks/useAuth";
-import { AuthRouteProps } from "./auth.types";
+import axios from "axios";
 
 //zod schema for login form validation
 const signInSchema = z.object({
-  username: z.string().min(1),
+  email: z.string().min(1),
   password: z.string().min(1),
 });
 
 //follow the schema of zod
 export type SignInProps = z.infer<typeof signInSchema>;
 
-export function LoginForm1({ route, ...props }: AuthRouteProps) {
+export function LoginForm1({ ...props }) {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { Login, socialAuthError } = useAuth();
@@ -46,8 +46,14 @@ export function LoginForm1({ route, ...props }: AuthRouteProps) {
       await Login(data); //call the usecontext function
       navigate("/", { replace: true });
       console.log("hello world");
+      console.log(data);
     } catch (error) {
-      setError("root", { message: "Invalid credentials. Please try again." });
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+      }
+      setError("root", {
+        message: "Invalid credentials. Please try again.",
+      });
     }
   };
 
@@ -89,9 +95,9 @@ export function LoginForm1({ route, ...props }: AuthRouteProps) {
               <div className="grid gap-6">
                 <div className="grid gap-3">
                   <Label className="" htmlFor="email">
-                    Username
+                    Email
                   </Label>
-                  <Input className="" {...register("username")} type="text" />
+                  <Input className="" {...register("email")} type="text" />
                 </div>
                 <div className="grid gap-3">
                   <div className="flex items-center">

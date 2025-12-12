@@ -129,9 +129,6 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
@@ -171,11 +168,9 @@ DEFAULT_AVATAR_URL = "/media/profile_picture/default_avatar.png"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SOCIALACCOUNT_AUTO_SIGNUP = True
-
 AUTH_USER_MODEL = "authentication.CustomUser"
 
-SITE_ID = 1
+SITE_ID = 2
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -192,6 +187,9 @@ REST_AUTH = {
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'REGISTER_SERIALIZER': 'authentication.serializers.CustomRegisterUserSerializer',
     'USER_DETAILS_SERIALIZER': 'authentication.serializers.UserSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'authentication.serializers.CustomPasswordResetSerializer',
+    'PASSWORD_RESET_CONFIRM_SERIALIZER': 'dj_rest_auth.serializers.PasswordResetConfirmSerializer',
+    'PASSWORD_CHANGE_SERIALIZER': 'dj_rest_auth.serializers.PasswordChangeSerializer',
     'JWT_AUTH_COOKIE': 'access',
     'JWT_AUTH_REFRESH_COOKIE': 'refresh',
     'JWT_AUTH_REFRESH_COOKIE_PATH': '/',
@@ -210,16 +208,34 @@ SIMPLE_JWT = {
     "LEEWAY": 1,
 }
 
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_ADAPTER = "authentication.adapters.CustomAccountAdapter"
 # # ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
 # # ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_SIGNUP_FIELDS = ["username", "email", "password1", "password2"]
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_SIGNUP_FIELDS = ["username", "email*", "password1", "password2"]
 
 #fix for duplicate social emails: https://stackoverflow.com/a/78722151
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
+
+# Send email to console; for dev purposes
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+#Send email from a legitimate email server; for production
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+# EMAIL_USE_TLS = True
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -239,7 +255,9 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-    
+
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:

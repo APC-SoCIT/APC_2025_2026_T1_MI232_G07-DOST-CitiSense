@@ -1,0 +1,15 @@
+{% load account %}
+{% load i18n %}
+
+{% block content %}
+{% autoescape off %}
+Hello,
+
+You're receiving this email because user "{{ user.get_username }}" has given your email address to register an account on CitiSense.
+
+To register your account, go to {{ activate_url }}
+
+Thank you,
+QuadThink team
+{% endautoescape %}
+{% endblock content %}

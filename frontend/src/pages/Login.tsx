@@ -11,7 +11,7 @@ export default function LoginPage() {
           </div>
           QuadThink
         </div>
-        <LoginForm1 route="/api/auth/token/" />
+        <LoginForm1 />
       </div>
     </div>
   );

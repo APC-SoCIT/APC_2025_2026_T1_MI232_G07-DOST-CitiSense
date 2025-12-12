@@ -3,22 +3,30 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api";
-import { CircleAlert, EyeIcon, EyeOff, EyeOffIcon } from "lucide-react";
+import { CircleAlert, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { AuthRouteProps } from "./auth.types";
 import axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 //zod schema for the form validation
 const signUpSchema = z
   .object({
     username: z.string(),
     email: z.email(),
-    password1: z.string().min(8, "Password must be at least 8 characters"),
-    password2: z.string().min(8, "Password must be at least 8 characters"),
+    password1: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Must include at least one uppercase letter")
+      .regex(/[0-9]/, "Must include at least one number"),
+
+    password2: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Must include at least one uppercase letter")
+      .regex(/[0-9]/, "Must include at least one number"),
   })
   //checks if password1 and password2 matches
   .refine((data) => data.password1 === data.password2, {
@@ -27,13 +35,15 @@ const signUpSchema = z
   });
 
 //follow the schema of the zod
-type SignUpFieldProps = z.infer<typeof signUpSchema>;
+export type SignUpFieldProps = z.infer<typeof signUpSchema>;
 
-export function RegisterForm({ route, ...props }: AuthRouteProps) {
+export function RegisterForm({ ...props }) {
   //for showing password
   const [showPassword1, setShowPassword1] = React.useState(false);
   const [showPassword2, setShowPassword2] = React.useState(false);
+  const [formError, setFormError] = React.useState("");
   const navigate = useNavigate();
+  const { Register } = useAuth();
   const {
     register,
     handleSubmit,
@@ -47,16 +57,32 @@ export function RegisterForm({ route, ...props }: AuthRouteProps) {
 
   const onSubmit = async (data: SignUpFieldProps) => {
     try {
-      await api.post(route, data);
-      navigate("/login");
+      await Register(data);
+      await navigate("/email/verification");
     } catch (error) {
       // Handle specific Axios error
       if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        console.log(error.response?.status);
         if (error.response?.data?.username) {
           setError("username", { message: error.response.data.username });
         }
         if (error.response?.data.email) {
           setError("email", { message: error.response.data.email });
+        }
+        if (error.response?.data.password1) {
+          setError("password1", {
+            message: error.response?.data.password1,
+          });
+        }
+        if (error.response?.data.password2) {
+          setError("password2", {
+            message: error.response?.data.password2,
+          });
+        }
+
+        if (error.response?.data.non_field_errors[0]) {
+          setFormError(error.response.data.non_field_errors[0]);
         }
       }
     }
@@ -123,6 +149,7 @@ export function RegisterForm({ route, ...props }: AuthRouteProps) {
               className=""
               {...register("password1")}
               type={showPassword1 ? "text" : "password"}
+              onBlur={() => trigger("password2")}
             />
             <Button
               type="button"
@@ -176,9 +203,19 @@ export function RegisterForm({ route, ...props }: AuthRouteProps) {
               </p>
             )}
           </div>
+          {formError && (
+            <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+              <CircleAlert className="w-4 h-4" /> {formError}
+            </p>
+          )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full"
+          onClick={() => setFormError("")}
+          disabled={isSubmitting}
+        >
           Register
         </Button>
       </div>

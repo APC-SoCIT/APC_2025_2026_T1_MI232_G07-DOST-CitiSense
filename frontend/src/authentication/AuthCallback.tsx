@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Loader } from "lucide-react";
 import axios from "axios";
+import { duration } from "html2canvas-pro/dist/types/css/property-descriptors/duration";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -11,30 +12,46 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const authenticate = async () => {
-      try {
-        //get the current code from the url
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get("code");
-
-        //if there is no code parameter in the url, then navigate to /login
-        if (!code) {
-          navigate("/login");
-          return;
-        }
-
-        //trigger the social login function from the context
-        await SocialLogin(code);
-
-        //on success navigate to the home
-        navigate("/");
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response?.data);
-        }
+      //get the current code from the url
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      //if there is no code parameter in the url, then navigate to /login
+      if (!code) {
         navigate("/login");
-      } finally {
-        setIsLoading(false);
+        return;
       }
+
+      let attempts = 0;
+      const maxAttempts = 3;
+
+      // Reference: https://www.reddit.com/r/learnjavascript/comments/1f4zunn/await_new_promiseresolve_settimeoutresolve_1000/
+      // To delay each retry attempt by 1.5 seconds
+      const delay = (durationMs: number) => {
+        return new Promise((resolve) => setTimeout(resolve, durationMs));
+      };
+
+      while (attempts < maxAttempts) {
+        try {
+          //trigger the social login function from the context
+          await SocialLogin(code);
+
+          //on success navigate to the home
+          navigate("/");
+          return;
+        } catch (error) {
+          // Handle specific Axios error
+          if (axios.isAxiosError(error)) {
+            console.log(error.response?.data);
+          }
+          console.log("This is run", attempts);
+          attempts++;
+
+          // Delay each retry by 1.5 seconds
+          await delay(1500);
+        }
+      }
+      navigate("/login");
+      setIsLoading(false);
     };
 
     authenticate();
