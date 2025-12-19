@@ -3,6 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* To hide the default eye icon from a password input in MS EDGE
+  Reference link: https://stackoverflow.com/a/67808595 */
+::-ms-reveal {
+  display: none;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
