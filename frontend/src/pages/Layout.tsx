@@ -10,7 +10,6 @@ export default function Layout() {
       <div className="flex w-full">
         <AppSidebar />
         <main className="flex flex-col grow min-w-0 bg-white">
-          <SidebarTrigger />
           <ProtectedRoute>
             <Outlet />
             <Toaster richColors position="top-right" />

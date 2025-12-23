@@ -14,7 +14,7 @@ export function UnauthorizedPage({
   return (
     <div
       className={cn(
-        "flex flex-col -mt-10 items-center justify-center min-h-screen p-4",
+        "flex flex-col items-center justify-center min-h-screen p-4",
         className
       )}
       {...props}

@@ -21,37 +21,21 @@ const AuthCallback = () => {
         return;
       }
 
-      let attempts = 0;
-      const maxAttempts = 3;
+      try {
+        //trigger the social login function from the context
+        await SocialLogin(code);
 
-      // Reference: https://www.reddit.com/r/learnjavascript/comments/1f4zunn/await_new_promiseresolve_settimeoutresolve_1000/
-      // To delay each retry attempt by 1.5 seconds
-      const delay = (durationMs: number) => {
-        return new Promise((resolve) => setTimeout(resolve, durationMs));
-      };
-
-      while (attempts < maxAttempts) {
-        try {
-          //trigger the social login function from the context
-          await SocialLogin(code);
-
-          //on success navigate to the home
-          navigate("/");
-          return;
-        } catch (error) {
-          // Handle specific Axios error
-          if (axios.isAxiosError(error)) {
-            console.log(error.response?.data);
-          }
-          console.log("This is run", attempts);
-          attempts++;
-
-          // Delay each retry by 1.5 seconds
-          await delay(1500);
+        //on success navigate to the home
+        navigate("/");
+        return;
+      } catch (error) {
+        // Handle specific Axios error
+        if (axios.isAxiosError(error)) {
+          console.log(error.response?.data);
         }
+        navigate("/login");
+        setIsLoading(false);
       }
-      navigate("/login");
-      setIsLoading(false);
     };
 
     authenticate();
