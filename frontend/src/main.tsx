@@ -21,6 +21,7 @@ import EmailVerification from "./pages/EmailVerification.js";
 import EmailForgotPasswordSuccess from "./pages/EmailForgotPasswordSuccess.js";
 import { EmailVerificationSent } from "./authentication/email-verification.js";
 import EmailVerificationCallback from "./authentication/EmailVerificationCallback.js";
+import GuestDashboard from "./components/dashboard/GuestDashboard.js";
 
 const router = createBrowserRouter([
   {
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
       { path: "/home", element: <Profile /> },
     ],
   },
-
+  { path: "/guest-dashboard", element: <GuestDashboard /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
   { path: "/logout", element: <Logout /> },

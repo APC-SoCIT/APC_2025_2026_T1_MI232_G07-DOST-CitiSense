@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
-import api from "../../api";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-  TableDropdownMenuCheckBoxItem,
 } from "../ui/dropdown-menu";
+import { Filter } from "lucide-react";
 
 type DashboardDropdownProps = {
   session: string[];
@@ -24,7 +21,7 @@ const DashboardDropdown = ({
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button className="bg-gray-100" variant="outline">
-          Filter dashboard
+          <Filter /> <span className="hidden md:inline">Filter</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="">

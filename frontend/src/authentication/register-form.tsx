@@ -41,7 +41,6 @@ export function RegisterForm({ ...props }) {
   //for showing password
   const [showPassword1, setShowPassword1] = React.useState(false);
   const [showPassword2, setShowPassword2] = React.useState(false);
-  const [formError, setFormError] = React.useState("");
   const navigate = useNavigate();
   const { Register } = useAuth();
   const {
@@ -79,10 +78,6 @@ export function RegisterForm({ ...props }) {
           setError("password2", {
             message: error.response?.data.password2,
           });
-        }
-
-        if (error.response?.data.non_field_errors[0]) {
-          setFormError(error.response.data.non_field_errors[0]);
         }
       }
     }
@@ -203,19 +198,9 @@ export function RegisterForm({ ...props }) {
               </p>
             )}
           </div>
-          {formError && (
-            <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-              <CircleAlert className="w-4 h-4" /> {formError}
-            </p>
-          )}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          onClick={() => setFormError("")}
-          disabled={isSubmitting}
-        >
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
           Register
         </Button>
       </div>
