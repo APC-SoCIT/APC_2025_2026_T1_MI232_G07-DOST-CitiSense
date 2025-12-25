@@ -1,31 +1,42 @@
-import { GalleryVerticalEnd } from "lucide-react";
-import { RegisterForm } from "../authentication/register-form";
+import { ShieldCheck, Database } from "lucide-react";
+import { RegisterForm } from "../Authentication/register-form";
 import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-[1fr_5fr]">
-      <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/blue1.png"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+    <div className="relative h-svh flex flex-col items-center justify-center p-6 md:p-10 bg-[#f8fafc]">
+      {/* DOST IRAD TECHNICAL BACKGROUND */}
+      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+        {/* SVG Technical Grid/Circuit Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%230038A8' stroke-width='0.5'%3E%3Cpath d='M10 10h60v60H10z'/%3E%3Cpath d='M0 40h80M40 0v80'/%3E%3Ccircle cx='40' cy='40' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
         />
+        <div className="absolute top-0 right-0 w-[50%] h-[50%] rounded-full bg-[#0038A8]/5 blur-[120px] -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-[50%] h-[50%] rounded-full bg-sky-500/5 blur-[120px] translate-y-1/2 -translate-x-1/4" />
       </div>
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link to="/login" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
-            </div>
+
+      {/* TOP LEFT BRANDING */}
+      <div className="absolute top-8 left-8 z-20 flex items-center gap-3">
+        <div className="bg-[#0038A8] text-white p-2 rounded-lg shadow-md">
+          <ShieldCheck className="size-5" />
+        </div>
+        <div className="flex flex-col border-l border-slate-300 pl-3">
+          <span className="text-sm font-bold text-slate-900 tracking-tighter leading-none">
+            DOST-IRAD
+          </span>
+          <span className="text-[10px] font-medium text-[#0038A8] uppercase tracking-widest">
             QuadThink
-          </Link>
+          </span>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <RegisterForm />
-          </div>
-        </div>
+      </div>
+
+      {/* MAIN CONTENT */}
+      <div className="relative z-10 flex w-full flex-col gap-6">
+        {/* The RegisterForm Component */}
+        <RegisterForm />
       </div>
     </div>
   );
