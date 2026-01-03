@@ -102,147 +102,107 @@ export function ForgotPasswordForm({ ...props }) {
   };
 
   return (
-    <div className="flex flex-col gap-6 items-center" {...props}>
-      {/* DOST Institutional Header */}
-      <div className="flex flex-col items-center gap-2 mb-2">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#0038A8] p-2 rounded-lg shadow-md">
-            <CircleAlert className="w-8 h-8 text-white" />
-          </div>
-          <div className="text-left">
-            <h1 className="text-xl font-bold leading-tight text-[#0038A8]">
-              DOST - IRAD
-            </h1>
-            <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground">
-              Sentiment Analysis Platform
-            </p>
-          </div>
-        </div>
-      </div>
+    <div
+      className="flex flex-col gap-6 scale-80 -mt-10 2xl:mt-5 2xl:scale-100"
+      {...props}
+    >
+      {isSubmitSuccessful && (
+        <CardDescription className="text-left bg-green-100 text-red px-4 py-3 rounded-lg text-black-600">
+          Password reset successfull! Redirecting you to login...
+        </CardDescription>
+      )}
+      <Card className="">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Reset your password</CardTitle>
+          <CardDescription className="">
+            Please enter your new password.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid gap-6">
+              <div className="grid gap-6">
+                <div className="grid gap-3">
+                  <div className="flex items-center">
+                    <Label className="" htmlFor="password">
+                      Password
+                    </Label>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      className=""
+                      {...register("new_password1")}
+                      type={showPassword1 ? "text" : "password"}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 py-5 hover:bg-transparent"
+                      onClick={() => setShowPassword1((prev) => !prev)}
+                    >
+                      {showPassword1 ? (
+                        <EyeIcon className="w-4 h-4" />
+                      ) : (
+                        <EyeOffIcon className="w-4 h-4" />
+                      )}
+                    </Button>
+                    {errors.new_password1 && (
+                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                        <CircleAlert className="w-4 h-4" />{" "}
+                        {errors.new_password1.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid gap-3">
+                  <div className="flex items-center">
+                    <Label className="" htmlFor="password">
+                      Re-enter password
+                    </Label>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      className=""
+                      {...register("new_password2")}
+                      type={showPassword2 ? "text" : "password"}
+                      onBlur={() => trigger("new_password2")}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 py-5 hover:bg-transparent"
+                      onClick={() => setShowPassword2((prev) => !prev)}
+                    >
+                      {showPassword2 ? (
+                        <EyeIcon className="w-4 h-4" />
+                      ) : (
+                        <EyeOffIcon className="w-4 h-4" />
+                      )}
+                    </Button>
+                    {errors.new_password2 && (
+                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                        <CircleAlert className="w-4 h-4" />{" "}
+                        {errors.new_password2.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-      <div
-        className={cn(
-          "flex min-h-[60vh] items-start justify-center pt-4 pb-2 bg-slate-50/50"
-        )}
-      >
-        <Card className="w-full max-w-2xl shadow-xl border-t-4 border-t-[#0038a8] bg-white">
-          <CardHeader className="space-y-2 pb-6 pt-8">
-            <CardTitle className="text-2xl font-bold tracking-tight text-center text-[#1e293b]">
-              Reset your password
-            </CardTitle>
-            <CardDescription className="text-center text-slate-500 text-base">
-              Please enter your new password.
-            </CardDescription>
-            {isSubmitSuccessful && (
-              <div className="text-green-700 bg-green-100 px-4 py-2 rounded text-center mt-2">
-                Password reset successful! Redirecting you to login...
-              </div>
-            )}
-          </CardHeader>
-          <CardContent className="grid gap-3 px-6">
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="grid grid-cols-1 md:grid-cols-2 gap-3"
-            >
-              <div className="grid gap-1">
-                <Label
-                  htmlFor="new_password1"
-                  className="text-xs font-semibold text-slate-700"
-                >
-                  Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="new_password1"
-                    type={showPassword1 ? "text" : "password"}
-                    {...register("new_password1")}
-                    className={cn(
-                      "h-10 pr-10 bg-slate-50 border-slate-200 text-sm",
-                      errors.new_password1 &&
-                        "border-destructive focus-visible:ring-destructive"
-                    )}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-400 hover:text-slate-600"
-                    onClick={() => setShowPassword1((prev) => !prev)}
-                  >
-                    {showPassword1 ? (
-                      <EyeIcon className="h-4 w-4" />
-                    ) : (
-                      <EyeOffIcon className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                <p
-                  className={cn(
-                    "text-destructive text-xs font-medium flex items-center gap-1.5 min-h-[1.5em]",
-                    !errors.new_password1 && "invisible"
-                  )}
-                >
-                  <CircleAlert className="w-3.5 h-3.5" />
-                  {errors.new_password1?.message || "placeholder"}
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <Label
-                  htmlFor="new_password2"
-                  className="text-xs font-semibold text-slate-700"
-                >
-                  Confirm Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="new_password2"
-                    type={showPassword2 ? "text" : "password"}
-                    {...register("new_password2")}
-                    onBlur={() => trigger("new_password2")}
-                    className={cn(
-                      "h-10 pr-10 bg-slate-50 border-slate-200 text-sm",
-                      errors.new_password2 &&
-                        "border-destructive focus-visible:ring-destructive"
-                    )}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-400 hover:text-slate-600"
-                    onClick={() => setShowPassword2((prev) => !prev)}
-                  >
-                    {showPassword2 ? (
-                      <EyeIcon className="h-4 w-4" />
-                    ) : (
-                      <EyeOffIcon className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                <p
-                  className={cn(
-                    "text-destructive text-xs font-medium flex items-center gap-1.5 min-h-[1.5em]",
-                    !errors.new_password2 && "invisible"
-                  )}
-                >
-                  <CircleAlert className="w-3.5 h-3.5" />
-                  {errors.new_password2?.message || "placeholder"}
-                </p>
-              </div>
-              <div className="col-span-1 md:col-span-2 mt-2">
                 <Button
                   type="submit"
-                  variant="bluedefault"
-                  className="w-full h-11 bg-[#0038a8] hover:bg-[#002d86] text-white font-bold transition-colors"
+                  variant="default"
+                  className="w-full"
                   disabled={isSubmitting}
                 >
                   Reset password
                 </Button>
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
