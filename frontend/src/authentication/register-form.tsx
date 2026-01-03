@@ -97,10 +97,8 @@ export function RegisterForm({ ...props }) {
     >
       <Card className="w-full max-w-3xl p-0 shadow-lg border border-border">
         <CardHeader className="text-center pb-2">
-          <CardTitle className="text-2xl mb-1 mt-4">
-            Register an account
-          </CardTitle>
-          <CardDescription className="mb-1">
+          <CardTitle className="text-2xl mt-4">Register an account</CardTitle>
+          <CardDescription className="">
             Enter your credentials to register an account
           </CardDescription>
         </CardHeader>

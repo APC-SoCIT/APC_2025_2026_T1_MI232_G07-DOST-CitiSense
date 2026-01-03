@@ -58,31 +58,37 @@ export function EmailForgotPasswordForm({ ...props }) {
 
   return (
     <div
-      className="flex flex-col gap-6 scale-80 -mt-10 2xl:mt-5 2xl:scale-100"
+      className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
       {...props}
     >
-      {errors.root?.message && (
-        <CardDescription className="text-left bg-red-100 text-red px-4 py-3 rounded-lg text-red-600">
-          {errors.root.message}
-        </CardDescription>
-      )}
-      <Card className="">
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Forgot your password?</CardTitle>
+      <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
+        <CardHeader className="text-center pb-2">
+          {errors.root?.message && (
+            <CardDescription className="text-left bg-red-100 text-red px-3 py-2 mb-3 rounded-lg text-red-600">
+              {errors.root.message}
+            </CardDescription>
+          )}
+          <CardTitle className="text-2xl mb-1 mt-4">
+            Forgot your password?
+          </CardTitle>
           <CardDescription className="">
             Please enter your email so that we can send you the password reset
             link.
           </CardDescription>
         </CardHeader>
-        <CardContent className="">
+        <CardContent className="pt-0">
           <form onSubmit={handleSubmit(ForgotPasswordSubmit)}>
-            <div className="grid gap-6">
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label className="" htmlFor="email">
+            <div className="grid gap-4">
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="email" className={undefined}>
                     Email
                   </Label>
-                  <Input className="" {...register("email")} type="email" />
+                  <Input
+                    {...register("email")}
+                    type="email"
+                    className="h-9 px-3 text-base"
+                  />
                 </div>
                 {errors.email && (
                   <p className="text-red-500 text-sm flex items-center gap-1 -mt-4">
@@ -92,22 +98,21 @@ export function EmailForgotPasswordForm({ ...props }) {
                 <Button
                   type="submit"
                   variant="default"
-                  className="w-full"
+                  className="w-full h-9 text-base bg-[#3949ab] hover:bg-[#5c6bc0] focus:bg-[#3949ab] text-white border-none"
                   disabled={isSubmitting}
                 >
                   Send Email
                 </Button>
               </div>
-            </div>
-            <div className="flex flex-row justify-center text-center items-center text-sm pt-10">
-              <a
-                href="/login"
-                className="flex flex-row items-center justify-center underline underline-offset-4"
-              >
-                {" "}
-                <ChevronLeft className="w-5 h-5" />
-                Back to Login
-              </a>
+              <div className="flex flex-row justify-center text-center items-center text-sm mt-2">
+                <a
+                  href="/login"
+                  className="flex flex-row items-center gap-1 justify-center underline underline-offset-4 mb-4"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  <span>Back to Login</span>
+                </a>
+              </div>
             </div>
           </form>
         </CardContent>
