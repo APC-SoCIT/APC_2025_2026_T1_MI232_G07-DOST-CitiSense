@@ -73,56 +73,62 @@ export function LoginForm1({ ...props }) {
 
   return (
     <div
-      className="flex flex-col gap-6 scale-80 -mt-10 2xl:mt-5 2xl:scale-100"
+      className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
       {...props}
     >
-      <Card className="">
-        <CardHeader className="text-center">
+      <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
+        <CardHeader className="text-center pb-2">
           {displayError && (
-            <CardDescription className="text-left bg-red-100 text-red px-4 py-3 mb-5 rounded-lg text-red-600">
+            <CardDescription className="text-left bg-red-100 text-red px-3 py-2 mb-3 rounded-lg text-red-600">
               {displayError}
             </CardDescription>
           )}
-
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription className="">
+          <CardTitle className="text-2xl mb-1 mt-4">Welcome back</CardTitle>
+          <CardDescription className="mb-1">
             Login with your own account
           </CardDescription>
         </CardHeader>
-        <CardContent className="">
+        <CardContent className="pt-0">
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-6">
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label className="" htmlFor="email">
+            <div className="grid gap-4">
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="email" className={undefined}>
                     Email
                   </Label>
-                  <Input className="" {...register("email")} type="text" />
+                  <Input
+                    {...register("email")}
+                    type="text"
+                    className="h-9 px-3 text-base"
+                    placeholder="you@example.com"
+                  />
                 </div>
-                <div className="grid gap-3">
+                <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label className="" htmlFor="password">
+                    <Label htmlFor="password" className={undefined}>
                       Password
                     </Label>
                     <a
                       href="/email/forgotpassword"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                      className="ml-auto text-xs underline-offset-4 hover:underline text-blue-700"
                     >
                       Forgot your password?
                     </a>
                   </div>
                   <div className="relative">
                     <Input
-                      className=""
                       {...register("password")}
                       type={showPassword ? "text" : "password"}
+                      className="h-9 px-3 text-base pr-10"
+                      placeholder="••••••••"
                     />
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 py-5 hover:bg-transparent"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
                       onClick={() => setShowPassword((prev) => !prev)}
+                      tabIndex={-1}
                     >
                       {showPassword ? (
                         <EyeIcon className="w-4 h-4" />
@@ -135,24 +141,29 @@ export function LoginForm1({ ...props }) {
                 <Button
                   type="submit"
                   variant="default"
-                  className="w-full"
+                  className="w-full h-9 text-base bg-[#3949ab] hover:bg-[#5c6bc0] focus:bg-[#3949ab] text-white border-none"
                   disabled={isSubmitting}
                 >
                   Login
                 </Button>
               </div>
-              <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+              <div className="after:border-border relative text-center text-xs after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
                   Or continue with
                 </span>
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="w-full h-9 text-base flex items-center justify-center gap-2"
                   onClick={() => handleGoogle()}
+                  type="button"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4 mr-1"
+                  >
                     <path
                       d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
                       fill="currentColor"
@@ -161,9 +172,12 @@ export function LoginForm1({ ...props }) {
                   Login with Google
                 </Button>
               </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="/register" className="underline underline-offset-4">
+              <div className="text-center text-xs mb-4">
+                Don't have an account?{" "}
+                <a
+                  href="/register"
+                  className="underline underline-offset-4 text-blue-700"
+                >
                   Sign up
                 </a>
               </div>
@@ -171,7 +185,7 @@ export function LoginForm1({ ...props }) {
           </form>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+      <div className="text-gray-600 *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 mt-2">
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
       </div>
