@@ -1,5 +1,12 @@
 import { cn } from "../lib/utils";
 import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
@@ -84,132 +91,150 @@ export function RegisterForm({ ...props }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className={cn("flex flex-col gap-6")}
+    <div
+      className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
       {...props}
     >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Register an account</h1>
-        <p className="text-muted-foreground text-sm text-balance">
-          Enter your credentials to register an account
-        </p>
-      </div>
-      <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label className="" htmlFor="username">
-            Username
-          </Label>
-          <div>
-            <Input
-              className=""
-              {...register("username")}
-              id="username"
-              type="text"
-            />
-            {errors.username && (
-              <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-                <CircleAlert className="w-4 h-4" /> {errors.username.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="grid gap-3">
-          <Label className="" htmlFor="email">
-            Email
-          </Label>
-          <div>
-            <Input
-              className=""
-              {...register("email")}
-              type="email"
-              placeholder="m@example.com"
-            />
-
-            {errors.email && (
-              <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-                <CircleAlert className="w-4 h-4" /> {errors.email.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label className="" htmlFor="password">
-              Password
-            </Label>
-          </div>
-          <div className="relative">
-            <Input
-              className=""
-              {...register("password1")}
-              type={showPassword1 ? "text" : "password"}
-              onBlur={() => trigger("password2")}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 py-5 hover:bg-transparent"
-              onClick={() => setShowPassword1((prev) => !prev)}
-            >
-              {showPassword1 ? (
-                <EyeIcon className="w-4 h-4" />
-              ) : (
-                <EyeOffIcon className="w-4 h-4" />
-              )}
-            </Button>
-            {errors.password1 && (
-              <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-                <CircleAlert className="w-4 h-4" /> {errors.password1.message}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label className="" htmlFor="password">
-              Confirm Passsword
-            </Label>
-          </div>
-          <div className="relative">
-            <Input
-              className=""
-              {...register("password2")}
-              type={showPassword2 ? "text" : "password"}
-              onBlur={() => trigger("password2")}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 py-5 hover:bg-transparent"
-              onClick={() => setShowPassword2((prev) => !prev)}
-            >
-              {showPassword2 ? (
-                <EyeIcon className="w-4 h-4" />
-              ) : (
-                <EyeOffIcon className="w-4 h-4" />
-              )}
-            </Button>
-            {errors.password2 && (
-              <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-                <CircleAlert className="w-4 h-4" /> {errors.password2.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          Register
-        </Button>
-      </div>
-      <div className="text-center text-sm">
-        Already have an account?{" "}
-        <Link to="/login" className="underline underline-offset-4">
-          Sign in
-        </Link>
-      </div>
-    </form>
+      <Card className="w-full max-w-3xl p-0 shadow-lg border border-border">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-2xl mb-1 mt-4">
+            Register an account
+          </CardTitle>
+          <CardDescription className="mb-1">
+            Enter your credentials to register an account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid gap-4">
+              <div className="grid gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="username" className={undefined}>
+                    Username
+                  </Label>
+                  <Input
+                    {...register("username")}
+                    id="username"
+                    type="text"
+                    className="h-9 px-3 text-base"
+                  />
+                  {errors.username && (
+                    <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <CircleAlert className="w-4 h-4" />{" "}
+                      {errors.username.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="email" className={undefined}>
+                    Email
+                  </Label>
+                  <Input
+                    {...register("email")}
+                    type="email"
+                    className="h-9 px-3 text-base"
+                    placeholder="you@example.com"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <CircleAlert className="w-4 h-4" /> {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password1" className={undefined}>
+                      Password
+                    </Label>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      {...register("password1")}
+                      type={showPassword1 ? "text" : "password"}
+                      className="h-9 px-3 text-base pr-10"
+                      onBlur={() => trigger("password2")}
+                      placeholder="••••••••"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
+                      onClick={() => setShowPassword1((prev) => !prev)}
+                      tabIndex={-1}
+                    >
+                      {showPassword1 ? (
+                        <EyeIcon className="w-4 h-4" />
+                      ) : (
+                        <EyeOffIcon className="w-4 h-4" />
+                      )}
+                    </Button>
+                    {errors.password1 && (
+                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                        <CircleAlert className="w-4 h-4" />{" "}
+                        {errors.password1.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password2" className={undefined}>
+                      Confirm Password
+                    </Label>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      {...register("password2")}
+                      type={showPassword2 ? "text" : "password"}
+                      className="h-9 px-3 text-base pr-10"
+                      onBlur={() => trigger("password2")}
+                      placeholder="••••••••"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
+                      onClick={() => setShowPassword2((prev) => !prev)}
+                      tabIndex={-1}
+                    >
+                      {showPassword2 ? (
+                        <EyeIcon className="w-4 h-4" />
+                      ) : (
+                        <EyeOffIcon className="w-4 h-4" />
+                      )}
+                    </Button>
+                    {errors.password2 && (
+                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                        <CircleAlert className="w-4 h-4" />{" "}
+                        {errors.password2.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  variant="default"
+                  className="w-full h-9 text-base bg-[#3949ab] hover:bg-[#5c6bc0] focus:bg-[#3949ab] text-white border-none"
+                  disabled={isSubmitting}
+                >
+                  Register
+                </Button>
+              </div>
+              <div className="text-center text-xs mb-4">
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="underline underline-offset-4 text-blue-700"
+                >
+                  Sign in
+                </Link>
+              </div>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

@@ -4,27 +4,28 @@ import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-[1fr_5fr]">
-      <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/blue1.png"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+    <div className="flex min-h-svh">
+      {/* Side Panel */}
+      <div className="hidden md:flex flex-col justify-center items-center text-primary-foreground w-80 p-8 bg-[#3949ab]">
+        <span className="text-4xl font-bold text-center">
+          Department of Science and Technology
+        </span>
       </div>
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link to="/login" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+      {/* Main Content */}
+      <div
+        className="flex flex-1 flex-col items-center justify-center gap-6 p-6 md:p-10"
+        style={{
+          background: "linear-gradient(20deg, #b4d4ebff 0%, #6b8cceff 100%)",
+        }}
+      >
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <div className="flex items-center gap-2 self-center font-medium">
+            <div className="bg-primary text-primary-foreground flex size-7 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
             </div>
             QuadThink
-          </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <RegisterForm />
           </div>
+          <RegisterForm />
         </div>
       </div>
     </div>
