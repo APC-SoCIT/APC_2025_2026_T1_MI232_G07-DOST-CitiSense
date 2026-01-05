@@ -30,17 +30,20 @@ export function EmailForgotPasswordSuccessForm({ ...props }) {
   };
 
   return (
-    <div className="flex flex-col gap-6 items-center justify-center min-h-[60vh] bg-slate-50/50 p-4">
-      <Card className="w-full max-w-md shadow-xl border-t-4 border-t-[#0038a8] bg-white">
-        <CardHeader className="space-y-2 pb-6 pt-8">
-          <CardTitle className="text-2xl font-bold tracking-tight text-center text-[#1e293b]">
+    <div
+      className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
+      {...props}
+    >
+      <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-2xl mb-1 mt-4 text-[#1e293b]">
             Email Sent
           </CardTitle>
-          <CardDescription className="text-center text-slate-500 text-base">
+          <CardDescription className="mb-1 text-slate-500 text-base">
             {`We sent a verification link to ${forgotEmail}. Please check your inbox and click the link to reset your password.`}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4 items-center px-6">
+        <CardContent className="pt-0 flex flex-col gap-4 items-center px-6">
           <Button
             type="button"
             variant="bluedefault"

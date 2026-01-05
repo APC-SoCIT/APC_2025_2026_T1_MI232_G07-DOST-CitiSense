@@ -124,11 +124,11 @@ function Profile() {
   }, [previewImage]);
 
   return (
-    <main className="flex flex-col items-center justify-center border border-gray-500 rounded-2xl shadow-xl w-[700px] h-[770px] mx-auto mt-10 relative">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-100 px-4">
       <Button
         type="button"
         variant="outline"
-        className={`mt-10 absolute top-0 right-5 text-white ${
+        className={`fixed top-8 right-8 z-10 text-white shadow-lg ${
           isEditing
             ? "bg-red-600 hover:bg-red-400 text-white hover:text-white"
             : "bg-blue-700 hover:bg-blue-500 hover:text-white"
@@ -139,128 +139,137 @@ function Profile() {
       </Button>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col justify-center items-center"
+        className="w-full max-w-2xl flex flex-col items-center gap-8 bg-transparent"
       >
-        <h1 className="flex items-center gap-2 text-3xl font-bold text-gray-900 mb-8">
-          <User className="w-10 h-10 text-blue-600" />
+        <h1 className="flex items-center gap-3 text-4xl font-extrabold text-gray-900 mb-2 tracking-tight drop-shadow-sm mt-0">
+          <User className="w-12 h-12 text-blue-600" />
           Profile
         </h1>
-        <div className="flex flex-col text-center">
-          <label className="relative">
+        {/* Profile Image Section */}
+        <div className="flex flex-col items-center mb-2 w-full">
+          <label className="relative group cursor-pointer">
             <img
               src={previewImage || user.picture}
               alt={user.username}
-              className="w-32 h-32 rounded-full object-cover mb-10"
+              className="w-36 h-36 rounded-full object-cover border-4 border-blue-200 shadow-lg transition-transform group-hover:scale-105 bg-white"
             />
-            {isEditing ? (
-              <span className="absolute flex items-center justify-center top-26 left-21 border w-8 h-8 bg-white rounded-3xl cursor-pointer">
-                <Camera className="w-5 h-5" />
+            {isEditing && (
+              <span className="absolute flex items-center justify-center bottom-3 right-3 border w-10 h-10 bg-white shadow-md rounded-full cursor-pointer group-hover:bg-blue-50 transition-colors">
+                <Camera className="w-6 h-6 text-blue-600" />
               </span>
-            ) : null}
-
-            {isEditing ? (
+            )}
+            {isEditing && (
               <Input
                 {...register("image", { onChange: (e) => imagePreview(e) })}
-                className="m-5 hidden"
+                className="hidden"
                 type="file"
               />
-            ) : null}
+            )}
           </label>
         </div>
-
-        <div className="flex flex-row gap-4 mb-6">
-          <div className="flex flex-col mr-15">
-            <Label className="mb-3 items-center justify-center flex">
+        <div className="w-full border-b border-gray-200 mb-1"></div>
+        {/* Name Fields */}
+        <div className="flex flex-row gap-8 w-full">
+          <div className="flex flex-col flex-1">
+            <Label className="mb-1 text-gray-700 font-semibold">
               First Name
             </Label>
             <Input
               {...register("first_name")}
-              className="text-bold bg-gray-200"
+              className="font-semibold bg-gray-50 border border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 py-3 px-4 rounded-lg"
               type="text"
               disabled={!isEditing}
               autoComplete="off"
             />
             {errors.first_name && (
-              <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+              <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
                 <CircleAlert className="w-4 h-4" /> {errors.first_name.message}
               </p>
             )}
           </div>
-          <div className="flex flex-col">
-            <Label className="mb-3 flex items-center justify-center">
+          <div className="flex flex-col flex-1">
+            <Label className="mb-1 text-gray-700 font-semibold">
               Last Name
             </Label>
             <Input
               {...register("last_name")}
-              className="text-bold bg-gray-200"
+              className="font-semibold bg-gray-50 border border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 py-3 px-4 rounded-lg"
               type="text"
               disabled={!isEditing}
               autoComplete="off"
             />
             {errors.last_name && (
-              <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+              <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
                 <CircleAlert className="w-4 h-4" /> {errors.last_name.message}
               </p>
             )}
           </div>
         </div>
-
-        <div className="flex flex-col mb-6">
-          <Label className="mb-3 flex items-center justify-center">
-            Username
-          </Label>
+        <div className="w-full border-b border-gray-200"></div>
+        {/* Username Field */}
+        <div className="flex flex-col w-full">
+          <Label className="mb-1 text-gray-700 font-semibold">Username</Label>
           <Input
             {...register("username")}
             type="text"
-            className="text-bold bg-gray-200"
+            className="font-semibold bg-gray-50 border border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 py-3 px-4 rounded-lg"
             disabled={!isEditing}
             onBlur={() => trigger("username")}
             autoComplete="off"
           />
           {errors.username && (
-            <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+            <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
               <CircleAlert className="w-4 h-4" /> {errors.username.message}
             </p>
           )}
         </div>
-        <div className="flex flex-col w-[300px] mb-15">
-          <Label className="mb-3 flex items-center justify-center">
-            Email{" "}
-          </Label>
-          <Input
-            {...register("email")}
-            className="text-center text-bold bg-gray-200"
-            type="text"
-            disabled={true}
-            autoComplete="off"
-          />
+        <div className="w-full border-b border-gray-200"></div>
+        {/* Email and Password Change Buttons Side by Side */}
+        <div className="flex flex-row items-center w-full gap-8 justify-center mt-2 mb-2">
+          <div className="flex flex-row items-center gap-5 ">
+            <Label className="mb-1 text-gray-700 font-semibold">Email:</Label>
+            <Button
+              size="sm"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md text-sm shadow mr-15"
+              type="button"
+              disabled={!isEditing}
+            >
+              Change email
+            </Button>
+          </div>
+          <div className="flex flex-row items-center gap-5">
+            <Label className="mb-1 text-gray-700 font-semibold">
+              Password:
+            </Label>
+            <Button
+              size="sm"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md text-sm shadow"
+              type="button"
+              disabled={!isEditing}
+            >
+              Change password
+            </Button>
+          </div>
         </div>
-        {errors.email && (
-          <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-            <CircleAlert className="w-4 h-4" /> {errors.email.message}
-          </p>
-        )}
-        <div className="flex flex-row text-2xl">
-          <Label className="mb-2 flex items-center justify-center mr-2">
-            Password:
-          </Label>
-          <span className="mr-2"></span>
-          <Button
-            size="sm"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md text-sm"
-            type="button"
-          >
-            Change password
-          </Button>
-        </div>
-        <Button
-          className="mt-20"
-          type="submit"
-          disabled={!isEditing}
-          variant="greendefault"
+        <div
+          style={{
+            height: "48px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          Submit
-        </Button>
+          {isEditing && (
+            <Button
+              className="w-40 shadow"
+              type="submit"
+              disabled={!isEditing}
+              variant="greendefault"
+            >
+              Submit
+            </Button>
+          )}
+        </div>
       </form>
     </main>
   );

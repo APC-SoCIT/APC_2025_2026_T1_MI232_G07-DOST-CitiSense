@@ -145,7 +145,7 @@ export function RegisterForm({ ...props }) {
                       Password
                     </Label>
                   </div>
-                  <div className="relative">
+                  <div className="relative h-12 flex items-center">
                     <Input
                       {...register("password1")}
                       type={showPassword1 ? "text" : "password"}
@@ -167,13 +167,13 @@ export function RegisterForm({ ...props }) {
                         <EyeOffIcon className="w-4 h-4" />
                       )}
                     </Button>
-                    {errors.password1 && (
-                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-                        <CircleAlert className="w-4 h-4" />{" "}
-                        {errors.password1.message}
-                      </p>
-                    )}
                   </div>
+                  {errors.password1 && (
+                    <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <CircleAlert className="w-4 h-4" />{" "}
+                      {errors.password1.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -181,7 +181,7 @@ export function RegisterForm({ ...props }) {
                       Confirm Password
                     </Label>
                   </div>
-                  <div className="relative">
+                  <div className="relative h-12 flex items-center">
                     <Input
                       {...register("password2")}
                       type={showPassword2 ? "text" : "password"}
@@ -203,13 +203,13 @@ export function RegisterForm({ ...props }) {
                         <EyeOffIcon className="w-4 h-4" />
                       )}
                     </Button>
-                    {errors.password2 && (
-                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
-                        <CircleAlert className="w-4 h-4" />{" "}
-                        {errors.password2.message}
-                      </p>
-                    )}
                   </div>
+                  {errors.password2 && (
+                    <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <CircleAlert className="w-4 h-4" />{" "}
+                      {errors.password2.message}
+                    </p>
+                  )}
                 </div>
                 <Button
                   type="submit"
