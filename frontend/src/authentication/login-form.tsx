@@ -77,7 +77,7 @@ export function LoginForm1({ ...props }) {
       {...props}
     >
       <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
-        <CardHeader className="text-center pb-2">
+        <CardHeader className="text-center p-3">
           {displayError && (
             <CardDescription className="text-left bg-red-100 text-red px-3 py-2 mb-3 rounded-lg text-red-600">
               {displayError}
@@ -120,7 +120,6 @@ export function LoginForm1({ ...props }) {
                       {...register("password")}
                       type={showPassword ? "text" : "password"}
                       className="h-9 px-3 text-base pr-10"
-                      placeholder="••••••••"
                     />
                     <Button
                       type="button"
