@@ -11,8 +11,11 @@ import DashboardDropdown from "./DashboardDropdown";
 import { SentimentPostType } from "../table/TableColumns";
 import { Download } from "lucide-react";
 import axios from "axios";
-
+import DashboardFilter from "./DashboardFilter";
+import { type DateRange } from "react-day-picker";
 function DashboardPage() {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [serviceItem, setServiceItem] = useState("");
   const [preview, setPreview] = useState<string>(""); //state for the current url of the image just downloaded from the browser
   const [isSaving, setIsSaving] = useState(false);
   const [fileName, setFileName] = useState("dashboard.png"); //state for the name of the image to be downloaded; default to dashboard.png
@@ -165,10 +168,11 @@ function DashboardPage() {
             Sentiment Analysis Dashboard
           </h3>
           <div>
-            <DashboardDropdown
-              session={session}
-              filterValue={filterValue}
-              handleSelectChange={handleSelectChange}
+            <DashboardFilter
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+              serviceItem={serviceItem}
+              setServiceItem={setServiceItem}
             />
             <Button
               className="text-white bg-blue-700 hover:bg-blue-500 hover:text-white ml-5"
@@ -180,6 +184,20 @@ function DashboardPage() {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Applied filter section*/}
+      <div className="text-muted-foreground px-8 py-2">
+        {dateRange || serviceItem ? (
+          <span>
+            Filters shown for {serviceItem && serviceItem}
+            {serviceItem && dateRange && " - "}
+            {dateRange &&
+              `${dateRange.from?.toLocaleDateString()} to ${dateRange.from?.toLocaleDateString()}`}
+          </span>
+        ) : (
+          "No filters applied"
+        )}
       </div>
 
       <main
@@ -203,9 +221,7 @@ function DashboardPage() {
           <div className="h-[400px] rounded-md shadow-lg mt-20 p-4">
             <Gender filterParams={filterParams} />
           </div>
-          <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-            <Gender filterParams={filterParams} />
-          </div>
+          <div className="h-[400px] rounded-md shadow-lg mt-10 p-4"></div>
         </div>
       </main>
 

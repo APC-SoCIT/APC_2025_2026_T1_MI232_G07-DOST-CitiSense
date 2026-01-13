@@ -8,8 +8,12 @@ import DashboardDropdown from "./DashboardDropdown";
 import { SentimentPostType } from "../table/TableColumns";
 import { Download } from "lucide-react";
 import axios from "axios";
+import DashboardFilter from "./DashboardFilter";
+import { type DateRange } from "react-day-picker";
 
 function GuestDashboard() {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [serviceItem, setServiceItem] = useState("");
   const [session, setSession] = useState<string[]>([]); //contains the session/quarter in the sentimentposts
   const [filterValue, setFilterValue] = useState<string[]>(() => {
     const savedDashboardFilters = localStorage.getItem("dashboardFilters"); //lazy initialization of the state from the saved filters from the localstorage
@@ -90,10 +94,11 @@ function GuestDashboard() {
             Sentiment Analysis Dashboard
           </h3>
           <div>
-            <DashboardDropdown
-              session={session}
-              filterValue={filterValue}
-              handleSelectChange={handleSelectChange}
+            <DashboardFilter
+              dateRange={dateRange}
+              setDateRange={setDateRange}
+              serviceItem={serviceItem}
+              setServiceItem={setServiceItem}
             />
             <Button
               className="text-white bg-blue-700 hover:bg-blue-500 hover:text-white ml-5"
@@ -106,7 +111,23 @@ function GuestDashboard() {
           </div>
         </div>
       </div>
-      <main className="scale-85 origin-top flex justify-center flex-col lg:flex-row">
+
+      {/* Applied filter section*/}
+      <div className="text-muted-foreground px-8 py-2">
+        {dateRange || serviceItem ? (
+          <span>
+            Filters shown for {serviceItem && serviceItem}
+            {serviceItem && dateRange && " - "}
+            {dateRange &&
+              `${dateRange.from?.toLocaleDateString()} to ${dateRange.from?.toLocaleDateString()}`}
+          </span>
+        ) : (
+          "No filters applied"
+        )}
+      </div>
+
+      {/* Dashboard section; charts*/}
+      <main className="scale-85 origin-top flex flex-col lg:flex-row">
         <div className="flex flex-col w-full lg:w-1/2 mr-5">
           <div className="h-[400px] rounded-md shadow-lg mt-20 p-10">
             <div className="flex justify-center items-center h-[250px]">
@@ -124,9 +145,7 @@ function GuestDashboard() {
           <div className="h-[400px] rounded-md shadow-lg mt-20 p-4">
             <Gender filterParams={filterParams} />
           </div>
-          <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-            <Gender filterParams={filterParams} />
-          </div>
+          <div className="h-[400px] rounded-md shadow-lg mt-10 p-4"></div>
         </div>
       </main>
     </div>
