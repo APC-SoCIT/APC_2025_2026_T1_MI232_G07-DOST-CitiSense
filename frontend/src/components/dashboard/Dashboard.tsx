@@ -2,168 +2,151 @@ import Gauge from "../charts/gauge";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
 import { Button } from "../ui/button";
-import { useEffect, useMemo, useRef, useState } from "react";
-import html2canvas from "html2canvas-pro";
-import DashboardDialog from "./DashboardDialog";
-import { toast } from "sonner";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import DashboardDropdown from "./DashboardDropdown";
 import { SentimentPostType } from "../table/TableColumns";
 import { Download } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "./DashboardFilter";
 import { type DateRange } from "react-day-picker";
-function DashboardPage() {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [serviceItem, setServiceItem] = useState("");
-  const [preview, setPreview] = useState<string>(""); //state for the current url of the image just downloaded from the browser
-  const [isSaving, setIsSaving] = useState(false);
-  const [fileName, setFileName] = useState("dashboard.png"); //state for the name of the image to be downloaded; default to dashboard.png
-  const cardRef = useRef<HTMLElement | null>(null);
-  const [session, setSession] = useState<string[]>([]); //contains the session/quarter in the sentimentposts
-  const [filterValue, setFilterValue] = useState<string[]>(() => {
-    const savedDashboardFilters = localStorage.getItem("dashboardFilters"); //lazy initialization of the state from the saved filters from the localstorage
-    return savedDashboardFilters ? JSON.parse(savedDashboardFilters) : [];
-  }); //the array of values to be filtered
+import { format } from "date-fns";
 
-  //the filter parameters to be included in the url
-  //filters out sessions in the 'filterValue' array and converts the remaining strings to url parameters
-  //recomputes once filter value or session is updated
-  const filterParams = useMemo(() => {
-    const shownSession = session.filter(
-      (session) => !filterValue.includes(session)
+function GuestDashboard() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
+    try {
+      const parsedDate = JSON.parse(
+        localStorage.getItem("dateRangeFilter") || "",
+      );
+
+      // Convert the parsed JSON (from and to) taken from the localStorage back to Date form
+      return {
+        from: new Date(parsedDate.from),
+        to: new Date(parsedDate.to),
+      };
+    } catch {
+      return undefined;
+    }
+  });
+
+  // Lazy Initialization from react, just get the value of the serviceNameFilter inside the localStorage on mount
+  // This contains the service names checked by the user; used for filtering.
+  const [filterServiceNameArray, setFilterServiceNameArray] = useState<
+    string[]
+  >(() => {
+    try {
+      return JSON.parse(localStorage.getItem("serviceNameFilter") || "[]");
+    } catch {
+      return [];
+    }
+  });
+
+  // Lazy Initialization from react, just get the value of the serviceTypeFilter inside the localStorage on mount
+  // This contains the service types checked by the user; used for filtering.
+  const [filterServiceTypeArray, setFilterServiceTypeArray] = useState<
+    string[]
+  >(() => {
+    try {
+      return JSON.parse(localStorage.getItem("serviceTypeFilter") || "[]");
+    } catch {
+      return [];
+    }
+  });
+  const [serviceName, setServiceName] = useState<string[]>([]); // This contains the unique service names
+  const [serviceType, setServiceType] = useState<string[]>([]); // This contains the unique service types
+
+  useEffect(() => {
+    localStorage.setItem("dateRangeFilter", JSON.stringify(dateRange));
+    localStorage.setItem(
+      "serviceNameFilter",
+      JSON.stringify(filterServiceNameArray),
     );
-    return new URLSearchParams(
-      shownSession.map((session) => ["quarter", session])
-    ).toString();
-  }, [filterValue, session]);
-  console.log(filterParams);
 
-  //on mount fetch the session/quarter data
+    localStorage.setItem(
+      "serviceTypeFilter",
+      JSON.stringify(filterServiceTypeArray),
+    );
+
+    console.log("Printing filters");
+  }, [filterServiceNameArray, filterServiceTypeArray, dateRange]);
+
+  // These are the filter parameters to be included in the URL.
+  const filterParams = useMemo(() => {
+    // Instantiate an URLSearchParam,this will hold all the filter values to be sent to the backend
+    const params = new URLSearchParams();
+
+    // Convert the shownFilters array into URL parameters and convert them to a string.
+    filterServiceNameArray.forEach((serviceName) =>
+      params.append("service_name", serviceName),
+    );
+    filterServiceTypeArray.forEach((serviceType) =>
+      params.append("service_type", serviceType),
+    );
+    if (dateRange?.from) {
+      // Format the date to only show the year, month, and date; excluding the time
+      params.append("from", format(dateRange?.from, "yyyy-MM-dd"));
+    }
+    if (dateRange?.to) {
+      // Format the date to only show the year, month, and date; excluding the time
+      params.append("to", format(dateRange?.to, "yyyy-MM-dd"));
+    }
+    return params.toString();
+  }, [filterServiceNameArray, filterServiceTypeArray, dateRange]);
+  console.log("This is the dateRange", dateRange);
+  console.log("This is the filterservicearray", filterServiceNameArray);
+
+  // On mount fetch the service_name part of the sentiment post
   useEffect(() => {
-    fetchSession();
+    setIsLoading(true);
+    const fetchServiceFilter = async () => {
+      try {
+        // Get all the feedback results
+        const sentimentFeedbackResults = await api.get("sentimentposts/");
+        const sentimentFeedbackData: SentimentPostType[] =
+          sentimentFeedbackResults.data.results;
+
+        // Maps through the sentimentFeedbackData array, and just gets the service_name part of the response
+        const serviceNames = sentimentFeedbackData.map(
+          (item) => item.service_name,
+        );
+
+        // Maps through the sentimentFeedbackData array, and just gets the service_type part of the response
+        const serviceTypes = sentimentFeedbackData.map(
+          (item) => item.service_type,
+        );
+
+        // Convert the service name and service type to an array to set; this is so that the array only contain the unique values
+        const getUniqueServiceNames = new Set(serviceNames);
+        const getUnqiueServiceTypes = new Set(serviceTypes);
+
+        // Convert the set back to an array and sort it alphabetically
+        const serviceFilterNameArray = Array.from(getUniqueServiceNames).sort(
+          (a, b) => a.localeCompare(b),
+        );
+        const serviceFilterTypeArray = Array.from(getUnqiueServiceTypes).sort(
+          (a, b) => a.localeCompare(b),
+        );
+        setServiceName(serviceFilterNameArray);
+        setServiceType(serviceFilterTypeArray);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error(error.response?.data);
+          console.error(error.response);
+        } else {
+          console.error("Error encountered", error);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchServiceFilter();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("dashboardFilters", JSON.stringify(filterValue));
-  }, [filterValue]);
-
-  //for capturing the dashboard page and saving to png
-  const handleCapture = async () => {
-    const cardElement = cardRef.current;
-    if (!cardElement) return;
-
-    try {
-      //temporarily remove the scale-85 style; this is to prevent capturing and saving cropped canvas
-      cardElement.classList.remove("scale-85");
-
-      //takes a screenshot of the dashboard and puts it in memory
-      const canvas = await html2canvas(cardElement, {
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        scale: 2,
-        allowTaint: true,
-      });
-
-      //get the url for the saved image from the canvas
-      const dataUrl = canvas.toDataURL("image/png");
-
-      //restore scaling after capture
-      cardElement.classList.add("scale-85");
-
-      //set the state for the URL of the image; for previewing the image before saving
-      setPreview(dataUrl);
-      setIsSaving(true);
-    } catch (error) {
-      alert("Faled to capture screenshot");
-      cardElement.classList.add("scale-85");
-    } finally {
-      cardElement.classList.add("scale-85");
-    }
-  };
-
-  const handleArchiveSubmit = async () => {
-    //get the url of the image
-    const response = await fetch(preview);
-    //convert the url to binary
-    const blob = await response.blob();
-
-    //check if the filename ends with an extension ".png" or ".jpg"
-    const fileNameEnd = fileName.endsWith(".png") || fileName.endsWith(".jpg");
-
-    let finalFileName = fileName;
-    //if file name doesn't include a file extension, then append ".png" to it
-    if (!fileNameEnd) {
-      finalFileName += ".png";
-    }
-
-    //create a form data and append the image and the fileName to the formData
-    const formData = new FormData();
-    formData.append("image", blob, finalFileName);
-    formData.append("title", finalFileName);
-
-    try {
-      //post the formData to the backend
-      await api.post("/archive/", formData);
-      setIsSaving(false);
-      toast.success("Successfully archived image!");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("this is the error", error.response?.data);
-      } else {
-        console.error("Error encountered", error);
-      }
-    }
-  };
-
-  //fetches the session part of the sentiment post
-  const fetchSession = async () => {
-    try {
-      const res = await api.get("sentimentposts/");
-
-      //maps through the array and just gets the quarter part of the response
-      const resSession = res.data.results.map(
-        (item: SentimentPostType) => item.quarter
-      );
-
-      //convert the session array to set; this is so that the array only contain the unique values
-      const sessions: Set<string> = new Set(resSession);
-
-      //converts the session set back to array to be sorted and also to be put into session state
-      const sessionArray = [...sessions].sort((a, b) => a.localeCompare(b));
-      setSession(sessionArray);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(error.response?.data);
-        console.error(error.response);
-      } else {
-        console.error("Error encountered", error);
-      }
-    }
-  };
-
-  //this is where the filterValue is coming from
-  const handleSelectChange = (quarter: string) => {
-    let newFilterValue: string[] = [];
-
-    //if the current unselected item from the dropdown is in the filter array, then remove it from the filter array
-    if (filterValue.includes(quarter)) {
-      newFilterValue = filterValue.filter(
-        (filterWords) => filterWords !== quarter
-      );
-
-      //if the current selected item from the dropdown is not in the filter array then make a shallow copy and append the item in the filter array
-    } else {
-      newFilterValue = [...filterValue, quarter];
-    }
-    //finally set the filter value to whatever the newFilterValue gets set to
-    setFilterValue(newFilterValue);
-  };
 
   return (
     <div className="w-full">
       <div>
-        <div className="bg-white shadow-md border-b border-gray-100 px-8 py-4 flex flex-wrap gap-4 justify-between items-center ">
+        <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-between items-center">
           <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center sm:text-left flex-1">
             Sentiment Analysis Dashboard
           </h3>
@@ -171,8 +154,10 @@ function DashboardPage() {
             <DashboardFilter
               dateRange={dateRange}
               setDateRange={setDateRange}
-              serviceItem={serviceItem}
-              setServiceItem={setServiceItem}
+              serviceNameArray={serviceName}
+              serviceTypeArray={serviceType}
+              setFilterServiceNameArray={setFilterServiceNameArray}
+              setFilterServiceTypeArray={setFilterServiceTypeArray}
             />
             <Button
               className="text-white bg-blue-700 hover:bg-blue-500 hover:text-white ml-5"
@@ -185,25 +170,47 @@ function DashboardPage() {
           </div>
         </div>
       </div>
-
       {/* Applied filter section*/}
-      <div className="text-muted-foreground px-8 py-2">
-        {dateRange || serviceItem ? (
-          <span>
-            Filters shown for {serviceItem && serviceItem}
-            {serviceItem && dateRange && " - "}
-            {dateRange &&
-              `${dateRange.from?.toLocaleDateString()} to ${dateRange.from?.toLocaleDateString()}`}
-          </span>
-        ) : (
+      <div className="text-muted-foreground px-8 py-2 break-words">
+        {isLoading ? (
+          <span>Loading dashboard filters...</span>
+        ) : !(
+            dateRange ||
+            filterServiceNameArray.length > 0 ||
+            filterServiceTypeArray.length > 0
+          ) ? (
           "No filters applied"
+        ) : (
+          <span>
+            Filters shown for {"   "}
+            {/* Service names filter */}
+            {filterServiceNameArray.length > 0 &&
+            filterServiceNameArray.length === serviceName.length
+              ? " All services names selected"
+              : filterServiceNameArray.join(", ")}
+            {/* Separator between the service names and service types */}
+            {filterServiceNameArray.length > 0 &&
+              filterServiceTypeArray.length > 0 &&
+              " - "}
+            {/* Service type filter */}
+            {filterServiceTypeArray.length > 0 &&
+            filterServiceTypeArray.length === serviceType.length
+              ? "All service types selected"
+              : filterServiceTypeArray.join(", ")}
+            {/* Separator between the service types date range */}
+            {(filterServiceNameArray.length > 0 ||
+              filterServiceTypeArray.length > 0) &&
+              dateRange &&
+              " - "}
+            {dateRange
+              ? `${dateRange.from?.toLocaleDateString()} to ${dateRange.to?.toLocaleDateString()}`
+              : ""}
+          </span>
         )}
       </div>
 
-      <main
-        ref={cardRef}
-        className="scale-85 origin-top flex justify-center flex-col lg:flex-row"
-      >
+      {/* Dashboard section*/}
+      <main className="scale-85 origin-top flex flex-col lg:flex-row">
         <div className="flex flex-col w-full lg:w-1/2 mr-5">
           <div className="h-[400px] rounded-md shadow-lg mt-20 p-10">
             <div className="flex justify-center items-center h-[250px]">
@@ -224,21 +231,8 @@ function DashboardPage() {
           <div className="h-[400px] rounded-md shadow-lg mt-10 p-4"></div>
         </div>
       </main>
-
-      <DashboardDialog
-        image={preview}
-        isOpen={isSaving}
-        setIsOpen={setIsSaving}
-        fileName={fileName}
-        setFileName={setFileName}
-        onCancel={() => setIsSaving(false)}
-        onConfirm={() => handleArchiveSubmit()}
-        dialogTitle="Preview image"
-        descriptionText="Please enter a name for the file to be downloaded"
-        buttonText="Redo?"
-      />
     </div>
   );
 }
 
-export default DashboardPage;
+export default GuestDashboard;

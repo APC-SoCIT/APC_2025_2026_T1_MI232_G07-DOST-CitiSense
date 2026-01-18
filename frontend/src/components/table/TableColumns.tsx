@@ -26,7 +26,8 @@ export type SentimentPostType = {
   id: number;
   name: string;
   quarter: string;
-  service: string;
+  service_name: string;
+  service_type: string;
   gender: Gender;
   feedback: string;
   sentiment: Sentiment;
@@ -34,7 +35,7 @@ export type SentimentPostType = {
 
 //column definition array initialization, this is where tanstack is referencing from
 export const getColumns = (
-  isEditing: boolean
+  isEditing: boolean,
 ): ColumnDef<SentimentPostType, any>[] => [
   {
     accessorKey: "service_name",

@@ -64,7 +64,7 @@ export function LoginForm1({ ...props }) {
         import.meta.env.VITE_GOOGLE_CALLBACK_URL
       }&prompt=consent&response_type=code&client_id=${
         import.meta.env.VITE_GOOGLE_CLIENT_ID
-      }&scope=openid%20email%20profile&access_type=offline`
+      }&scope=openid%20email%20profile&access_type=offline`,
     );
   };
 

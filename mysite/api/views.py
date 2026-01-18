@@ -9,13 +9,38 @@ from django.db.models import Count, Q, F
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 
-def filter_sentiment_queryset(request):
+# Get the current filter for the dashboard using dictionary unpacking
+def filter_dashboard_request(request):
     queryset = labeled_feedback.objects.all()
-    quarter = request.query_params.getlist("quarter")
 
-    if len(quarter) > 0:
-        queryset = queryset.filter(feedback__quarter__in=quarter)
-    return queryset
+    # Get the query parameters from either the service_name, service_type, or quarter in the URL.
+    service_name = request.query_params.getlist('service_name')
+    quarter = request.query_params.getlist("quarter")
+    service_type = request.query_params.getlist("service_type")
+    from_date = request.query_params.get("from")
+    to_date = request.query_params.get("to")
+
+    # Instantiate a dictionary; this will be used to hold the key/value pairs for the filters
+    filter_dict = {}
+
+    # If there is a service_name, quarter, and/or service_type in the query paramaters, then put it into the dictionary
+    # Just add more if statements if you want to add more new filters based on the requirements
+    if service_name:
+        filter_dict["feedback__service_name__in"] = service_name
+    if quarter:
+        filter_dict["feedback__quarter__in"] = quarter
+    if service_type:
+        filter_dict["feedback__service_type__in"] = service_type
+    if from_date:
+        # Split the text and remove the time field, just get the specific date
+        filter_dict["feedback__created_at__gte"] = from_date.split('T')[0]
+    if to_date:
+        # Split the text and remove the time field, just get the specific date
+        filter_dict["feedback__created_at__lte"] = to_date.split('T')[0]
+        
+    # Filter based on what the contents of the dictionary are
+    # Default to 0
+    return queryset.filter(**filter_dict)
 
 class IsAuthorOnly(permissions.BasePermission):
     #this only allows the authors of the dashboard to view, and update or delete their own archive image
@@ -42,9 +67,10 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = LabeledFeedbackSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
 
+
 @api_view(['GET'])
 def gauge_chart(request):
-    queryset = filter_sentiment_queryset(request)
+    queryset = filter_dashboard_request(request)
     senticounts = queryset.aggregate(
         positive = Count("id", filter=Q(sentiment="Positive")),
         negative =Count("id", filter=Q(sentiment="Negative")),
@@ -62,12 +88,12 @@ def gauge_chart(request):
 
 @api_view(['GET'])
 def gender_chart(request): 
-    queryset = filter_sentiment_queryset(request)
+    queryset = filter_dashboard_request(request)
     gendercount = queryset.values('sentiment', sex=F('feedback__sex')).annotate(sencount=Count('sentiment'))
     return Response({"genderCount" : gendercount})
 
 @api_view(['GET'])
 def service_chart(request):
-    queryset = filter_sentiment_queryset(request)
+    queryset = filter_dashboard_request(request)
     servicecount = queryset.values('sentiment', service=F('feedback__service_type')).annotate(sencount=Count('sentiment'))
     return Response({"serviceCount": servicecount})

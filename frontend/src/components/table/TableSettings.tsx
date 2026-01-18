@@ -143,8 +143,7 @@ const TableSettings = ({
               <h4 className="text-sm font-medium mb-3">Table Settings</h4>
               <div>
                 <Button
-                  size="sm"
-                  className="h-6 w-6 mr-2"
+                  className="mb-2 h-7 "
                   variant="destructive"
                   onClick={() => {
                     table.resetColumnFilters();
@@ -155,7 +154,7 @@ const TableSettings = ({
                     localStorage.removeItem("columnSizing");
                   }}
                 >
-                  <Trash2 />
+                  <span className="text-xs">Reset all</span>{" "}
                 </Button>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import axios from "axios";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const EmailVerificationCallback = () => {
   const { key } = useParams();
@@ -41,7 +41,7 @@ const EmailVerificationCallback = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <Loader className="w-20 h-20 animate-spin [animation-duration:2s]" />{" "}
+      <Loader2 className="w-20 h-20 animate-spin [animation-duration:2s]" />{" "}
       <h4 className="text-2xl">Redirecting you to login in {redirectTimer}</h4>
     </div>
   );

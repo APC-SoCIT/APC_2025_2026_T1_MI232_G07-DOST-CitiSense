@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { duration } from "html2canvas-pro/dist/types/css/property-descriptors/duration";
 
@@ -44,7 +44,7 @@ const AuthCallback = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <Loader className="w-20 h-20 animate-spin" />{" "}
+        <Loader2 className="w-20 h-20 animate-spin" />{" "}
         <h4 className="text-2xl">Authenticating</h4>
       </div>
     );

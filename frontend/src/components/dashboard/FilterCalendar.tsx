@@ -1,5 +1,4 @@
 import {
-  DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenu,
@@ -29,7 +28,7 @@ const FilterCalendar = ({
         <DropdownMenuTrigger asChild>
           <Button
             size="lg"
-            className="w-full justify-between "
+            className="w-full justify-between"
             variant="outline"
           >
             <span className="text-muted-foreground">
