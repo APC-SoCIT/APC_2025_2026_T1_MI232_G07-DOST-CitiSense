@@ -11,7 +11,7 @@ import DashboardFilter from "./DashboardFilter";
 import { type DateRange } from "react-day-picker";
 import { format } from "date-fns";
 
-function GuestDashboard() {
+function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     try {
@@ -224,7 +224,7 @@ function GuestDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col w-full lg:w-1/2 ml-5 pb-10">
+        <div className="flex flex-col w-full lg:w-1/2 lg:ml-5 pb-10">
           <div className="h-[400px] rounded-md shadow-lg mt-20 p-4">
             <Gender filterParams={filterParams} />
           </div>
@@ -235,4 +235,4 @@ function GuestDashboard() {
   );
 }
 
-export default GuestDashboard;
+export default DashboardPage;

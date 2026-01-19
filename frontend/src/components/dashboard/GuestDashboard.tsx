@@ -224,7 +224,7 @@ function GuestDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col w-full lg:w-1/2 ml-5 pb-10">
+        <div className="flex flex-col w-full lg:w-1/2 lg:ml-5 pb-10">
           <div className="h-[400px] rounded-md shadow-lg mt-20 p-4">
             <Gender filterParams={filterParams} />
           </div>

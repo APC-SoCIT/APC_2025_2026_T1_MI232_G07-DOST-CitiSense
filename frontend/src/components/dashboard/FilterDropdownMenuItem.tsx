@@ -7,7 +7,7 @@ import {
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type FilterDropdownMenuItemProps = {
   title: string;
@@ -29,12 +29,14 @@ const FilterDropdownMenuItem = ({
   const [searchTerm, setSearchTerm] = useState("");
 
   // Reference for the search term code: https://stackoverflow.com/a/68740356
-  const filterSearchTerm = serviceArray.filter((service) =>
-    service.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filterSearchTerm = useMemo(() => {
+    return serviceArray.filter((service) =>
+      service.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }, [serviceArray, searchTerm]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-w-0">
       <span className="p-1">{title}</span>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -43,7 +45,7 @@ const FilterDropdownMenuItem = ({
             className="w-full justify-between"
             variant="outline"
           >
-            <span className="text-muted-foreground max-w-md truncate">
+            <span className="text-muted-foreground truncate">
               {/* If nothing is selected, then show message */}
               {filterServiceArray.length === 0
                 ? "Nothing selected"

@@ -89,7 +89,7 @@ const DashboardFilter = ({
           <Filter /> <span className="hidden md:inline">Filter</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-xl">
+      <DialogContent className="w-[95vw] max-w-xl sm:w-full lg:min-w-xl">
         <DialogHeader>
           <DialogTitle>Filters</DialogTitle>
           <DialogDescription>Apply filters to the dashboard</DialogDescription>
@@ -118,7 +118,7 @@ const DashboardFilter = ({
           setDateRange={setLocalDateRange}
           dateRange={localDateRange}
         />
-        <DialogFooter className="flex w-full justify-between">
+        <DialogFooter className="flex flex-row justify-between ">
           <div className="flex-1">
             <Button
               variant="ghost"
