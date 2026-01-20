@@ -208,14 +208,11 @@ SIMPLE_JWT = {
     "LEEWAY": 1,
 }
 
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_ADAPTER = "authentication.adapters.CustomAccountAdapter"
-# # ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1", "password2"]
-# # ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {"email", "username"}
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_SIGNUP_FIELDS = ["username", "email*", "password1", "password2"]
+ACCOUNT_SIGNUP_FIELDS = ["username*", "email*", "password1", "password2"]
 
 #fix for duplicate social emails: https://stackoverflow.com/a/78722151
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
