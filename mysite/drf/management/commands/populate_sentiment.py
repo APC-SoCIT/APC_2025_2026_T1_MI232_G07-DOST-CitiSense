@@ -6,7 +6,7 @@ import sys
 
 # Reference: https://docs.djangoproject.com/en/6.0/howto/custom-management-commands/
 class Command(BaseCommand): 
-    help = "This management command is for putting a sentiment in each field"
+    help = "This management command is for putting a sentiment in each field."
 
     def handle(self, *args, **options):
         start_time = time.time()
@@ -16,9 +16,8 @@ class Command(BaseCommand):
         error_count = 0
         skipped_count = 0
 
-        labeled = labeled_feedback.objects.all()
+        labeled = labeled_feedback.objects.filter(sentiment=None)
         total = labeled.count()
-   
         
         self.stdout.write(f"Starting sentiment labeling for {total} row(s)...\n")
         
@@ -31,7 +30,7 @@ class Command(BaseCommand):
 
             try:
                 # If the current item in the loop doesn't have a sentiment to it, then put one
-                if item.sentiment is not None:
+                if item.sentiment is None:
                     sentiment = analyze_sentiment(item.feedback.comments)
                     item.sentiment = sentiment
                     update_count += 1
@@ -58,7 +57,7 @@ class Command(BaseCommand):
 
         # Print how many rows got an error
         if error_count > 0:    
-            self.stdout.write(self.style.ERROR(f"Failed to put sentiment on {error_count} row(s)."))
+            self.stdout.write(self.style.ERROR(f"Failed to put sesntiment on {error_count} row(s)."))
         
         # Print how many rows got skipped when applying a sentiment to, as they already have sentiment in their fields
         if skipped_count > 0:

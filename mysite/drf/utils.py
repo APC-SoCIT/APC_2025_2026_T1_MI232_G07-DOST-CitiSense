@@ -8,8 +8,16 @@ model = AutoModelForSequenceClassification.from_pretrained("dost-asti/RoBERTa-tl
 
 def analyze_sentiment(text):
 
+    # When there is no text, just return an empty field.
+    # "   " comments are still counted as text.
+    if not text or not text.strip():
+        return None
+    
+    # Remove whitespaces and new lines
+    clean_text = text.strip()
+
     # Tokenize the text
-    inputs = tokenizer(text, return_tensors="pt")
+    inputs = tokenizer(clean_text, return_tensors="pt", truncation=True, max_length=512)
 
     # Covert the inputs to logits
     output = model(**inputs)
@@ -18,7 +26,7 @@ def analyze_sentiment(text):
     # dim=1 means turn each row of logits into probabilities that sum to 1
     probabilities = torch.softmax(output.logits, dim=-1)
     
-    # Get the highest probability
+    # Get the highest probability   
     # .item() converts the tensor (e.g., tensor[42]) to a number so it will become 42
     predicted_sentiment = torch.argmax(probabilities, dim=-1).item()
     
