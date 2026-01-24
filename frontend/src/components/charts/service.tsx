@@ -3,7 +3,11 @@ import ReactApexChart from "react-apexcharts";
 import serviceData from "../../mockdata/service.json";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
-import { ChartProps, ResDataProps, ServiceDataProps } from "./chartprops";
+import {
+  ChartProps,
+  ResDataProps,
+  ServiceDataProps,
+} from "../../types/ChartsProps";
 
 type ServiceSeriesProps = {
   name: string;
@@ -24,12 +28,12 @@ const serviceMap = {
   "Library Tour": 3,
 };
 
-const Service = ({ filterParams }: ChartProps) => {
+const Service = ({ filterParams, refreshCharts }: ChartProps) => {
   const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
 
   useEffect(() => {
     getService();
-  }, [filterParams]);
+  }, [filterParams, refreshCharts]);
 
   const getService = async () => {
     try {
@@ -58,7 +62,7 @@ const Service = ({ filterParams }: ChartProps) => {
         ([sentiment, array]) => ({
           name: sentiment,
           data: array,
-        })
+        }),
       );
 
       setServiceValue(serviceSeries);

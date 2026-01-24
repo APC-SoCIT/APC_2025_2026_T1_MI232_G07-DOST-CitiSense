@@ -67,6 +67,13 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = LabeledFeedbackSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
 
+# Get the unique values for the filters in the dashboard to be sent to the frontend
+@api_view(['GET'])
+def dashboard_filter(request):
+    queryset = cleaned_feedback.objects.values_list
+    service_name = queryset("service_name", flat=True).distinct()
+    service_type = queryset("service_type", flat=True).distinct()
+    return Response({"service_name": service_name, "service_type": service_type})
 
 @api_view(['GET'])
 def gauge_chart(request):

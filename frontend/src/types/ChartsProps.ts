@@ -1,5 +1,6 @@
 export type ChartProps = {
   filterParams: string;
+  refreshCharts: number;
 };
 export type Sentiment = "Positive" | "Neutral" | "Negative";
 

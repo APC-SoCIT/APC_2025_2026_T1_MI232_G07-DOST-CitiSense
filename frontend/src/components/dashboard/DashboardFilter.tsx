@@ -15,15 +15,7 @@ import FilterDropdownMenuItem from "./FilterDropdownMenuItem";
 import FilterCalendar from "./FilterCalendar";
 import { type DateRange } from "react-day-picker";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
-
-type DashboardFilterProps = {
-  dateRange: DateRange | undefined;
-  setDateRange: (range: DateRange | undefined) => void;
-  serviceNameArray: string[];
-  serviceTypeArray: string[];
-  setFilterServiceNameArray: (serviceName: string[]) => void;
-  setFilterServiceTypeArray: (serviceType: string[]) => void;
-};
+import { DashboardFilterProps } from "../../types/DashboardProps";
 
 const DashboardFilter = ({
   dateRange,
@@ -125,8 +117,8 @@ const DashboardFilter = ({
               className="text-blue-600 hover:text-blue-800"
               onClick={() => {
                 setLocalDateRange(undefined);
-                setLocalServiceName([]);
-                setLocalServiceType([]);
+                setLocalServiceName(serviceNameArray);
+                setLocalServiceType(serviceTypeArray);
               }}
             >
               Clear Filters

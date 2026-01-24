@@ -2,19 +2,7 @@ import React from "react";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-
-type DashboardDialogProps = {
-  image: string;
-  isOpen: boolean;
-  setIsOpen: () => void;
-  fileName: string;
-  setFileName: (fileName: string) => void;
-  onCancel: () => void;
-  onConfirm: () => void;
-  dialogTitle: string;
-  descriptionText: string;
-  buttonText: string;
-};
+import { DashboardDialogProps } from "../../types/DashboardProps";
 
 const DashboardDialog = ({
   image,

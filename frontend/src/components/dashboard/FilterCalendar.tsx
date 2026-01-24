@@ -5,15 +5,8 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
-import { type DateRange } from "react-day-picker";
 import { Calendar } from "../../components/ui/calendar";
-
-type FilterCalendarProps = {
-  title: string;
-  placeholder: string;
-  dateRange: DateRange | undefined;
-  setDateRange: (range: DateRange | undefined) => void;
-};
+import { FilterCalendarProps } from "../../types/DashboardProps";
 
 const FilterCalendar = ({
   title,

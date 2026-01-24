@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         SERVICENAME_CHOICES = ["Library Seminar: Information Institutions", "Sustainability in Libraries: Green Practices for Information Institutions"]
         GENDER_CHOICES = ["Male", "Female"]
-        SERVICETYPE_CHOICES = ["HAHAAHAHHAA", "EWAN KO LANG"]
+        SERVICETYPE_CHOICES = ["Hybrid Seminar", "Material Requests", "Online Library", "Library Tour"]
         SENTIMENT_CHOICES = ["Positive", "Negative", "Neutral"]
         QUARTER_CHOICES = ["First Quarter", "Second Quarter", "Third Quarter", "Fourth Quarter"]
         TYPEOFLIBRARY_CHOICES = ["Non-library Institution", "Academic Library", "School Library", "Public Library"]

@@ -8,15 +8,7 @@ import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Input } from "../ui/input";
 import { useMemo, useState } from "react";
-
-type FilterDropdownMenuItemProps = {
-  title: string;
-  serviceArray: string[];
-  handleFilter: (service: string) => void;
-  filterServiceArray: string[];
-  placeholder: string;
-  handleSelectAll: (selectAll: boolean) => void;
-};
+import { FilterDropdownMenuItemProps } from "../../types/DashboardProps";
 
 const FilterDropdownMenuItem = ({
   title,

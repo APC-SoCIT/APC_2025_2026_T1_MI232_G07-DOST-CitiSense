@@ -6,12 +6,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Filter } from "lucide-react";
+import { DashboardDropdownProps } from "../../types/DashboardProps";
 
-type DashboardDropdownProps = {
-  session: string[];
-  handleSelectChange: (quarter: string) => void;
-  filterValue: string[];
-};
 const DashboardDropdown = ({
   session,
   handleSelectChange,

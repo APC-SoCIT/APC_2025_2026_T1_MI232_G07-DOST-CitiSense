@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import GaugeComponent from "react-gauge-component";
 import api from "../../api";
-import { ChartProps } from "./chartprops";
+import { ChartProps } from "../../types/ChartsProps";
 
-const Gauge = ({ filterParams }: ChartProps) => {
+const Gauge = ({ filterParams, refreshCharts }: ChartProps) => {
   const [gaugeValue, setGaugeValue] = useState(0);
 
   useEffect(() => {
     getGauge();
-  }, [filterParams]);
+  }, [filterParams, refreshCharts]);
 
   const getGauge = async () => {
     try {

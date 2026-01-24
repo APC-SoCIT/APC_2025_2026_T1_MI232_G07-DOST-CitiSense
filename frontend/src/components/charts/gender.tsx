@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
-import { ChartProps, ResDataProps } from "./chartprops";
+import { ChartProps, ResDataProps } from "../../types/ChartsProps";
 
 type GenderSeriesProps = {
   name: string;
@@ -15,12 +15,12 @@ const fallbackSeries = [
   { name: "Positive", data: [0, 0] },
 ];
 
-const Gender = ({ filterParams }: ChartProps) => {
+const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
 
   useEffect(() => {
     getGender();
-  }, [filterParams]);
+  }, [filterParams, refreshCharts]);
 
   const getGender = async () => {
     try {
@@ -50,7 +50,7 @@ const Gender = ({ filterParams }: ChartProps) => {
         ([sentiment, array]) => ({
           name: sentiment,
           data: array,
-        })
+        }),
       );
 
       setGenderValue(genderSeries);
