@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'drf.apps.DrfConfig',
     'authentication.apps.AuthenticationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,7 +51,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'corsheaders',  
-    'drf.apps.DrfConfig',
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'rest_framework',
