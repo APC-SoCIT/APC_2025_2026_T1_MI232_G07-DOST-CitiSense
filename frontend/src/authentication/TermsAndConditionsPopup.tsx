@@ -44,7 +44,7 @@ const TermsAndConditionsPopup: React.FC<TermsAndConditionsPopupProps> = ({
         if (!v) onClose();
       }}
     >
-      <DialogContent className="max-w-lg w-full p-0 overflow-hidden">
+      <DialogContent className="flex flex-col p-0 overflow-hidden">
         <DialogHeader className="border-b px-8 py-6 bg-white">
           <DialogTitle className="text-2xl font-bold text-slate-800 m-0">
             Terms and Conditions
@@ -120,40 +120,37 @@ const TermsAndConditionsPopup: React.FC<TermsAndConditionsPopupProps> = ({
           </section>
         </div>
         <DialogFooter className="border-t px-8 py-6 bg-white">
-          {error && (
-            <div className="mb-4 text-red-700 bg-red-50 px-3 py-2 rounded text-xs border border-red-200">
-              {error}
+          <div className="flex flex-col w-full">
+            <div className="flex items-center gap-2 mb-5">
+              <Checkbox
+                id="agree-checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+              />
+              <Label
+                htmlFor="agree-checkbox"
+                className="text-sm cursor-pointer select-none text-slate-600"
+              >
+                I have read and agree to the Terms and Conditions
+              </Label>
             </div>
-          )}
-          <div className="flex items-center gap-2 mb-5">
-            <Checkbox
-              id="agree-checkbox"
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-            />
-            <Label
-              htmlFor="agree-checkbox"
-              className="text-sm cursor-pointer select-none text-slate-600"
-            >
-              I have read and agree to the Terms and Conditions
-            </Label>
-          </div>
-          <div className="flex gap-3 justify-end">
-            <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={handleOk}
-              disabled={!agreed}
-              className={
-                agreed
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-slate-400 cursor-not-allowed"
-              }
-            >
-              Accept & Continue
-            </Button>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" type="button" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleOk}
+                disabled={!agreed}
+                className={
+                  agreed
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-slate-400 cursor-not-allowed"
+                }
+              >
+                Accept & Continue
+              </Button>
+            </div>
           </div>
         </DialogFooter>
       </DialogContent>
