@@ -12,14 +12,13 @@ import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import { sentimentFeedbackDataProps } from "../../types/DashboardProps";
-import ChatbotUI from "./chatbot/chatbotui";
 
 function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     try {
       const parsedDate = JSON.parse(
-        localStorage.getItem("dateRangeFilter") || ""
+        localStorage.getItem("dateRangeFilter") || "",
       );
 
       // Convert the parsed JSON (from and to) taken from the localStorage back to Date form
@@ -62,19 +61,19 @@ function DashboardPage() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null); // For the last refreshed x minutes ago message
   const [tick, setTick] = useState(0); // State for manually refreshing the page every minute, for the {x} value inside the last refreshed message
-  const [refreshCharts, setRefreshCharts] = useState(0); // State for refreshing the charts, when user clicked refresh dashboard button
+  const [refreshCharts, setRefreshCharts] = useState(0); // State for refreshing the charts in their respective useEffects, when user clicks the refresh dashboard button
   const [chartsLoading, setChartsLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("dateRangeFilter", JSON.stringify(dateRange));
     localStorage.setItem(
       "serviceNameFilter",
-      JSON.stringify(filterServiceNameArray)
+      JSON.stringify(filterServiceNameArray),
     );
 
     localStorage.setItem(
       "serviceTypeFilter",
-      JSON.stringify(filterServiceTypeArray)
+      JSON.stringify(filterServiceTypeArray),
     );
 
     console.log("Printing filters");
@@ -87,10 +86,10 @@ function DashboardPage() {
 
     // Convert the shownFilters array into URL parameters and convert them to a string.
     filterServiceNameArray.forEach((serviceName) =>
-      params.append("service_name", serviceName)
+      params.append("service_name", serviceName),
     );
     filterServiceTypeArray.forEach((serviceType) =>
-      params.append("service_type", serviceType)
+      params.append("service_type", serviceType),
     );
     if (dateRange?.from) {
       // Format the date to only show the year, month, and date; excluding the time
@@ -108,7 +107,7 @@ function DashboardPage() {
     try {
       // Get all the feedback results
       const sentimentFeedbackResults = await api.get(
-        "sentimentposts/dashboardfilters/"
+        "sentimentposts/dashboardfilters/",
       );
 
       const sentimentFeedbackData: sentimentFeedbackDataProps =
@@ -180,9 +179,7 @@ function DashboardPage() {
           <div>
             <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all ">
               {lastRefreshed
-                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, {
-                    addSuffix: true,
-                  })}`
+                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
                 : ""}
             </span>
             <Button
@@ -294,7 +291,6 @@ function DashboardPage() {
           </div>
         </main>
       )}
-      <ChatbotUI />
     </div>
   );
 }

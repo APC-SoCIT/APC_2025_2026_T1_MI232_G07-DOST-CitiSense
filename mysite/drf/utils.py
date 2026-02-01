@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-
+import ollama
 
 tokenizer = AutoTokenizer.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
 model = AutoModelForSequenceClassification.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
@@ -34,3 +34,16 @@ def analyze_sentiment(text):
     sentiment_map = {0: "Negative", 1: "Positive", 2: "Neutral"}
 
     return sentiment_map[predicted_sentiment]
+
+def summarize_text(text):
+    model="llama3.2:1b"
+    prompt = (
+        f"Summarize the following text in 1-2 sentences. "
+        f"Only output the summary text, do NOT add 'Here is a summary' or extra words.\n\n"
+        f"Text: \"{text}\""
+    )
+    response = ollama.generate(model=model, prompt=prompt, options={"temperature": 0.1,})
+
+    return response.response
+
+

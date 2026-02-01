@@ -8,6 +8,9 @@ from rest_framework.decorators import api_view
 from django.db.models import Count, Q, F
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
+from drf.utils import summarize_text
+from django.core.cache import cache
+import hashlib
 
 # Get the current filter for the dashboard using dictionary unpacking
 def filter_dashboard_request(request):
@@ -66,6 +69,137 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     queryset = labeled_feedback.objects.all()
     serializer_class = LabeledFeedbackSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
+
+# @api_view(['GET'])
+# def gender_bar_chart_tooltip(request):
+#     queryset = filter_dashboard_request(request)
+#     comments = list(queryset.values_list("feedback__comments", flat=True)[:1])
+
+#     response = summarize_text(comments)
+#     return Response({"response": response})
+
+
+# @api_view(['GET'])
+# def service_bar_chart_tooltip(request):
+#     queryset = filter_dashboard_request(request)
+#     comments = list(queryset.values_list("feedback__comments", flat=True)[:1])
+
+#     response = summarize_text(comments)
+#     return Response({"response": response})
+
+@api_view(['GET'])
+def get_total_feedback(request):
+    queryset = filter_dashboard_request(request)
+    totalcount = queryset.count()
+
+    return Response({"totalcount": totalcount})
+
+@api_view(['GET'])
+def service_bar_chart_tooltip(request):
+    data = {
+    "serviceTooltip": [
+        {
+            "sentiment": "Positive",
+            "service": "Material Requests",
+            "summary": "Material Requests service receives positive feedback from users."
+        },
+        {
+            "sentiment": "Positive",
+            "service": "Library Tour",
+            "summary": "Library Tour participants find the experience informative and welcoming."
+        },
+        {
+            "sentiment": "Negative",
+            "service": "Hybrid Seminar",
+            "summary": "Hybrid Seminar attendees express concerns about technical issues and engagement."
+        },
+        {
+            "sentiment": "Positive",
+            "service": "Hybrid Seminar",
+            "summary": "Hybrid Seminar attendees appreciate the flexibility and content quality."
+        },
+        {
+            "sentiment": "Negative",
+            "service": "Online Library",
+            "summary": "Online Library users report difficulties with navigation and accessibility."
+        },
+        {
+            "sentiment": "Negative",
+            "service": "Material Requests",
+            "summary": "Material Requests service faces criticism for slow processing times."
+        },
+        {
+            "sentiment": "Neutral",
+            "service": "Hybrid Seminar",
+            "summary": "Hybrid Seminar receives mixed or neutral feedback from participants."
+        },
+        {
+            "sentiment": "Neutral",
+            "service": "Library Tour",
+            "summary": "Library Tour attendees provide moderate feedback with room for improvement."
+        },
+        {
+            "sentiment": "Negative",
+            "service": "Library Tour",
+            "summary": "Library Tour participants express dissatisfaction with pacing and coverage."
+        },
+        {
+            "sentiment": "Neutral",
+            "service": "Material Requests",
+            "summary": "Material Requests service receives neutral feedback from users."
+        },
+        {
+            "sentiment": "Neutral",
+            "service": "Online Library",
+            "summary": "Online Library users provide moderate feedback about the platform."
+        },
+        {
+            "sentiment": "Positive",
+            "service": "Online Library",
+            "summary": "Online Library users find it a positive and helpful resource."
+        }
+    ]
+}
+    return Response(data)
+
+@api_view(['GET'])
+def gender_bar_chart_tooltip(request):
+    data = {
+        "genderTooltip": [
+            {
+                "sentiment": "Positive",
+                "sex": "Male",
+                "summary": "Male users are generally satisfied with the service and appreciate the smooth experience and helpful features."
+            },
+            {
+                "sentiment": "Positive",
+                "sex": "Female",
+                "summary": "Female users highlight good service quality, fast processing, and a pleasant overall experience."
+            },
+            {
+                "sentiment": "Negative",
+                "sex": "Male",
+                "summary": "Male users report delays, confusing steps, and occasional issues that made the process frustrating."
+            },
+            {
+                "sentiment": "Negative",
+                "sex": "Female",
+                "summary": "Female users mention slow responses, unclear instructions, and problems that affected their experience."
+            },
+            {
+                "sentiment": "Neutral",
+                "sex": "Female",
+                "summary": "Female feedback is mixed, with comments describing the process as average and suggesting minor improvements."
+            },
+            {
+                "sentiment": "Neutral",
+                "sex": "Male",
+                "summary": "Male feedback is mostly balanced, noting that the service works but could be clearer and more consistent."
+            }
+        ]
+    }
+
+    return Response(data)
 
 # Get the unique values for the filters in the dashboard to be sent to the frontend
 @api_view(['GET'])

@@ -5,14 +5,11 @@ import api from "../../api";
 import { ApexOptions } from "apexcharts";
 import {
   ChartProps,
-  ResDataProps,
   ServiceDataProps,
+  ServiceTooltipDataProps,
+  ServiceSeriesProps,
 } from "../../types/ChartsProps";
 
-type ServiceSeriesProps = {
-  name: string;
-  data: number[];
-};
 //fallback data for chart, if no data fetched or undefined
 const fallbackSeries = [
   { name: "Negative", data: [0, 0, 0, 0] },
@@ -30,10 +27,54 @@ const serviceMap = {
 
 const Service = ({ filterParams, refreshCharts }: ChartProps) => {
   const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
+  const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
+  const [serviceTooltipLoading, setServiceTooltipLoading] =
+    useState<boolean>(false);
 
   useEffect(() => {
     getService();
   }, [filterParams, refreshCharts]);
+
+  useEffect(() => {
+    getServiceTooltip();
+  }, [filterParams]);
+
+  const getServiceTooltip = async () => {
+    try {
+      setServiceTooltipLoading(true);
+
+      const res = await api.get(
+        `/sentimentposts/servicetooltip/?${filterParams}`,
+      );
+      const resData = res.data.serviceTooltip;
+
+      // Used to store the current summary for each sentiment and each service category
+      let serviceSummary = {
+        Negative: ["", "", "", ""],
+        Neutral: ["", "", "", ""],
+        Positive: ["", "", "", ""],
+      };
+
+      // Transform the data, and put the each summary in their respective serviceSummary dictionary
+      resData.forEach((item: ServiceTooltipDataProps) => {
+        // Get the current index from the serviceMap
+        const index = serviceMap[item.service];
+
+        // Access the current sentiment within the loop in the serviceSumary dictionary, then use the index of the service to place the summary text
+        // e.g., item.sentiment is 0 = Negative, the index is 0 = Hybrid Seminar. So serviceSummary["Negative"][0] = summary text
+        serviceSummary[item.sentiment][index] = item.summary;
+      });
+
+      // Get only the values of the serviceSummary (not the key)
+      const serviceTooltipObject = Object.values(serviceSummary);
+
+      setServiceTooltip(serviceTooltipObject);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setServiceTooltipLoading(false);
+    }
+  };
 
   const getService = async () => {
     try {
@@ -143,7 +184,39 @@ const Service = ({ filterParams, refreshCharts }: ChartProps) => {
     },
     tooltip: {
       style: {
-        fontSize: "12px",
+        fontSize: "14px",
+      },
+      // Series index is the index for the row, data point index is the index for the column
+      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+        return `
+      <div style="
+        padding: 16px;
+        max-width: 300px;
+        width: 300px;
+        white-space: initial;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      ">
+        <div style="
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 8px;
+          color: #333;
+        ">
+          ${w.globals.labels[dataPointIndex]} - 
+          Value: ${w.globals.series[seriesIndex][dataPointIndex]}
+        </div>
+          <div style="
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+          ">
+          ${serviceTooltipLoading ? "Loading summary..." : serviceTooltip[seriesIndex]?.[dataPointIndex] || "No summary available"}          
+          </div>
+        </div>
+      </div>
+    `;
       },
     },
   };

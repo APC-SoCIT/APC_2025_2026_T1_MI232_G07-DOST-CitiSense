@@ -4,10 +4,21 @@ export type ChartProps = {
 };
 export type Sentiment = "Positive" | "Neutral" | "Negative";
 
-export type ResDataProps = {
+export type GenderDataProps = {
   sex: "Female" | "Male";
   sentiment: Sentiment;
   sencount: number;
+};
+
+export type GenderSeriesProps = {
+  name: string;
+  data: number[];
+};
+
+export type GenderTooltipDataProps = {
+  sex: "Female" | "Male";
+  sentiment: Sentiment;
+  summary: string;
 };
 
 type Service =
@@ -20,4 +31,15 @@ export type ServiceDataProps = {
   service: Service;
   sentiment: Sentiment;
   sencount: number;
+};
+
+export type ServiceSeriesProps = {
+  name: string;
+  data: number[];
+};
+
+export type ServiceTooltipDataProps = {
+  service: Service;
+  sentiment: Sentiment;
+  summary: string;
 };

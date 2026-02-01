@@ -61,7 +61,7 @@ function GuestDashboard() {
   const [isSpinning, setIsSpinning] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null); // For the last refreshed x minutes ago message
   const [tick, setTick] = useState(0); // State for manually refreshing the page every minute, for the {x} value inside the last refreshed message
-  const [refreshCharts, setRefreshCharts] = useState(0); // State for refreshing the charts, when user clicked refresh dashboard button
+  const [refreshCharts, setRefreshCharts] = useState(0); // State for refreshing the charts in their respective useEffects, when user clicks the refresh dashboard button
   const [chartsLoading, setChartsLoading] = useState(false);
 
   useEffect(() => {

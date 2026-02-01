@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
-import { ChartProps, ResDataProps } from "../../types/ChartsProps";
+import {
+  ChartProps,
+  GenderDataProps,
+  GenderTooltipDataProps,
+  GenderSeriesProps,
+} from "../../types/ChartsProps";
 
-type GenderSeriesProps = {
-  name: string;
-  data: number[];
-};
 //fallback for the chart data if no data is fetched or if data is undefined
 const fallbackSeries = [
   { name: "Negative", data: [0, 0] },
@@ -17,10 +18,51 @@ const fallbackSeries = [
 
 const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
+  const [genderTooltip, setGenderTooltip] = useState<string[][]>([]);
+  const [isGenderTooltipLoading, setIsGenderTooltipLoading] = useState(false);
 
   useEffect(() => {
     getGender();
   }, [filterParams, refreshCharts]);
+
+  useEffect(() => {
+    getGenderTooltip();
+  }, [filterParams]);
+  const getGenderTooltip = async () => {
+    try {
+      setIsGenderTooltipLoading(true);
+      const res = await api.get(
+        `/sentimentposts/gendertooltip/?${filterParams}`,
+      );
+      const resData = res.data.genderTooltip;
+
+      // Used to store the current summary for each sentiment and each gender category
+      let genderSummary = {
+        Negative: ["", ""],
+        Neutral: ["", ""],
+        Positive: ["", ""],
+      };
+
+      // Transform the data, and put the each summary in their respective genderSummary dictionary.
+      resData.forEach((item: GenderTooltipDataProps) => {
+        // Assign an index for both sex (e.g., Female = 0, Male = 1)
+        const index = item.sex === "Female" ? 0 : 1;
+
+        // Access the current sentiment within the loop in the genderSummary dictionary, then use the index of the gender to place the summary text
+        // e.g., item.sentiment is 0 = Negative, the index is 0 = Female. So genderSummary["Negative"][0] = summary text
+        genderSummary[item.sentiment][index] = item.summary;
+      });
+
+      // Get only the values of the genderSummary (not the key)
+      const genderTooltipObject = Object.values(genderSummary);
+
+      setGenderTooltip(genderTooltipObject);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsGenderTooltipLoading(false);
+    }
+  };
 
   const getGender = async () => {
     try {
@@ -28,6 +70,7 @@ const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
       const resData = res.data.genderCount;
       console.log(res);
       console.log(resData);
+
       //temporary holder for sentiment counts per gender, this will hold the array for the series for the chart's y-axis
       //Index 0 = Female, Index 1 = Male
       let sentimentCounts = {
@@ -37,7 +80,7 @@ const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
       };
 
       // if the gender is "F" set index to 0; otherwise 1 ("M")
-      resData.forEach((item: ResDataProps) => {
+      resData.forEach((item: GenderDataProps) => {
         const index = item.sex === "Female" ? 0 : 1;
 
         //get the current sentiment in the loop and determine the gender index
@@ -125,7 +168,39 @@ const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
     },
     tooltip: {
       style: {
-        fontSize: "12px",
+        fontSize: "14px",
+      },
+      // Series index is the index for the row, data point index is the index for the column
+      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+        return `
+      <div style="
+        padding: 16px;
+        max-width: 300px;
+        width: 300px;
+        white-space: initial;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      ">
+        <div style="
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 8px;
+          color: #333;
+        ">
+          ${w.globals.labels[dataPointIndex]} - 
+          Value: ${w.globals.series[seriesIndex][dataPointIndex]}
+        </div>
+          <div style="
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+          ">
+          ${isGenderTooltipLoading ? "Loading summary..." : genderTooltip[seriesIndex]?.[dataPointIndex] || "No summary available"}          
+          </div>
+        </div>
+      </div>
+    `;
       },
     },
   };
