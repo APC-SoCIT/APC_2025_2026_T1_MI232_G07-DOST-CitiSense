@@ -1,4 +1,6 @@
 import Gauge from "../charts/gauge";
+// ...existing code...
+import ChatbotUI from "./chatbot/chatbotui";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
 import { Button } from "../ui/button";
@@ -291,6 +293,7 @@ function GuestDashboard() {
           </div>
         </main>
       )}
+      <ChatbotUI />
     </div>
   );
 }

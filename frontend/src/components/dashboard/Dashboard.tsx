@@ -1,6 +1,7 @@
 import Gauge from "../charts/gauge";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
+import ChatbotUI from "./chatbot/chatbotui";
 import { Button } from "../ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
@@ -291,6 +292,8 @@ function DashboardPage() {
           </div>
         </main>
       )}
+      {/* Chatbot floating button */}
+      <ChatbotUI />
     </div>
   );
 }
