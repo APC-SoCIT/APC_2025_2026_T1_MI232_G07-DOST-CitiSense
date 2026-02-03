@@ -13,6 +13,7 @@ import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import { sentimentFeedbackDataProps } from "../../types/DashboardProps";
+import SentimentTrends from "../charts/sentimenttrends";
 
 function DashboardPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -288,11 +289,15 @@ function DashboardPage() {
                 refreshCharts={refreshCharts}
               />
             </div>
-            <div className="h-[400px] rounded-md shadow-lg mt-10 p-4"></div>
+            <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
+              <SentimentTrends
+                filterParams={filterParams}
+                refreshCharts={refreshCharts}
+              />
+            </div>
           </div>
         </main>
       )}
-      {/* Chatbot floating button */}
       <ChatbotUI />
     </div>
   );

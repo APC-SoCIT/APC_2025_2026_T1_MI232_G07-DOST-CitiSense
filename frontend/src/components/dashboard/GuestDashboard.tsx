@@ -1,8 +1,8 @@
 import Gauge from "../charts/gauge";
-// ...existing code...
 import ChatbotUI from "./chatbot/chatbotui";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
+import SentimentTrends from "../charts/sentimenttrends";
 import { Button } from "../ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
@@ -289,7 +289,12 @@ function GuestDashboard() {
                 refreshCharts={refreshCharts}
               />
             </div>
-            <div className="h-[400px] rounded-md shadow-lg mt-10 p-4"></div>
+            <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
+              <SentimentTrends
+                filterParams={filterParams}
+                refreshCharts={refreshCharts}
+              />
+            </div>
           </div>
         </main>
       )}
