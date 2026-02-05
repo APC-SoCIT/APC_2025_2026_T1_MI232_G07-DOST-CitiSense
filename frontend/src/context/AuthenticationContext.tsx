@@ -34,7 +34,7 @@ type AuthProviderProps = {
 };
 //create a context where components can use it to render
 export const AuthenticationContext = createContext<AuthContextProps | null>(
-  null
+  null,
 );
 
 export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
@@ -44,22 +44,23 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   const [forgotEmail, setForgotEmail] = useState<string>("");
   const [registerEmail, setRegisterEmail] = useState<string>("");
 
-  //auth endpoints to skip auth checks
-  const authEndpoint =
-    window.location.href.includes("/login") ||
-    window.location.href.includes("/register") ||
-    window.location.href.includes("/password") ||
-    window.location.href.includes("/email");
-
   //fetch the user details on mount and for automatically refreshing the access token of the user
   useEffect(() => {
-    //check for the auth status; if there is no details, the refresh the access token.
+    // Some endpoints to skip auth checks
+    const authEndpoint =
+      window.location.href.includes("/login") ||
+      window.location.href.includes("/register") ||
+      window.location.href.includes("/password") ||
+      window.location.href.includes("/email") ||
+      window.location.href.includes("/guest-dashboard");
 
     //skip auth checks for auth endpoints
     if (authEndpoint) {
       setIsLoading(false);
       return;
     }
+
+    //check for the auth status; if there are no details, the refresh the access token.
     const checkAuthStatus = async () => {
       try {
         const userDetails = await api.get("/api/auth/user/");
@@ -74,7 +75,7 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       }
     };
     checkAuthStatus();
-    console.log("This is run");
+    console.log("AuthCheck is run");
     //set interval for automatically refreshing user every 9 minutes before the token expires;
     //this is for when a user is not actively accessing api endpoints
     const interval = setInterval(checkAuthStatus, 540000);

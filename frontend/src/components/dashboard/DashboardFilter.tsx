@@ -22,6 +22,8 @@ const DashboardFilter = ({
   setDateRange,
   serviceNameArray,
   serviceTypeArray,
+  filterServiceNameArray,
+  filterServiceTypeArray,
   setFilterServiceNameArray,
   setFilterServiceTypeArray,
 }: DashboardFilterProps) => {
@@ -32,9 +34,9 @@ const DashboardFilter = ({
 
   // On mount, populate the localService state with the current serviceArray values; serviceArray contains the unique services
   useEffect(() => {
-    setLocalServiceName(serviceNameArray);
-    setLocalServiceType(serviceTypeArray);
-  }, [serviceNameArray, serviceTypeArray]);
+    setLocalServiceName(filterServiceNameArray);
+    setLocalServiceType(filterServiceTypeArray);
+  }, [filterServiceNameArray, filterServiceTypeArray]);
 
   const handleServiceNameFilter = (serviceName: string) => {
     // Get the current localServiceType array state and assign each item in it to the prev variable
@@ -117,8 +119,8 @@ const DashboardFilter = ({
               className="text-blue-600 hover:text-blue-800"
               onClick={() => {
                 setLocalDateRange(undefined);
-                setLocalServiceName(serviceNameArray);
-                setLocalServiceType(serviceTypeArray);
+                setLocalServiceName([]);
+                setLocalServiceType([]);
               }}
             >
               Clear Filters

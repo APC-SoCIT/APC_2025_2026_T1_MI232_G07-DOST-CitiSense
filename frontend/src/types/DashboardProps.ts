@@ -45,6 +45,15 @@ export type DashboardFilterProps = {
   setDateRange: (range: DateRange | undefined) => void;
   serviceNameArray: string[];
   serviceTypeArray: string[];
+  filterServiceNameArray: string[];
+  filterServiceTypeArray: string[];
   setFilterServiceNameArray: (serviceName: string[]) => void;
   setFilterServiceTypeArray: (serviceType: string[]) => void;
+};
+
+export type DashboardSettingsProps = {
+  getGenderTooltip: (limit: number) => void;
+  isGenderTooltipLoading: boolean;
+  getServiceTooltip: (limit: number) => void;
+  isServiceTooltipLoading: boolean;
 };

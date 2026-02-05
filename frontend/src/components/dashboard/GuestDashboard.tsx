@@ -14,8 +14,23 @@ import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import { sentimentFeedbackDataProps } from "../../types/DashboardProps";
+import DashboardSettings from "./dashboardtools/DashboardSettings";
+import {
+  GenderTooltipDataProps,
+  ServiceTooltipDataProps,
+  serviceMap,
+} from "../../types/ChartsProps";
 
 function GuestDashboard() {
+  const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
+  const [serviceTooltipCount, setServiceTooltipCount] = useState<number[][]>(
+    [],
+  ); // State to count how many service text got summarized by the AI
+  const [serviceTooltipLoading, setServiceTooltipLoading] =
+    useState<boolean>(false);
+  const [genderTooltip, setGenderTooltip] = useState<string[][]>([]);
+  const [genderTooltipCount, setGenderTooltipCount] = useState<number[][]>([]); // State to count how many gender text got summarized by the AI
+  const [isGenderTooltipLoading, setIsGenderTooltipLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     try {
@@ -86,13 +101,25 @@ function GuestDashboard() {
     // Instantiate an URLSearchParam,this will hold all the filter values to be sent to the backend
     const params = new URLSearchParams();
 
+    const allServiceNameSelected =
+      filterServiceNameArray.length === serviceName.length;
+    const allServiceTypeSelected =
+      filterServiceTypeArray.length === serviceType.length;
+
+    // Only add service_name filters if not all selected
     // Convert the shownFilters array into URL parameters and convert them to a string.
-    filterServiceNameArray.forEach((serviceName) =>
-      params.append("service_name", serviceName),
-    );
-    filterServiceTypeArray.forEach((serviceType) =>
-      params.append("service_type", serviceType),
-    );
+    if (!allServiceNameSelected) {
+      filterServiceNameArray.forEach((serviceName) =>
+        params.append("service_name", serviceName),
+      );
+    }
+    // Only add service_type filters if not all selected
+    if (!allServiceTypeSelected) {
+      filterServiceTypeArray.forEach((serviceType) =>
+        params.append("service_type", serviceType),
+      );
+    }
+
     if (dateRange?.from) {
       // Format the date to only show the year, month, and date; excluding the time
       params.append("from", format(dateRange?.from, "yyyy-MM-dd"));
@@ -142,6 +169,18 @@ function GuestDashboard() {
     }
   };
 
+  // On mount, fetch the filter values, and refresh the charts
+  useEffect(() => {
+    fetchServiceFilter();
+    setRefreshCharts((prev) => prev + 1);
+  }, []);
+
+  // This is to reset the tooltip values once the filters change.
+  useEffect(() => {
+    setGenderTooltip([]);
+    setServiceTooltip([]);
+  }, [filterParams]);
+
   // For animating and disabling the refresh button based on the fetchServiceFilter function
   const handleRefresh = async () => {
     setIsSpinning(true);
@@ -152,7 +191,7 @@ function GuestDashboard() {
     console.log("Dashboard is refreshed");
   };
 
-  // UseEffect for manually triggering a refresh every 60 seconds; for rendering the formatDistanceToNow code
+  // UseEffect for manually updating the refresh message every 60 seconds; for rendering the formatDistanceToNow code
   useEffect(() => {
     const interval = setInterval(() => {
       setTick((x) => x + 1);
@@ -171,7 +210,95 @@ function GuestDashboard() {
     return () => clearTimeout(timeout);
   }, [filterParams, lastRefreshed]);
 
-  return (
+  const getGenderTooltip = async (limit: number) => {
+    try {
+      setIsGenderTooltipLoading(true);
+      const res = await api.get(
+        `/sentimentposts/gendertooltip/?limit=${limit}&offset=0&${filterParams}`,
+      );
+      const resData = res.data.genderTooltip;
+
+      let genderSummaryCount = {
+        Negative: [0, 0],
+        Neutral: [0, 0],
+        Positive: [0, 0],
+      };
+
+      // Used to store the current summary for each sentiment and each gender category
+      let genderSummary = {
+        Negative: ["", ""],
+        Neutral: ["", ""],
+        Positive: ["", ""],
+      };
+
+      // Transform the data, and put the each summary in their respective genderSummary dictionary.
+      resData.forEach((item: GenderTooltipDataProps) => {
+        // Assign an index for both sex (e.g., Female = 0, Male = 1)
+        const index = item.sex === "Female" ? 0 : 1;
+        // Access the current sentiment within the loop in the genderSummary/count dictionary, then use the index of the gender to place the summary text
+        // e.g., item.sentiment is 0 = Negative, the index is 0 = Female. So genderSummary["Negative"][0] = summary text / summary text count
+        genderSummary[item.sentiment][index] = item.summary;
+        genderSummaryCount[item.sentiment][index] = item.count;
+      });
+
+      // Just get the values from the genderSummaryCount and genderSummary dictionary of lists
+      setGenderTooltipCount(Object.values(genderSummaryCount));
+      setGenderTooltip(Object.values(genderSummary));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsGenderTooltipLoading(false);
+    }
+  };
+
+  const getServiceTooltip = async (limit: number) => {
+    try {
+      setServiceTooltipLoading(true);
+
+      const res = await api.get(
+        `/sentimentposts/servicetooltip/?limit=${limit}&offset=0&${filterParams}`,
+      );
+      const resData = res.data.serviceTooltip;
+
+      // Used to store the current summary for each sentiment and each service category
+      let serviceSummary = {
+        Negative: ["", "", "", ""],
+        Neutral: ["", "", "", ""],
+        Positive: ["", "", "", ""],
+      };
+
+      let serviceSummaryCount = {
+        Negative: [0, 0, 0, 0],
+        Neutral: [0, 0, 0, 0],
+        Positive: [0, 0, 0, 0],
+      };
+      // Transform the data, and put the each summary in their respective serviceSummary dictionary
+      resData.forEach((item: ServiceTooltipDataProps) => {
+        // Get the current index from the serviceMap
+        const index = serviceMap[item.service];
+
+        // Access the current sentiment within the loop in the serviceSumary dictionary, then use the index of the service to place the summary text
+        // e.g., item.sentiment is 0 = Negative, the index is 0 = Hybrid Seminar. So serviceSummary["Negative"][0] = summary text / summary count
+        serviceSummary[item.sentiment][index] = item.summary;
+        serviceSummaryCount[item.sentiment][index] = item.count;
+      });
+
+      // Get only the values of the serviceSummary (not the key)
+      setServiceTooltip(Object.values(serviceSummary));
+      setServiceTooltipCount(Object.values(serviceSummaryCount));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setServiceTooltipLoading(false);
+    }
+  };
+
+  return isGenderTooltipLoading || serviceTooltipLoading ? (
+    <div className="flex flex-col justify-center items-center min-h-screen mt-5">
+      <Loader2 className="w-20 h-20 animate-spin" />
+      <p className="text-gray-600 text-lg">Generating AI summaries...</p>
+    </div>
+  ) : (
     <div className="w-full">
       <div>
         <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-between items-center">
@@ -203,18 +330,18 @@ function GuestDashboard() {
               setDateRange={setDateRange}
               serviceNameArray={serviceName}
               serviceTypeArray={serviceType}
+              filterServiceNameArray={filterServiceNameArray}
+              filterServiceTypeArray={filterServiceTypeArray}
               setFilterServiceNameArray={setFilterServiceNameArray}
               setFilterServiceTypeArray={setFilterServiceTypeArray}
             />
-            <Button
-              className="text-white bg-blue-700 hover:bg-blue-500 hover:text-white ml-4"
-              variant="outline"
-              onClick={() => alert("Hello world!")}
-            >
-              <Download />
-              <span className="hidden md:inline">Export</span>
-            </Button>
           </div>
+          <DashboardSettings
+            getGenderTooltip={getGenderTooltip}
+            isGenderTooltipLoading={isGenderTooltipLoading}
+            getServiceTooltip={getServiceTooltip}
+            isServiceTooltipLoading={serviceTooltipLoading}
+          />
         </div>
       </div>
       {/* Applied filter section*/}
@@ -278,6 +405,9 @@ function GuestDashboard() {
               <Service
                 filterParams={filterParams}
                 refreshCharts={refreshCharts}
+                serviceTooltip={serviceTooltip}
+                serviceTooltipLoading={serviceTooltipLoading}
+                serviceTooltipCount={serviceTooltipCount}
               />
             </div>
           </div>
@@ -287,6 +417,9 @@ function GuestDashboard() {
               <Gender
                 filterParams={filterParams}
                 refreshCharts={refreshCharts}
+                genderTooltip={genderTooltip}
+                isGenderTooltipLoading={isGenderTooltipLoading}
+                genderTooltipCount={genderTooltipCount}
               />
             </div>
             <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">

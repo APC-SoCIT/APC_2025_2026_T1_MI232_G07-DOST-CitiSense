@@ -4,10 +4,10 @@ import serviceData from "../../mockdata/service.json";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
 import {
-  ChartProps,
   ServiceDataProps,
-  ServiceTooltipDataProps,
   ServiceSeriesProps,
+  ServiceChartProps,
+  serviceMap,
 } from "../../types/ChartsProps";
 
 //fallback data for chart, if no data fetched or undefined
@@ -17,64 +17,18 @@ const fallbackSeries = [
   { name: "Positive", data: [0, 0, 0, 0] },
 ];
 
-//map each service with a key for faster lookup
-const serviceMap = {
-  "Hybrid Seminar": 0,
-  "Material Requests": 1,
-  "Online Library": 2,
-  "Library Tour": 3,
-};
-
-const Service = ({ filterParams, refreshCharts }: ChartProps) => {
+const Service = ({
+  filterParams,
+  refreshCharts,
+  serviceTooltipLoading,
+  serviceTooltip,
+  serviceTooltipCount,
+}: ServiceChartProps) => {
   const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
-  const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
-  const [serviceTooltipLoading, setServiceTooltipLoading] =
-    useState<boolean>(false);
 
   useEffect(() => {
     getService();
   }, [filterParams, refreshCharts]);
-
-  useEffect(() => {
-    getServiceTooltip();
-  }, [filterParams]);
-
-  const getServiceTooltip = async () => {
-    try {
-      setServiceTooltipLoading(true);
-
-      const res = await api.get(
-        `/sentimentposts/servicetooltip/?${filterParams}`,
-      );
-      const resData = res.data.serviceTooltip;
-
-      // Used to store the current summary for each sentiment and each service category
-      let serviceSummary = {
-        Negative: ["", "", "", ""],
-        Neutral: ["", "", "", ""],
-        Positive: ["", "", "", ""],
-      };
-
-      // Transform the data, and put the each summary in their respective serviceSummary dictionary
-      resData.forEach((item: ServiceTooltipDataProps) => {
-        // Get the current index from the serviceMap
-        const index = serviceMap[item.service];
-
-        // Access the current sentiment within the loop in the serviceSumary dictionary, then use the index of the service to place the summary text
-        // e.g., item.sentiment is 0 = Negative, the index is 0 = Hybrid Seminar. So serviceSummary["Negative"][0] = summary text
-        serviceSummary[item.sentiment][index] = item.summary;
-      });
-
-      // Get only the values of the serviceSummary (not the key)
-      const serviceTooltipObject = Object.values(serviceSummary);
-
-      setServiceTooltip(serviceTooltipObject);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setServiceTooltipLoading(false);
-    }
-  };
 
   const getService = async () => {
     try {
@@ -206,7 +160,10 @@ const Service = ({ filterParams, refreshCharts }: ChartProps) => {
         ">
           ${w.globals.labels[dataPointIndex]} - 
           Value: ${w.globals.series[seriesIndex][dataPointIndex]}
+          <br/>
+          Comments summarized: ${serviceTooltipCount[seriesIndex][dataPointIndex]}
         </div>
+          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 8px 0;" />
           <div style="
             font-size: 14px;
             color: #6b7280;

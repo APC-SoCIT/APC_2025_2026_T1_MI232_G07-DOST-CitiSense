@@ -3,10 +3,9 @@ import ReactApexChart from "react-apexcharts";
 import api from "../../api";
 import { ApexOptions } from "apexcharts";
 import {
-  ChartProps,
   GenderDataProps,
-  GenderTooltipDataProps,
   GenderSeriesProps,
+  GenderChartProps,
 } from "../../types/ChartsProps";
 
 //fallback for the chart data if no data is fetched or if data is undefined
@@ -16,53 +15,18 @@ const fallbackSeries = [
   { name: "Positive", data: [0, 0] },
 ];
 
-const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
+const Gender = ({
+  filterParams,
+  refreshCharts,
+  genderTooltip,
+  isGenderTooltipLoading,
+  genderTooltipCount,
+}: GenderChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
-  const [genderTooltip, setGenderTooltip] = useState<string[][]>([]);
-  const [isGenderTooltipLoading, setIsGenderTooltipLoading] = useState(false);
 
   useEffect(() => {
     getGender();
   }, [filterParams, refreshCharts]);
-
-  useEffect(() => {
-    getGenderTooltip();
-  }, [filterParams]);
-  const getGenderTooltip = async () => {
-    try {
-      setIsGenderTooltipLoading(true);
-      const res = await api.get(
-        `/sentimentposts/gendertooltip/?${filterParams}`,
-      );
-      const resData = res.data.genderTooltip;
-
-      // Used to store the current summary for each sentiment and each gender category
-      let genderSummary = {
-        Negative: ["", ""],
-        Neutral: ["", ""],
-        Positive: ["", ""],
-      };
-
-      // Transform the data, and put the each summary in their respective genderSummary dictionary.
-      resData.forEach((item: GenderTooltipDataProps) => {
-        // Assign an index for both sex (e.g., Female = 0, Male = 1)
-        const index = item.sex === "Female" ? 0 : 1;
-
-        // Access the current sentiment within the loop in the genderSummary dictionary, then use the index of the gender to place the summary text
-        // e.g., item.sentiment is 0 = Negative, the index is 0 = Female. So genderSummary["Negative"][0] = summary text
-        genderSummary[item.sentiment][index] = item.summary;
-      });
-
-      // Get only the values of the genderSummary (not the key)
-      const genderTooltipObject = Object.values(genderSummary);
-
-      setGenderTooltip(genderTooltipObject);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsGenderTooltipLoading(false);
-    }
-  };
 
   const getGender = async () => {
     try {
@@ -172,6 +136,11 @@ const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
       },
       // Series index is the index for the row, data point index is the index for the column
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+        console.log(
+          "This is the gendertooltip seriesindex",
+          genderTooltip[seriesIndex][dataPointIndex],
+        );
+
         return `
       <div style="
         padding: 16px;
@@ -190,7 +159,10 @@ const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
         ">
           ${w.globals.labels[dataPointIndex]} - 
           Value: ${w.globals.series[seriesIndex][dataPointIndex]}
+          <br/>
+          Comments summarized: ${genderTooltipCount[seriesIndex][dataPointIndex]}
         </div>
+          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 8px 0;" />
           <div style="
             font-size: 14px;
             color: #6b7280;
@@ -204,7 +176,6 @@ const Gender = ({ filterParams, refreshCharts }: ChartProps) => {
       },
     },
   };
-
   return (
     <div>
       <ReactApexChart
