@@ -160,6 +160,7 @@ class FileMigration(models.Model):
         failed_count = 0
 
         # This allows us to execute SQL commands directly which is coming from the SQL file
+        # Reference: https://docs.djangoproject.com/en/6.0/topics/db/sql/#executing-custom-sql-directly
         with connection.cursor() as cursor:
             for statement in statements:
                 statement = statement.strip()

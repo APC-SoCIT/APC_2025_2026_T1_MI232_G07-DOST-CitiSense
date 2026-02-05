@@ -14,7 +14,7 @@ urlpatterns = [
     path("sentimentposts/dashboardfilters/", dashboard_filter, name="dboardfilters"),
     path("sentimentposts/gendertooltip/", gender_bar_chart_tooltip, name="gendertooltip"),
     path("sentimentposts/servicetooltip/", service_bar_chart_tooltip, name="servicetooltip"),
-    path("sentimentposts/totalcount/", get_total_feedback, name="total_feedback")
+    path("sentimentposts/totalcount/", get_total_feedback, name="total_feedback"),
     # path("archive/", views.ArchivePostListCreate.as_view(), name="archiveposts"),
     # path("archive/<int:pk>/", views.ArchivePostListUpdate.as_view(),  name="archivepost-update"),
 ]

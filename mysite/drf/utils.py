@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import ollama
+import time
 
 tokenizer = AutoTokenizer.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
 model = AutoModelForSequenceClassification.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
@@ -43,7 +44,6 @@ def summarize_text(text):
         f"Text: \"{text}\""
     )
     response = ollama.generate(model=model, prompt=prompt, options={"temperature": 0.1,})
-
     return response.response
 
 

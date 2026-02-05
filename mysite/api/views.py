@@ -5,12 +5,13 @@ from drf.models import cleaned_feedback, labeled_feedback
 from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q, F, Min
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from drf.utils import summarize_text
 from django.core.cache import cache
 import hashlib
+import time
 
 # Get the current filter for the dashboard using dictionary unpacking
 def filter_dashboard_request(request):
@@ -40,7 +41,7 @@ def filter_dashboard_request(request):
     if to_date:
         # Split the text and remove the time field, just get the specific date
         filter_dict["feedback__created_at__lte"] = to_date.split('T')[0]
-        
+
     # Filter based on what the contents of the dictionary are
     # Default to 0
     return queryset.filter(**filter_dict)
@@ -70,22 +71,7 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = LabeledFeedbackSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
 
-# @api_view(['GET'])
-# def gender_bar_chart_tooltip(request):
-#     queryset = filter_dashboard_request(request)
-#     comments = list(queryset.values_list("feedback__comments", flat=True)[:1])
 
-#     response = summarize_text(comments)
-#     return Response({"response": response})
-
-
-# @api_view(['GET'])
-# def service_bar_chart_tooltip(request):
-#     queryset = filter_dashboard_request(request)
-#     comments = list(queryset.values_list("feedback__comments", flat=True)[:1])
-
-#     response = summarize_text(comments)
-#     return Response({"response": response})
 
 @api_view(['GET'])
 def get_total_feedback(request):
@@ -93,113 +79,6 @@ def get_total_feedback(request):
     totalcount = queryset.count()
 
     return Response({"totalcount": totalcount})
-
-@api_view(['GET'])
-def service_bar_chart_tooltip(request):
-    data = {
-    "serviceTooltip": [
-        {
-            "sentiment": "Positive",
-            "service": "Material Requests",
-            "summary": "Material Requests service receives positive feedback from users."
-        },
-        {
-            "sentiment": "Positive",
-            "service": "Library Tour",
-            "summary": "Library Tour participants find the experience informative and welcoming."
-        },
-        {
-            "sentiment": "Negative",
-            "service": "Hybrid Seminar",
-            "summary": "Hybrid Seminar attendees express concerns about technical issues and engagement."
-        },
-        {
-            "sentiment": "Positive",
-            "service": "Hybrid Seminar",
-            "summary": "Hybrid Seminar attendees appreciate the flexibility and content quality."
-        },
-        {
-            "sentiment": "Negative",
-            "service": "Online Library",
-            "summary": "Online Library users report difficulties with navigation and accessibility."
-        },
-        {
-            "sentiment": "Negative",
-            "service": "Material Requests",
-            "summary": "Material Requests service faces criticism for slow processing times."
-        },
-        {
-            "sentiment": "Neutral",
-            "service": "Hybrid Seminar",
-            "summary": "Hybrid Seminar receives mixed or neutral feedback from participants."
-        },
-        {
-            "sentiment": "Neutral",
-            "service": "Library Tour",
-            "summary": "Library Tour attendees provide moderate feedback with room for improvement."
-        },
-        {
-            "sentiment": "Negative",
-            "service": "Library Tour",
-            "summary": "Library Tour participants express dissatisfaction with pacing and coverage."
-        },
-        {
-            "sentiment": "Neutral",
-            "service": "Material Requests",
-            "summary": "Material Requests service receives neutral feedback from users."
-        },
-        {
-            "sentiment": "Neutral",
-            "service": "Online Library",
-            "summary": "Online Library users provide moderate feedback about the platform."
-        },
-        {
-            "sentiment": "Positive",
-            "service": "Online Library",
-            "summary": "Online Library users find it a positive and helpful resource."
-        }
-    ]
-}
-    return Response(data)
-
-@api_view(['GET'])
-def gender_bar_chart_tooltip(request):
-    data = {
-        "genderTooltip": [
-            {
-                "sentiment": "Positive",
-                "sex": "Male",
-                "summary": "Male users are generally satisfied with the service and appreciate the smooth experience and helpful features."
-            },
-            {
-                "sentiment": "Positive",
-                "sex": "Female",
-                "summary": "Female users highlight good service quality, fast processing, and a pleasant overall experience."
-            },
-            {
-                "sentiment": "Negative",
-                "sex": "Male",
-                "summary": "Male users report delays, confusing steps, and occasional issues that made the process frustrating."
-            },
-            {
-                "sentiment": "Negative",
-                "sex": "Female",
-                "summary": "Female users mention slow responses, unclear instructions, and problems that affected their experience."
-            },
-            {
-                "sentiment": "Neutral",
-                "sex": "Female",
-                "summary": "Female feedback is mixed, with comments describing the process as average and suggesting minor improvements."
-            },
-            {
-                "sentiment": "Neutral",
-                "sex": "Male",
-                "summary": "Male feedback is mostly balanced, noting that the service works but could be clearer and more consistent."
-            }
-        ]
-    }
-
-    return Response(data)
 
 # Get the unique values for the filters in the dashboard to be sent to the frontend
 @api_view(['GET'])
@@ -238,3 +117,135 @@ def service_chart(request):
     queryset = filter_dashboard_request(request)
     servicecount = queryset.values('sentiment', service=F('feedback__service_type')).annotate(sencount=Count('sentiment'))
     return Response({"serviceCount": servicecount})
+
+@api_view(['GET'])
+def gender_bar_chart_tooltip(request):
+    queryset = filter_dashboard_request(request)
+
+    start_time = time.time()
+
+    # Get the limit and offset based on the API, default to 200 for the limit, offset is always 0.
+    limit = int(request.query_params.get("limit", 200))
+    offset = int(request.query_params.get("offset",0))
+
+    # Generate a cache key from the request's filter parameters
+    # If there is a cache key already used with, use that and don't compute for summarization anymore
+    cache_key = f"gender_tooltip_{hash(str(request.GET))}"
+    cached_result = cache.get(cache_key)
+    if cached_result:
+        return Response({"genderTooltip": cached_result})
+
+    # Convert the queryset to a list so you can modify it in place
+    response = list(queryset[offset:offset+limit].values("sentiment", sex=F("feedback__sex"), summary=F("feedback__comments")))
+   
+   # Initialize a dictionary to hold the new shape of the API
+    response_dict = {}
+
+    for row in response:
+        # Generate a key from the sentiment and sex (e.g., key = Positive_Male)
+        key = f"{row['sentiment']}_{row['sex']}"
+
+        # If the key is not in the dictionary yet, then insert it with the values taken from the response
+        if key not in response_dict:
+            response_dict[key] = {
+                "sentiment": row["sentiment"],
+                "sex": row["sex"],
+                "summary": row["summary"],
+                "count": 1
+            }
+        else: 
+            # Append the summary to the current row sentiment and sex's summary
+            response_dict[key]["summary"] += ", " + row["summary"]
+            response_dict[key]["count"] += 1
+
+    response_list = list(response_dict.values())
+
+    for row in response_list:
+        if row["summary"] is not None:
+        # Access the current and get the summary/comments value, then
+        # Update the value of the summary, by putting the comments through the AI model
+            row["summary"] = summarize_text(row["summary"])
+    
+    # If there isn't a cache for the gender response, then cache the response, and set the cache_key as the identifier.
+    cache.set(cache_key, response_list, 3600)
+
+    end_time = time.time()
+    completed_time = end_time - start_time
+    print(f"Time completed: {completed_time:.2f} for gendertooltip")
+    return Response({"genderTooltip": response_list})
+
+@api_view(['GET'])
+def service_bar_chart_tooltip(request):
+    queryset = filter_dashboard_request(request)
+
+    # Get the limit and offset based on the API, default to 200 for the limit, offset is always 0.
+    limit = int(request.query_params.get("limit", 200))
+    offset = int(request.query_params.get("offset",0))
+
+    start_time = time.time()
+
+    # Generate a cache key from the request's filter parameters
+    # If there is a cache key already used with, use that and don't compute for summarization anymore
+    cache_key = f"serviceTooltip{hash(str(request.GET))}"
+    cached_result = cache.get(cache_key)
+    if cached_result:
+        return Response({"serviceTooltip": cached_result})
+    
+    # Convert the queryset to a list so you can modify it in place
+    response = list(queryset[offset:offset+limit].values("sentiment", service=F("feedback__service_type"), summary=F("feedback__comments")))
+    
+    # Initialize a dictionary to hold the new shape of the API
+    response_dict = {}
+
+    for row in response:
+        # Generate a key from the sentiment and service (e.g., key = Positive_Hybrid Seminar)
+        key = f"{row['sentiment']}_{row['service']}"
+
+        if key not in response_dict:
+            response_dict[key] ={
+                "sentiment": row["sentiment"],
+                "service": row["service"],
+                "summary": row["summary"],
+                "count": 1
+            }
+        else:
+            # Append the summary to the current row sentiment and service's summary
+            response_dict[key]["summary"] += ", " + row["summary"]
+            response_dict[key]["count"] += 1
+
+    response_list = list(response_dict.values())
+
+    for row in response_list: 
+        # For each row in the response list, access and update the summary with the AI model's response
+        row["summary"] = summarize_text(row["summary"])
+
+    # If there isn't a cache for the service response, then cache the response, and set the cache_key as the identifier.
+    cache.set(cache_key, response_list, 3600)
+
+    end_time = time.time()
+    completed_time = end_time - start_time
+    print(f"Time completed: {completed_time} for service tooltip")
+
+    return Response({"serviceTooltip": response_list})
+
+#summarize_text()
+
+# @api_view(['GET'])
+# def gender_bar_chart_tooltip(request):
+#     queryset = filter_dashboard_request(request)
+
+#     # first_ids = queryset.values("sentiment", "feedback__sex").annotate(first_id=Min("id")).values_list("first_id", flat=True)
+#     first_ids = queryset.values("sentiment", "feedback__sex", "feedback__comments")
+#     response = queryset.filter(id__in=first_ids).values("sentiment", sex=F("feedback__sex"), summary=F("feedback__comments"))
+
+#     return Response({ "firstIds": first_ids, "genderTooltip": response})
+
+# @api_view(['GET'])
+# def service_bar_chart_tooltip(request):
+#     queryset = filter_dashboard_request(request)
+
+#     first_ids = queryset.values("sentiment", "feedback__service_type").annotate(first_id=Min("id")).values_list("first_id", flat=True)
+#     response = queryset.filter(id__in=first_ids).values("sentiment", service=F("feedback__service_type"), summary=F("feedback__comments"))
+
+#     return Response({"serviceTooltip": response})
+
