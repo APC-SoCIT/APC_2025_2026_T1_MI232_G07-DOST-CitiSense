@@ -1,7 +1,8 @@
 import Gauge from "../charts/gauge";
+import ChatbotUI from "./chatbot/chatbotui";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
-import ChatbotUI from "./chatbot/chatbotui";
+import SentimentTrends from "../charts/sentimenttrends";
 import { Button } from "../ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
@@ -13,15 +14,13 @@ import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import { sentimentFeedbackDataProps } from "../../types/DashboardProps";
-
-import SentimentTrends from "../charts/sentimenttrends";
-
 import DashboardSettings from "./dashboardtools/DashboardSettings";
 import {
   GenderTooltipDataProps,
   ServiceTooltipDataProps,
   serviceMap,
 } from "../../types/ChartsProps";
+import ThematicAnalysisTable from "../charts/ThematicAnalysis";
 
 function DashboardPage() {
   const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
@@ -425,14 +424,17 @@ function DashboardPage() {
               />
             </div>
             <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-              <SentimentTrends
-                filterParams={filterParams}
-                refreshCharts={refreshCharts}
-              />
+              <ThematicAnalysisTable />
             </div>
           </div>
         </main>
       )}
+      <div className="h-[400px] rounded-md shadow-lg mt-10 px-10">
+        <SentimentTrends
+          filterParams={filterParams}
+          refreshCharts={refreshCharts}
+        />
+      </div>
       <ChatbotUI />
     </div>
   );

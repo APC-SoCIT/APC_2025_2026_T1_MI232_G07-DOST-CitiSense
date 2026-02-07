@@ -118,6 +118,51 @@ def service_chart(request):
     servicecount = queryset.values('sentiment', service=F('feedback__service_type')).annotate(sencount=Count('sentiment'))
     return Response({"serviceCount": servicecount})
 
+@api_view(["GET"])
+def area_chart(request):
+    queryset = filter_dashboard_request(request)
+    areacount = list(queryset.values('sentiment', date_created=F("feedback__created_at")))
+
+    # Initialize a dictionary to hold the API shape for the area chart
+    areacount_dict = {}
+
+    for row in areacount: 
+        # For each row in the response, convert each into string and remove the time from the date. Final transformation will look like 2025-12-3
+        date_str = row["date_created"].isoformat().split("T")[0]
+        # Create a key for the dictionary using only the sentiment
+        sentiment = row["sentiment"]
+        
+        if sentiment not in areacount_dict:
+            areacount_dict[sentiment] = {
+                "name": row["sentiment"],
+                "data": [],
+                "date_counts": {},
+            }
+        
+        # Check if the date already exists in the date_counts
+        if date_str in areacount_dict[sentiment]["date_counts"]:
+            # Increment by one if the current date has appeared before
+            areacount_dict[sentiment]["date_counts"][date_str] += 1
+        else:
+            # If it's the first time for the date to appear, start the count at 1
+            areacount_dict[sentiment]["date_counts"][date_str] = 1
+        
+        # Get the current total count for the date within this loop
+        count = areacount_dict[sentiment]["date_counts"][date_str]
+
+    for sentiment in areacount_dict:
+        # Append the date and the total count for each date to the data list
+        for date, count in areacount_dict[sentiment]["date_counts"].items():
+            areacount_dict[sentiment]["data"].append([date, count])
+
+        # Sort by date; x[0] because the index 0 is the date value
+        areacount_dict[sentiment]["data"].sort(key=lambda x: x[0])
+        # Additionally, after the for loop, delete the date_counts dictionary, this is not needed for the API response
+        del areacount_dict[sentiment]["date_counts"]
+
+    areacount_list = list(areacount_dict.values())
+    return Response({"areaCount": areacount_list})
+
 @api_view(['GET'])
 def gender_bar_chart_tooltip(request):
     queryset = filter_dashboard_request(request)

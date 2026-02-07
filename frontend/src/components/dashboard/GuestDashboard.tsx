@@ -20,6 +20,7 @@ import {
   ServiceTooltipDataProps,
   serviceMap,
 } from "../../types/ChartsProps";
+import ThematicAnalysisTable from "../charts/ThematicAnalysis";
 
 function GuestDashboard() {
   const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
@@ -423,14 +424,17 @@ function GuestDashboard() {
               />
             </div>
             <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-              <SentimentTrends
-                filterParams={filterParams}
-                refreshCharts={refreshCharts}
-              />
+              <ThematicAnalysisTable />
             </div>
           </div>
         </main>
       )}
+      <div className="h-[400px] rounded-md shadow-lg px-10">
+        <SentimentTrends
+          filterParams={filterParams}
+          refreshCharts={refreshCharts}
+        />
+      </div>
       <ChatbotUI />
     </div>
   );

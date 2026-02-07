@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
-import { ChevronDown, Download, Loader2, Settings } from "lucide-react";
+import { Check, ChevronDown, Download, Loader2, Settings } from "lucide-react";
 import { DashboardSettingsProps } from "../../../types/DashboardProps";
 import {
   DropdownMenu,
@@ -34,7 +34,7 @@ const DashboardSettings = ({
     await getGenderTooltip(selectedRows);
     await getServiceTooltip(selectedRows);
   };
-  const rowArray = [10, 50, 100, 200, 500, 1000];
+  const rowArray = [1, 5, 10, 50, 100, 200, 500, 1000];
   return (
     <div className="flex flex-col min-w-0">
       <Dialog open={open} onOpenChange={setOpen}>
@@ -70,15 +70,16 @@ const DashboardSettings = ({
                 <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="className={`min-w-[var(--radix-dropdown-menu-trigger-width)] max-h-48 max-w-3xs">
+            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-48 overflow-auto">
               {rowArray.map((item, index) => (
                 <DropdownMenuItem
-                  className=""
+                  className="w-full flex justify-between items-center"
                   onSelect={() => setSelectedRows(item)}
                   inset={false}
                   key={index}
                 >
-                  {item}
+                  <span>{item}</span>
+                  {selectedRows === item && <Check className="h-4 w-4" />}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -102,7 +103,7 @@ const DashboardSettings = ({
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             <Button
               variant="outline"
-              className="w-full sm:w-auto bg-green-500 text-white"
+              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 hover:text-white text-white"
               onClick={() => alert("Export clicked")}
             >
               <Download className="mr-2 h-4 w-4" />
@@ -111,7 +112,10 @@ const DashboardSettings = ({
 
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="secondary" className="w-full sm:w-auto">
+                <Button
+                  variant="secondary"
+                  className="w-full sm:w-auto bg-red-500 text-white hover:bg-red-600"
+                >
                   Close
                 </Button>
               </DialogClose>

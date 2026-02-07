@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import axios from "axios";
+import api from "../../api";
+import {
+  SentimentTrendsDataProps,
+  SentimentTrendsChartsProps,
+} from "../../types/ChartsProps";
+import { generateFakeData } from "../../mockdata/fakeSentimentTrends";
 
 const fallbackSeries = [
   { name: "Negative", data: [0, 0, 0, 0, 0, 0, 0] },
@@ -9,68 +15,57 @@ const fallbackSeries = [
   { name: "Positive", data: [0, 0, 0, 0, 0, 0, 0] },
 ];
 
-interface SentimentTrendsProps {
-  filterParams?: string;
-  refreshCharts?: number;
-}
-
-const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
-  const [series, setSeries] = useState(fallbackSeries);
+const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
+  filterParams,
+  refreshCharts,
+}) => {
+  const [trendsValue, setTrendsValue] = useState<SentimentTrendsDataProps[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSentimentTrendsData = async () => {
       setIsLoading(true);
       setIsError(null);
       try {
-        const response = await axios.get("/api/sentimentposts/trends/");
-        const apiData = response.data?.trends;
-        if (Array.isArray(apiData) && apiData.length > 0) {
-          const mapped = ["Negative", "Neutral", "Positive"].map(
-            (sentiment) => {
-              const found = apiData.find(
-                (item) => item.sentiment === sentiment,
-              );
-              return {
-                name: sentiment,
-                data:
-                  found && Array.isArray(found.data)
-                    ? found.data
-                    : [0, 0, 0, 0, 0, 0, 0],
-              };
-            },
-          );
-          setSeries(mapped);
-        } else {
-          setSeries(fallbackSeries);
-        }
+        const response = await api.get(
+          `sentimentposts/areachart/?${filterParams}`,
+        );
+        const responseData = response.data.areaCount;
+
+        // setTrendsValue(generateFakeData());
+        setTrendsValue(responseData);
       } catch (err) {
+        console.log(err);
         setIsError("Failed to fetch sentiment trends data.");
-        setSeries(fallbackSeries);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    fetchSentimentTrendsData();
+  }, [filterParams, refreshCharts]);
 
   const options: ApexOptions = {
     chart: {
       type: "area",
       stacked: true,
-      height: 350,
       toolbar: {
         show: true,
         tools: {
           download: true,
-          zoom: false,
+          zoom: true,
           zoomin: true,
           zoomout: true,
-          reset: false,
-          pan: false,
-          selection: false,
+          reset: true,
+          selection: true,
         },
+      },
+      zoom: {
+        enabled: true,
+        type: "x",
+        autoScaleYaxis: true,
       },
       animations: {
         enabled: true,
@@ -81,17 +76,18 @@ const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
     title: {
       text: "Sentiment Trends",
       align: "left",
+
       style: {
         fontSize: "20px",
         fontWeight: 600,
       },
     },
-    colors: ["#EA4228", "#d4ab57ff", "#4CAF50"],
+    colors: ["#4CAF50", "#EA4228", "#d4ab57ff"],
     dataLabels: {
       enabled: false,
     },
     stroke: {
-      curve: "smooth",
+      curve: "monotoneCubic",
       width: 2,
     },
     fill: {
@@ -104,8 +100,9 @@ const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
       },
     },
     xaxis: {
-      categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      type: "datetime",
       labels: {
+        datetimeUTC: true,
         style: {
           colors: "#64748b",
           fontSize: "12px",
@@ -120,6 +117,7 @@ const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
       },
     },
     yaxis: {
+      min: 0,
       title: {
         text: "Sentiment Count",
         style: {
@@ -153,7 +151,7 @@ const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
       },
     },
     grid: {
-      borderColor: "#e2e8f0",
+      borderColor: "#adb4be",
       strokeDashArray: 3,
       xaxis: {
         lines: {
@@ -179,11 +177,9 @@ const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
       style: {
         fontSize: "12px",
       },
-      x: {
-        formatter: (val) => `Day: ${val}`,
-      },
+      x: { format: "dd MMM yy" },
       y: {
-        formatter: (value) => `${value} posts`,
+        formatter: (value) => `${value} post(s)`,
         title: {
           formatter: (seriesName) => `${seriesName}:`,
         },
@@ -215,13 +211,13 @@ const SentimentTrends: React.FC<SentimentTrendsProps> = () => {
 
   if (isLoading) return <div>Loading...</div>;
   return (
-    <div className="w-full">
+    <div className="w-full px-10">
       {isError && <div className="text-red-500 text-sm mb-2">{isError}</div>}
       <ReactApexChart
         options={options}
-        series={series}
+        series={trendsValue.length > 0 ? trendsValue : fallbackSeries}
         type="area"
-        height={350}
+        height={"350px"}
       />
     </div>
   );

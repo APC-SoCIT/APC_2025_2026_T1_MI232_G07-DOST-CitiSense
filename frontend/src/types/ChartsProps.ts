@@ -70,3 +70,16 @@ export type ServiceTooltipDataProps = {
   summary: string;
   count: number;
 };
+
+export type SentimentTrendsDataProps = {
+  name: Sentiment;
+  data: {
+    x: string | number | Date;
+    y: number;
+  }[];
+};
+
+export type SentimentTrendsChartsProps = {
+  refreshCharts: number;
+  filterParams: string;
+};
