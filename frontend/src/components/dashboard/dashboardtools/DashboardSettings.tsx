@@ -18,21 +18,32 @@ import {
   DropdownMenuItem,
 } from "../../ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { toast } from "sonner";
 
 const DashboardSettings = ({
   getGenderTooltip,
   isGenderTooltipLoading,
   getServiceTooltip,
   isServiceTooltipLoading,
+  setShowCustomTooltip,
 }: DashboardSettingsProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<number>(10);
 
   const handleGenerateSummaries = async () => {
     setOpen(false);
-    // Call the genderTooltip function first, then the serviceTooltip. This is to prevent any issues with parallel text going into the AI model
-    await getGenderTooltip(selectedRows);
-    await getServiceTooltip(selectedRows);
+
+    try {
+      // Call the genderTooltip function first, then the serviceTooltip. This is to prevent any issues with parallel text going into the AI model
+      await getGenderTooltip(selectedRows);
+      await getServiceTooltip(selectedRows);
+      setShowCustomTooltip(true);
+      toast.success("Successfully summarized chart content!");
+    } catch (error) {
+      console.log("Failed to generate summaries: ", error);
+      setShowCustomTooltip(false);
+      toast.error("Failed to generate summaries.");
+    }
   };
   const rowArray = [1, 5, 10, 50, 100, 200, 500, 1000];
   return (

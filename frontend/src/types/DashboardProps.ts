@@ -56,4 +56,5 @@ export type DashboardSettingsProps = {
   isGenderTooltipLoading: boolean;
   getServiceTooltip: (limit: number) => void;
   isServiceTooltipLoading: boolean;
+  setShowCustomTooltip: React.Dispatch<React.SetStateAction<boolean>>;
 };

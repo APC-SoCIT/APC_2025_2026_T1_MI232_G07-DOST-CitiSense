@@ -11,6 +11,7 @@ export type GenderChartProps = {
   genderTooltip: string[][];
   isGenderTooltipLoading: boolean;
   genderTooltipCount: number[][];
+  showCustomTooltip: boolean;
 };
 
 export type ServiceChartProps = {
@@ -19,6 +20,8 @@ export type ServiceChartProps = {
   serviceTooltip: string[][];
   serviceTooltipLoading: boolean;
   serviceTooltipCount: number[][];
+  showCustomTooltip: boolean;
+  uniqueServiceType: string[];
 };
 
 //map each service with a key for faster lookup

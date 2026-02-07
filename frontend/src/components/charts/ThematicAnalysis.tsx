@@ -70,10 +70,10 @@ const ThematicAnalysisTable = () => {
         <TableBody>
           {invoices.map((invoice) => (
             <TableRow key={invoice.invoice}>
-              <TableCell className="text-center font-medium border-r border-gray-300">
+              <TableCell className="text-center font-medium text-l border-r border-gray-300">
                 {invoice.invoice}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center text-l">
                 {invoice.totalAmount}
               </TableCell>
             </TableRow>

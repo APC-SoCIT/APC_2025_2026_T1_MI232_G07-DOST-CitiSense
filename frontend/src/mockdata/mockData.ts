@@ -1,4 +1,4 @@
-import { Posttype } from "./components/table/TableColumns";
+import { Posttype } from "../components/table/TableColumns";
 
 export const mockData1: Posttype[] = [
   {

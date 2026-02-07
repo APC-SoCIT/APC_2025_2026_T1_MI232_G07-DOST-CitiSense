@@ -23,6 +23,8 @@ import {
 import ThematicAnalysisTable from "../charts/ThematicAnalysis";
 
 function GuestDashboard() {
+  const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
+  const [showCustomTooltip, setShowCustomtoolTip] = useState(false); // For rendering the normal tooltip on mount. Then on generating summaries, show the custom tooltip
   const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
   const [serviceTooltipCount, setServiceTooltipCount] = useState<number[][]>(
     [],
@@ -139,6 +141,8 @@ function GuestDashboard() {
       const sentimentFeedbackResults = await api.get(
         "sentimentposts/dashboardfilters/",
       );
+      // To get the service types to be passed on to the service chart; for dynamically rendering service types
+      setUniqueServiceType(sentimentFeedbackResults.data.service_type);
 
       const sentimentFeedbackData: sentimentFeedbackDataProps =
         sentimentFeedbackResults.data;
@@ -247,6 +251,7 @@ function GuestDashboard() {
       setGenderTooltip(Object.values(genderSummary));
     } catch (error) {
       console.log(error);
+      throw error;
     } finally {
       setIsGenderTooltipLoading(false);
     }
@@ -261,22 +266,42 @@ function GuestDashboard() {
       );
       const resData = res.data.serviceTooltip;
 
+      // Get the unique values using set, and then convert it back to an array
+      const serviceResData = Array.from(
+        new Set(
+          (res.data.serviceTooltip as ServiceTooltipDataProps[]).map(
+            (item: any) => item.service,
+          ),
+        ),
+      );
+
+      // Get the length of the array
+      const size = serviceResData.length;
+
+      // Initialize an empty dictionary and put the current service in the loop, along with its index
+      const dynamicServiceMap: Record<string, number> = {};
+      serviceResData.forEach((service, index) => {
+        dynamicServiceMap[service] = index;
+      });
+
+      // Reference: https://stackoverflow.com/a/44172015
       // Used to store the current summary for each sentiment and each service category
       let serviceSummary = {
-        Negative: ["", "", "", ""],
-        Neutral: ["", "", "", ""],
-        Positive: ["", "", "", ""],
+        Negative: Array(size).fill(""),
+        Neutral: Array(size).fill(""),
+        Positive: Array(size).fill(""),
+      };
+      // Create an array filled with zeroes based on the serviceType count
+      let serviceSummaryCount = {
+        Negative: Array(size).fill(0),
+        Neutral: Array(size).fill(0),
+        Positive: Array(size).fill(0),
       };
 
-      let serviceSummaryCount = {
-        Negative: [0, 0, 0, 0],
-        Neutral: [0, 0, 0, 0],
-        Positive: [0, 0, 0, 0],
-      };
       // Transform the data, and put the each summary in their respective serviceSummary dictionary
       resData.forEach((item: ServiceTooltipDataProps) => {
         // Get the current index from the serviceMap
-        const index = serviceMap[item.service];
+        const index = dynamicServiceMap[item.service];
 
         // Access the current sentiment within the loop in the serviceSumary dictionary, then use the index of the service to place the summary text
         // e.g., item.sentiment is 0 = Negative, the index is 0 = Hybrid Seminar. So serviceSummary["Negative"][0] = summary text / summary count
@@ -289,11 +314,14 @@ function GuestDashboard() {
       setServiceTooltipCount(Object.values(serviceSummaryCount));
     } catch (error) {
       console.log(error);
+      throw error;
     } finally {
       setServiceTooltipLoading(false);
     }
   };
-
+  useEffect(() => {
+    getServiceTooltip(1);
+  }, []);
   return isGenderTooltipLoading || serviceTooltipLoading ? (
     <div className="flex flex-col justify-center items-center min-h-screen mt-5">
       <Loader2 className="w-20 h-20 animate-spin" />
@@ -342,6 +370,7 @@ function GuestDashboard() {
             isGenderTooltipLoading={isGenderTooltipLoading}
             getServiceTooltip={getServiceTooltip}
             isServiceTooltipLoading={serviceTooltipLoading}
+            setShowCustomTooltip={setShowCustomtoolTip}
           />
         </div>
       </div>
@@ -409,6 +438,8 @@ function GuestDashboard() {
                 serviceTooltip={serviceTooltip}
                 serviceTooltipLoading={serviceTooltipLoading}
                 serviceTooltipCount={serviceTooltipCount}
+                showCustomTooltip={showCustomTooltip}
+                uniqueServiceType={uniqueServiceType}
               />
             </div>
           </div>
@@ -421,6 +452,7 @@ function GuestDashboard() {
                 genderTooltip={genderTooltip}
                 isGenderTooltipLoading={isGenderTooltipLoading}
                 genderTooltipCount={genderTooltipCount}
+                showCustomTooltip={showCustomTooltip}
               />
             </div>
             <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">

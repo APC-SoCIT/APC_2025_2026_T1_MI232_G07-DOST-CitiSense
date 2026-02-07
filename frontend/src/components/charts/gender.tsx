@@ -21,6 +21,7 @@ const Gender = ({
   genderTooltip,
   isGenderTooltipLoading,
   genderTooltipCount,
+  showCustomTooltip,
 }: GenderChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
 
@@ -130,18 +131,19 @@ const Gender = ({
         },
       },
     },
-    tooltip: {
-      style: {
-        fontSize: "14px",
-      },
-      // Series index is the index for the row, data point index is the index for the column
-      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        console.log(
-          "This is the gendertooltip seriesindex",
-          genderTooltip[seriesIndex][dataPointIndex],
-        );
+    tooltip: showCustomTooltip
+      ? {
+          style: {
+            fontSize: "14px",
+          },
+          // Series index is the index for the row, data point index is the index for the column
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            console.log(
+              "This is the gendertooltip seriesindex",
+              genderTooltip[seriesIndex][dataPointIndex],
+            );
 
-        return `
+            return `
       <div style="
         padding: 16px;
         max-width: 300px;
@@ -173,8 +175,13 @@ const Gender = ({
         </div>
       </div>
     `;
-      },
-    },
+          },
+        }
+      : {
+          style: {
+            fontSize: "14px",
+          },
+        },
   };
   return (
     <div>

@@ -23,30 +23,42 @@ const Service = ({
   serviceTooltipLoading,
   serviceTooltip,
   serviceTooltipCount,
+  showCustomTooltip,
+  uniqueServiceType,
 }: ServiceChartProps) => {
   const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
 
   useEffect(() => {
     getService();
-  }, [filterParams, refreshCharts]);
+  }, [filterParams, refreshCharts, uniqueServiceType]);
 
   const getService = async () => {
     try {
       const res = await api.get(`/sentimentposts/service/?${filterParams}`);
       const resData = res.data.serviceCount;
 
+      // Get the length of the serviceTypes array
+      const size = uniqueServiceType.length;
+
+      // Create a dictionary with key/value pair and assign each service type with its own value
+      const dynamicServiceMap: Record<string, number> = {};
+      uniqueServiceType.forEach((service: string, index: number) => {
+        dynamicServiceMap[service] = index;
+      });
+
       //used to temporarily store the current object needed for the chart data
       //this object contains the sentiment count per service in each sentiment category
+      // Reference: https://stackoverflow.com/a/44172015 - create an array filled with zeroes based on the serviceType count
       let serviceCounts = {
-        Negative: [0, 0, 0, 0],
-        Neutral: [0, 0, 0, 0],
-        Positive: [0, 0, 0, 0],
+        Negative: Array(size).fill(0),
+        Neutral: Array(size).fill(0),
+        Positive: Array(size).fill(0),
       };
 
       //loop for updating the serviceCounts based on the serviceMap
       //looks for the value pair of the current index and assigns it as the current index
       resData.forEach((item: ServiceDataProps) => {
-        const index = serviceMap[item.service];
+        const index = dynamicServiceMap[item.service];
         if (index !== undefined) {
           serviceCounts[item.sentiment][index] = item.sencount;
         }
@@ -87,12 +99,7 @@ const Service = ({
       text: "Sentiment by Service",
     },
     xaxis: {
-      categories: [
-        "Hybrid Seminar",
-        "Material Requests",
-        "Online Library",
-        "Library Tour",
-      ],
+      categories: uniqueServiceType,
     },
     yaxis: {
       labels: {
@@ -136,13 +143,14 @@ const Service = ({
         },
       },
     },
-    tooltip: {
-      style: {
-        fontSize: "14px",
-      },
-      // Series index is the index for the row, data point index is the index for the column
-      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        return `
+    tooltip: showCustomTooltip
+      ? {
+          style: {
+            fontSize: "14px",
+          },
+          // Series index is the index for the row, data point index is the index for the column
+          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+            return `
       <div style="
         padding: 16px;
         max-width: 300px;
@@ -174,8 +182,11 @@ const Service = ({
         </div>
       </div>
     `;
-      },
-    },
+          },
+        }
+      : {
+          style: { fontSize: "14px" },
+        },
   };
 
   return (

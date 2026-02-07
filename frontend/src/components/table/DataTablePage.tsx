@@ -20,7 +20,7 @@ import TableSettings from "./TableSettings";
 import { toast } from "sonner";
 import Dialog1 from "./TableDialog";
 import Pagination from "./Pagination";
-import { mockData1 } from "../../mockData";
+import { mockData1 } from "../../mockdata/mockData";
 import axios from "axios";
 
 const DataTablePage = () => {
@@ -52,7 +52,7 @@ const DataTablePage = () => {
     () => {
       const savedVisiblity = localStorage.getItem("columnVisibility");
       return savedVisiblity ? JSON.parse(savedVisiblity) : {};
-    }
+    },
   );
 
   //puts the column visibility changes in localstorage whenever user toggles column visibility
@@ -114,7 +114,7 @@ const DataTablePage = () => {
       updateData: (
         rowIndex: number,
         columnId: string,
-        value: string | number
+        value: string | number,
       ) => {
         //maps through the data array that is fetched from the backend
         //if the current row index to be updated from the table matches the current index of the row in the data array,
@@ -122,8 +122,8 @@ const DataTablePage = () => {
         //the specified column with its new value, otherwise keep the row unchanged
         setData((prev) =>
           prev.map((row, index) =>
-            index === rowIndex ? { ...row, [columnId]: value } : row
-          )
+            index === rowIndex ? { ...row, [columnId]: value } : row,
+          ),
         );
 
         //gets the current data array and accesses the current row index of the row to be updated
@@ -178,12 +178,12 @@ const DataTablePage = () => {
       const results = await Promise.allSettled(
         toBeUpdated.map((row) => {
           return api.put(`/sentimentposts/${row.id}/`, row);
-        })
+        }),
       );
 
       //get the values from the promise.allSettled with status "fulfilled"
       const accepted = results.filter(
-        (result) => result.status === "fulfilled"
+        (result) => result.status === "fulfilled",
       );
 
       //get the values from the promise.allSettled with status "rejected"

@@ -22,6 +22,7 @@ import EmailForgotPasswordSuccess from "./pages/EmailForgotPasswordSuccess.js";
 import { EmailVerificationSent } from "./authentication/email-verification.js";
 import EmailVerificationCallback from "./authentication/EmailVerificationCallback.js";
 import GuestDashboard from "./components/dashboard/GuestDashboard.js";
+import NonProtectedLayout from "./pages/NonProtectedLayout.js";
 
 const router = createBrowserRouter([
   {
@@ -50,7 +51,11 @@ const router = createBrowserRouter([
       { path: "/home", element: <Profile /> },
     ],
   },
-  { path: "/guest-dashboard", element: <GuestDashboard /> },
+  {
+    path: "/guest-dashboard",
+    element: <NonProtectedLayout />,
+    children: [{ index: true, element: <GuestDashboard /> }],
+  },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
   { path: "/logout", element: <Logout /> },
@@ -73,5 +78,5 @@ createRoot(document.getElementById("root") as HTMLElement).render(
     <AuthenticationProvider>
       <RouterProvider router={router} />
     </AuthenticationProvider>
-  </StrictMode>
+  </StrictMode>,
 );
