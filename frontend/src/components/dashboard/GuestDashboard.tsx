@@ -24,6 +24,17 @@ import ThematicAnalysisTable from "../charts/ThematicAnalysis";
 
 function GuestDashboard() {
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  // Fetch total count for guest dashboard
+  const fetchTotalCount = async () => {
+    try {
+      const res = await api.get(`/sentimentposts/totalcount/${filterParams}`);
+      setTotalCount(res.data.totalCount || 0);
+    } catch (error) {
+      setTotalCount(null);
+      console.error("Error fetching total count", error);
+    }
+  };
   const [showCustomTooltip, setShowCustomtoolTip] = useState(false); // For rendering the normal tooltip on mount. Then on generating summaries, show the custom tooltip
   const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
   const [serviceTooltipCount, setServiceTooltipCount] = useState<number[][]>(
@@ -178,12 +189,14 @@ function GuestDashboard() {
   useEffect(() => {
     fetchServiceFilter();
     setRefreshCharts((prev) => prev + 1);
+    fetchTotalCount();
   }, []);
 
   // This is to reset the tooltip values once the filters change.
   useEffect(() => {
     setGenderTooltip([]);
     setServiceTooltip([]);
+    fetchTotalCount();
   }, [filterParams]);
 
   // For animating and disabling the refresh button based on the fetchServiceFilter function
@@ -333,6 +346,11 @@ function GuestDashboard() {
         <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-between items-center">
           <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center sm:text-left flex-1">
             Sentiment Analysis Dashboard
+            {typeof totalCount === "number" && (
+              <span className="ml-4 text-lg text-blue-600 font-semibold">
+                Total Responses: {totalCount}
+              </span>
+            )}
           </h3>
           <div>
             <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all ">
