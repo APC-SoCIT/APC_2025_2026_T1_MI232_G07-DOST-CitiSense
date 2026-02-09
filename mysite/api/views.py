@@ -70,7 +70,10 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     queryset = labeled_feedback.objects.all()
     serializer_class = LabeledFeedbackSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
-
+    
+    # To automatically update/populate the last_modified_by field when editing a sentiment
+    def perform_update(self, serializer):
+        serializer.save(last_modified_by=self.request.user)
 
 
 @api_view(['GET'])
@@ -169,8 +172,8 @@ def gender_bar_chart_tooltip(request):
 
     start_time = time.time()
 
-    # Get the limit and offset based on the API, default to 200 for the limit, offset is always 0.
-    limit = int(request.query_params.get("limit", 200))
+    # Get the limit and offset based on the API, default to 10 for the limit, offset is always 0.
+    limit = int(request.query_params.get("limit", 10))
     offset = int(request.query_params.get("offset",0))
 
     # Generate a cache key from the request's filter parameters
@@ -223,8 +226,8 @@ def gender_bar_chart_tooltip(request):
 def service_bar_chart_tooltip(request):
     queryset = filter_dashboard_request(request)
 
-    # Get the limit and offset based on the API, default to 200 for the limit, offset is always 0.
-    limit = int(request.query_params.get("limit", 200))
+    # Get the limit and offset based on the API, default to 10 for the limit, offset is always 0.
+    limit = int(request.query_params.get("limit", 10))
     offset = int(request.query_params.get("offset",0))
 
     start_time = time.time()
