@@ -479,11 +479,13 @@ function DashboardPage() {
           </div>
         </main>
       )}
-      <div className="h-[400px] rounded-md shadow-lg px-10">
-        <SentimentTrends
-          filterParams={filterParams}
-          refreshCharts={refreshCharts}
-        />
+      <div className="w-full flex flex-col items-center gap-0 mt-[-150px]">
+        <div className="h-[400px] rounded-md shadow-lg mb-10 w-full lg:w-[1150px]">
+          <SentimentTrends
+            filterParams={filterParams}
+            refreshCharts={refreshCharts}
+          />
+        </div>
       </div>
       <ChatbotUI />
     </div>
