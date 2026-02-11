@@ -10,15 +10,10 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-
-type DialogProps = {
-  showDialog?: boolean;
-  setShowDialog?: (open: boolean) => void;
-  text: string | string[];
-};
+import { TableDialogProps } from "../../types/TableProps";
 
 // Dialog popup for when there is an error in updating row/s in the table.
-const Dialog1 = ({ showDialog, setShowDialog, text }: DialogProps) => {
+const Dialog1 = ({ showDialog, setShowDialog, text }: TableDialogProps) => {
   // checks if the passed value is an array, then maps through it to display error messages
   // else just render the text
   const renderMessage = () => {

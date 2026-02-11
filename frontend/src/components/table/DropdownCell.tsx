@@ -6,12 +6,18 @@ import {
   TableDropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { senArray } from "../../types/TableColumnProps";
+import { senArray, SentimentPostType } from "../../types/TableColumnProps";
+import { CellContext } from "@tanstack/react-table";
+import { Sentiment } from "../../types/ChartsProps";
 
-const DropdownCell = ({ getValue, row, column, table }) => {
+const DropdownCell = ({
+  getValue,
+  row,
+  column,
+  table,
+}: CellContext<SentimentPostType, Sentiment>) => {
   const sentiment = getValue();
-  const { updateData } = table.options.meta;
-
+  const updateData = table.options.meta?.updateData;
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>

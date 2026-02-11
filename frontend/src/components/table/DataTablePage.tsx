@@ -294,6 +294,7 @@ const DataTablePage = () => {
           setIsEditing={setIsEditing}
           postChange={postChange}
           handleEditOrCancel={handleEditOrCancel}
+          filterParams={filterParams}
         />
         <DataTable table={table} />
         <Dialog1

@@ -17,14 +17,22 @@ export const senArray: SentimentOption[] = [
   { label: "Negative", color: "bg-red-500" },
 ];
 
+// Type for the shape of the API response for the category/feedback data
 export type SentimentPostType = {
   id: number;
   name: string;
   quarter: string;
+  gender: Gender;
   service_name: string;
   service_type: string;
-  gender: Gender;
-  feedback: string;
+  timestamp: string;
+  year: string;
+  category: string;
+  typeoflibrary: string;
+  region: string;
+  key_takeaways: string;
+  comments: string;
+  suggestions: string;
   sentiment: Sentiment;
 };
 

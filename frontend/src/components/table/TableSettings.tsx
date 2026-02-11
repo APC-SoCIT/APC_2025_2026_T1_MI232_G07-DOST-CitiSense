@@ -16,16 +16,9 @@ import {
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { writeFileXLSX, utils, write } from "xlsx";
-import { Table } from "@tanstack/react-table";
 import { SentimentPostType } from "../../types/TableColumnProps";
-
-type TableToolbarProps = {
-  table: Table<SentimentPostType>;
-  isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
-  postChange: () => void;
-  handleEditOrCancel: () => void;
-};
+import api from "../../api";
+import { TableToolbarProps } from "../../types/TableProps";
 
 const TableSettings = ({
   table,
@@ -33,10 +26,23 @@ const TableSettings = ({
   setIsEditing,
   postChange,
   handleEditOrCancel,
+  filterParams,
+  rowCount,
 }: TableToolbarProps) => {
   const handleTableExport = async (rows: any[]) => {
-    // extract the row data from the tanstack table
-    const tableData = rows.map((row) => row.original);
+    // Get total row count for current filters
+    const countRes = await api.get(
+      `sentimentposts/?limit=1&offset=0&${filterParams}`,
+    );
+    const total = countRes.data.count;
+
+    // Fetch all filtered rows
+    const res = await api.get(
+      `sentimentposts/?limit=${total}&offset=0&${filterParams}`,
+    );
+
+    // Get the current feedback results
+    const tableData = res.data.results;
 
     // create a new workbook
     const workbook = utils.book_new();
@@ -47,8 +53,8 @@ const TableSettings = ({
     //append the worksheet to the workbook
     utils.book_append_sheet(workbook, worksheet, "Sheet 1");
 
-    if (window.showSaveFilePicker) {
-      const hFile = await window.showSaveFilePicker({
+    if ("showSaveFilePicker" in window) {
+      const hFile = await (window as any).showSaveFilePicker({
         suggestedName: "Worksheet.xlsx",
         types: [
           {

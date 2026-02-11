@@ -1,13 +1,16 @@
 import React from "react";
 import { Input } from "../ui/input";
+import { FilterTextProps } from "../../types/TableProps";
 
-const FilterText = ({ column }) => {
+const FilterText = ({ column }: FilterTextProps) => {
   const columnFilterValue = column.getFilterValue();
   return (
     <Input
       type="text"
       value={(columnFilterValue ?? "") as string}
-      onChange={(e) => column.setFilterValue(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+        column.setFilterValue(e.target.value)
+      }
       className=""
     />
   );
