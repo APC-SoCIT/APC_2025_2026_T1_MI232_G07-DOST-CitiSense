@@ -46,6 +46,40 @@ def filter_dashboard_request(request):
     # Default to 0
     return queryset.filter(**filter_dict)
 
+# Get the current filter for the table using dictionary unpacking
+def filter_table_request(request):
+    queryset = cleaned_feedback.objects.all()
+
+    # Get the query parameters and store them in variables
+    service_name = request.query_params.getlist('service_name')
+    quarter = request.query_params.getlist("quarter")
+    service_type = request.query_params.getlist("service_type")
+    year = request.query_params.getlist("year")
+    sex = request.query_params.getlist("sex") 
+    sentiment = request.query_params.getlist("sentiment")
+
+    # Instantiate a dictionary; this will be used to hold the key/value pairs for the filters
+    filter_dict = {}
+
+    # If there is a specific value in the query paramaters, then put it into the dictionary
+    # Just add more if statements if you want to add more new filters based on the requirements
+    if service_name:
+        filter_dict["service_name__in"] = service_name
+    if quarter:
+        filter_dict["quarter__in"] = quarter
+    if service_type:
+        filter_dict["service_type__in"] = service_type
+    if year:
+        filter_dict["year__in"] = year
+    if sex:
+        filter_dict["sex__in"] = sex
+    if sentiment:
+        filter_dict["labeled_feedback__sentiment__in"] = sentiment
+
+    # Filter based on what the contents of the dictionary are
+    # Default to 0
+    return queryset.filter(**filter_dict)
+
 class IsAuthorOnly(permissions.BasePermission):
     #this only allows the authors of the dashboard to view, and update or delete their own archive image
     def has_object_permission(self, request, view, obj):
@@ -65,6 +99,9 @@ class IsAnalyst(permissions.BasePermission):
 class CleanedFeedbackList(generics.ListCreateAPIView):
     queryset = cleaned_feedback.objects.all()
     serializer_class = CleanedFeedbackSerializer
+    
+    def get_queryset(self):
+        return filter_table_request(self.request)
 
 class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     queryset = labeled_feedback.objects.all()
@@ -75,6 +112,21 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(last_modified_by=self.request.user)
 
+@api_view(['GET'])
+def get_unique_table_filters(request):
+    quarter = cleaned_feedback.objects.values_list('quarter', flat=True).distinct()
+    service_type = cleaned_feedback.objects.values_list('service_type', flat=True).distinct()
+    year = cleaned_feedback.objects.values_list('year', flat=True).distinct()
+    sex = cleaned_feedback.objects.values_list('sex', flat=True).distinct()
+    sentiment = cleaned_feedback.objects.values_list('labeled_feedback__sentiment', flat=True).distinct()
+
+    return Response({
+        "quarter": quarter,
+        "service_type": service_type,
+        "year": year,
+        "sex": sex,
+        "sentiment": sentiment,
+    })
 
 @api_view(['GET'])
 def get_total_feedback(request):
@@ -111,19 +163,19 @@ def gauge_chart(request):
 
 @api_view(['GET'])
 def gender_chart(request): 
-    queryset = filter_dashboard_request(request)
+    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False)
     gendercount = queryset.values('sentiment', sex=F('feedback__sex')).annotate(sencount=Count('sentiment'))
     return Response({"genderCount" : gendercount})
 
 @api_view(['GET'])
 def service_chart(request):
-    queryset = filter_dashboard_request(request)
+    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False)
     servicecount = queryset.values('sentiment', service=F('feedback__service_type')).annotate(sencount=Count('sentiment'))
     return Response({"serviceCount": servicecount})
 
 @api_view(["GET"])
 def area_chart(request):
-    queryset = filter_dashboard_request(request)
+    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False)
     areacount = list(queryset.values('sentiment', date_created=F("feedback__created_at")))
 
     # Initialize a dictionary to hold the API shape for the area chart

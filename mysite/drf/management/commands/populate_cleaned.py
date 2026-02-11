@@ -29,7 +29,7 @@ class Command(BaseCommand):
             # Get the list of all users
             users = list(User.objects.all())
 
-            x = 100
+            x = 3000
             
             # Make x rows of fake data
             for _ in range(x):
