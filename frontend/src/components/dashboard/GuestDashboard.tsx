@@ -25,16 +25,7 @@ import ThematicAnalysisTable from "../charts/ThematicAnalysis";
 function GuestDashboard() {
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
   const [totalCount, setTotalCount] = useState<number | null>(null);
-  // Fetch total count for guest dashboard
-  const fetchTotalCount = async () => {
-    try {
-      const res = await api.get(`/sentimentposts/totalcount/${filterParams}`);
-      setTotalCount(res.data.totalCount || 0);
-    } catch (error) {
-      setTotalCount(null);
-      console.error("Error fetching total count", error);
-    }
-  };
+ 
   const [showCustomTooltip, setShowCustomtoolTip] = useState(false); // For rendering the normal tooltip on mount. Then on generating summaries, show the custom tooltip
   const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
   const [serviceTooltipCount, setServiceTooltipCount] = useState<number[][]>(
@@ -228,6 +219,17 @@ function GuestDashboard() {
     return () => clearTimeout(timeout);
   }, [filterParams, lastRefreshed]);
 
+ // Fetch total count for guest dashboard
+  const fetchTotalCount = async () => {
+    try {
+      const res = await api.get(`/sentimentposts/totalcount/${filterParams}`);
+      setTotalCount(res.data.totalcount || 0);
+    } catch (error) {
+      setTotalCount(null);
+      console.error("Error fetching total count", error);
+    }
+  };
+  
   const getGenderTooltip = async (limit: number) => {
     try {
       setIsGenderTooltipLoading(true);
@@ -332,9 +334,7 @@ function GuestDashboard() {
       setServiceTooltipLoading(false);
     }
   };
-  useEffect(() => {
-    getServiceTooltip(1);
-  }, []);
+ 
   return isGenderTooltipLoading || serviceTooltipLoading ? (
     <div className="flex flex-col justify-center items-center min-h-screen mt-5">
       <Loader2 className="w-20 h-20 animate-spin" />
