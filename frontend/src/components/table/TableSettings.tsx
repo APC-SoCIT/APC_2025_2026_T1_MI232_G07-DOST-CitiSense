@@ -17,7 +17,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { writeFileXLSX, utils, write } from "xlsx";
 import { Table } from "@tanstack/react-table";
-import { SentimentPostType } from "./TableColumns";
+import { SentimentPostType } from "../../types/TableColumnProps";
 
 type TableToolbarProps = {
   table: Table<SentimentPostType>;
@@ -47,7 +47,6 @@ const TableSettings = ({
     //append the worksheet to the workbook
     utils.book_append_sheet(workbook, worksheet, "Sheet 1");
 
-    //check if the browser has the
     if (window.showSaveFilePicker) {
       const hFile = await window.showSaveFilePicker({
         suggestedName: "Worksheet.xlsx",
@@ -154,7 +153,7 @@ const TableSettings = ({
                     localStorage.removeItem("columnSizing");
                   }}
                 >
-                  <span className="text-xs">Reset all</span>{" "}
+                  <span className="text-xs">Reset filters</span>{" "}
                 </Button>
               </div>
             </div>

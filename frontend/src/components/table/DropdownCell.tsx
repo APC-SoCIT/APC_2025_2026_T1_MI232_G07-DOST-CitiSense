@@ -6,7 +6,7 @@ import {
   TableDropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { senArray } from "./TableColumns";
+import { senArray } from "../../types/TableColumnProps";
 
 const DropdownCell = ({ getValue, row, column, table }) => {
   const sentiment = getValue();

@@ -13,7 +13,7 @@ import React, { useEffect, useMemo } from "react";
 import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
 import CustomTableBody, { MemoizedTableBody } from "./TableBody";
-import { TableProps } from "./TableColumns";
+import { TableProps } from "../../types/TableColumnProps";
 
 export function DataTable({ table }: TableProps) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
@@ -47,16 +47,18 @@ export function DataTable({ table }: TableProps) {
   // Check if there is any data in the table
   const hasData = table.getRowModel().rows?.length > 0;
 
- // Render messages based on no columns shown or no data is taken from the API response
-if (!hasData || !table.getIsSomeColumnsVisible()) {
-  return (
-    <div className="rounded-md border">
-      <div className="h-[200px] flex items-center justify-center text-muted-foreground">
-        {!table.getIsSomeColumnsVisible() ? "No columns are visible." : "No results."}
+  // Render messages based on no columns shown or no data is taken from the API response
+  if (!hasData || !table.getIsSomeColumnsVisible()) {
+    return (
+      <div className="rounded-md border">
+        <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+          {!table.getIsSomeColumnsVisible()
+            ? "No columns are visible."
+            : "No results."}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
   return (
     <div>
       <div className="rounded-md border overflow-x-auto w-full">
@@ -99,7 +101,7 @@ if (!hasData || !table.getIsSomeColumnsVisible()) {
                               >
                                 {flexRender(
                                   header.column.columnDef.header,
-                                  header.getContext()
+                                  header.getContext(),
                                 )}
                               </div>
                               {/* filter button

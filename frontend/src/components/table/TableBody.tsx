@@ -1,7 +1,7 @@
 import React from "react";
 import { TableBody, TableCell, TableRow } from "../ui/table";
 import { flexRender } from "@tanstack/react-table";
-import { TableProps } from "./TableColumns";
+import { TableProps } from "../../types/TableColumnProps";
 
 const CustomTableBody = ({ table }: TableProps) => {
   return (
@@ -45,5 +45,5 @@ export default CustomTableBody;
 //only rerenders once data is added, updated, or deleted.
 export const MemoizedTableBody = React.memo(
   CustomTableBody,
-  (prev, next) => prev.table.options.data === next.table.options.data
+  (prev, next) => prev.table.options.data === next.table.options.data,
 ) as typeof CustomTableBody;

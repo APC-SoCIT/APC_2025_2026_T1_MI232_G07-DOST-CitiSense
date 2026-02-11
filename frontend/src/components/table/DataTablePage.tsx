@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "./DataTable";
 import { getColumns } from "./TableColumns";
-import type { SentimentPostType } from "./TableColumns";
+import { SentimentPostType } from "../../types/TableColumnProps";
 import api from "../../api";
 import {
   useReactTable,
@@ -12,7 +12,9 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import type {
+  ColumnFilter,
   ColumnFiltersState,
+  PaginationState,
   VisibilityState,
 } from "@tanstack/react-table";
 
@@ -24,6 +26,10 @@ import { mockData1 } from "../../mockdata/mockData";
 import axios from "axios";
 
 const DataTablePage = () => {
+  const [rowCount, setRowCount] = useState<number>(0); // State for providing rowCount context to tanstack for manual pagination
+  const [filterOptions, setFilterOptions] = useState<Record<string, string[]>>(
+    {},
+  ); // State for the unique filter values
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
@@ -32,10 +38,13 @@ const DataTablePage = () => {
   const [originalData, setOriginalData] = useState<SentimentPostType[]>([]);
   // const [originalData, setOriginalData] = useState<Posttype[]>(mockData1);
   const [editedRows, setEditedRows] = useState<Set<number>>(new Set());
-  const columns = useMemo(() => getColumns(isEditing), [isEditing]); //to pass the isEditing to the column definition which is also a function
+
+  const columns = useMemo(
+    () => getColumns(isEditing, filterOptions),
+    [isEditing, filterOptions],
+  ); // To pass the isEditing and unique filter options to the column definition which is also a function
 
   //put table settings in local storage for persistence of user preference in the table component
-
   //gets and initializes the column sizing from localstorage so user preference persists after reload
   const [columnSizing, setColumnSizing] = useState(() => {
     const savedSizing = localStorage.getItem("columnSizing");
@@ -92,15 +101,18 @@ const DataTablePage = () => {
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: "onChange",
     columnResizeDirection: "ltr",
-    getFilteredRowModel: getFilteredRowModel(),
+    // getFilteredRowModel: getFilteredRowModel(), // Not needed for manual filtering
     onColumnFiltersChange: setColumnFilters,
     onColumnSizingChange: setColumnSizing,
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(), // Not needed for manual pagination
     onPaginationChange: setPagination,
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onColumnVisibilityChange: setColumnVisibility,
     autoResetPageIndex: false,
+    manualFiltering: true,
+    manualPagination: true,
+    rowCount: rowCount,
     state: {
       pagination,
       columnVisibility,
@@ -147,14 +159,52 @@ const DataTablePage = () => {
     }
   };
 
+  const filterParams = useMemo(() => {
+    const params = new URLSearchParams();
+
+    columnFilters.forEach((filter) => {
+      const value = filter.value;
+
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          params.append(filter.id, item);
+        });
+      } else {
+        params.append(filter.id, String(filter.value));
+      }
+
+      console.log(value);
+    });
+    return params.toString();
+  }, [columnFilters]);
+
+  useEffect(() => {
+    const getFilterOptions = async () => {
+      try {
+        const res = await api.get("sentimentposts/tablefilters");
+        setFilterOptions(res.data);
+        console.log("filter options", res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getFilterOptions();
+  }, []);
   // getting the data for tanstack table to render
   useEffect(() => {
     const getSentimentData = async () => {
       try {
-        const res = await api.get("sentimentposts/");
+        // pageIndex is the index of the whole table, pageSize is how many rows to show
+        const { pageIndex, pageSize } = pagination;
+        const offset = pageIndex * pageSize;
+        const res = await api.get(
+          `sentimentposts/?limit=${pageSize}&offset=${offset}&${filterParams}`,
+        );
+        setRowCount(res?.data.count);
         setData(res?.data.results);
         setOriginalData(res?.data.results);
-        // console.log(res);
+        console.log(res?.data.count);
+        console.log(res);
       } catch (error) {
         // check if the error came from axios
         if (axios.isAxiosError(error)) {
@@ -165,7 +215,7 @@ const DataTablePage = () => {
       }
     };
     getSentimentData();
-  }, []);
+  }, [pagination, filterParams]);
 
   //handles the posting of updated table data to the backend
   const postChange = async () => {

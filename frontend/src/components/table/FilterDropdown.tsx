@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -18,29 +18,14 @@ interface FilterDropdownProps {
   column: any;
   columnFilters?: ColumnFiltersState;
   columnName?: string;
+  options: string[];
 }
 const FilterDropdown = ({
   column,
-  columnFilters,
   columnName,
+  options,
 }: FilterDropdownProps) => {
-  //memoize the unique values so it doesn't recompute every render, only recomputes when a unique row value is added
-  const uniqueRows = useMemo(() => {
-    return Array.from(column.getFacetedUniqueValues().keys()); //get the unique values from each column, and convert them into an array
-  }, [column.getFacetedUniqueValues()]);
-
-  const columnFilterValue = column.getFilterValue() ?? uniqueRows; //on render start with a full list of the unique values from the rows
-
-  // transform unique values into an key, value pairs
-  // only get the first 5,000 and only recalculate if not if unique values changed
-  const sortedUniqueValues = useMemo(
-    () =>
-      Array.from(column.getFacetedUniqueValues().entries()).slice(
-        0,
-        5000
-      ) as Array<[string | number, number]>, // each sorted unique value returns an array of tuple
-    [column.getFacetedUniqueValues()]
-  );
+  const columnFilterValue = column.getFilterValue() ?? options; //on render start with a full list of the unique values from the rows
 
   // checks the current value in the column
   // if it isn't in the filter array, put the current value in the filter array; else remove it from the array
@@ -50,11 +35,24 @@ const FilterDropdown = ({
       newFilterValue = [...columnFilterValue, value];
     } else {
       newFilterValue = columnFilterValue.filter(
-        (filterWords: string) => filterWords !== value
+        (filterWords: string) => filterWords !== value,
       );
     }
     column.setFilterValue(newFilterValue);
   };
+
+  // Don't render if no options
+  if (!options || options.length === 0) {
+    return (
+      <Button
+        className="p-1 rounded hover:bg-sky-100 scale-70"
+        variant="outline"
+        disabled
+      >
+        <Funnel />
+      </Button>
+    );
+  }
 
   return (
     <DropdownMenu modal={false}>
@@ -69,14 +67,14 @@ const FilterDropdown = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="">
         <DropdownMenuCheckboxItem
-          checked={""}
+          checked={false}
           onCheckedChange={() => column.setFilterValue(undefined)}
           className="text-red-500"
         >
           Clear
         </DropdownMenuCheckboxItem>
         <DropdownMenuSeparator className="" />
-        {sortedUniqueValues.map(([value, count]) => (
+        {options.map((value) => (
           <TableDropdownMenuCheckBoxItem
             key={String(value)}
             className=""
@@ -86,9 +84,6 @@ const FilterDropdown = ({
           >
             <div className="flex items-center w-full justify-between">
               <span className="text-sm text-gray-800">{value}</span>
-              <span className="ml-2 text-xs text-muted-foreground bg-gray-200 px-2 py-0.5 rounded-full">
-                {count}{" "}
-              </span>
             </div>
           </TableDropdownMenuCheckBoxItem>
         ))}

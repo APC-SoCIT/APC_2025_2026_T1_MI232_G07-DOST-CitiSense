@@ -6,7 +6,6 @@ import SentimentTrends from "../charts/sentimenttrends";
 import { Button } from "../ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { SentimentPostType } from "../table/TableColumns";
 import { Download, Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "./DashboardFilter";
@@ -25,7 +24,7 @@ import ThematicAnalysisTable from "../charts/ThematicAnalysis";
 function DashboardPage() {
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
   const [totalCount, setTotalCount] = useState<number | null>(null);
-  
+
   const [showCustomTooltip, setShowCustomtoolTip] = useState(false); // For rendering the normal tooltip on mount. Then on generating summaries, show the custom tooltip
   const [serviceTooltip, setServiceTooltip] = useState<string[][]>([]);
   const [serviceTooltipCount, setServiceTooltipCount] = useState<number[][]>(
@@ -219,17 +218,17 @@ function DashboardPage() {
     return () => clearTimeout(timeout);
   }, [filterParams, lastRefreshed]);
 
-// Fetch total count for dashboard
+  // Fetch total count for dashboard
   const fetchTotalCount = async () => {
     try {
-      const res = await api.get(`/sentimentposts/totalcount/${filterParams}`);
+      const res = await api.get(`/sentimentposts/totalcount/?${filterParams}`);
       setTotalCount(res.data.totalcount || 0);
     } catch (error) {
       setTotalCount(null);
       console.error("Error fetching total count", error);
     }
   };
-  
+
   const getGenderTooltip = async (limit: number) => {
     try {
       setIsGenderTooltipLoading(true);
@@ -334,7 +333,7 @@ function DashboardPage() {
       setServiceTooltipLoading(false);
     }
   };
- 
+
   return isGenderTooltipLoading || serviceTooltipLoading ? (
     <div className="flex flex-col justify-center items-center min-h-screen mt-5">
       <Loader2 className="w-20 h-20 animate-spin" />
@@ -480,7 +479,7 @@ function DashboardPage() {
         </main>
       )}
       <div className="w-full flex flex-col items-center gap-0 mt-[-150px]">
-        <div className="h-[400px] rounded-md shadow-lg mb-10 w-full lg:w-[1150px]">
+        <div className="h-[400px] rounded-md shadow-lg mb-10 w-full lg:flex-row">
           <SentimentTrends
             filterParams={filterParams}
             refreshCharts={refreshCharts}

@@ -2,40 +2,13 @@ import { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
 import Dialog1 from "./TableDialog";
 import FilterDropdown from "./FilterDropdown";
-import { Table } from "@tanstack/react-table";
+import { SentimentPostType, filterOptions } from "../../types/TableColumnProps";
+import { Sentiment } from "../../types/ChartsProps";
 
-export type TableProps = {
-  table: Table<SentimentPostType>;
-};
-
-type Gender = "M" | "F";
-type Sentiment = "Positive" | "Negative" | "Neutral";
-
-export type SentimentOption = {
-  label: Sentiment;
-  color: string;
-};
-
-export const senArray: SentimentOption[] = [
-  { label: "Positive", color: "bg-green-500" },
-  { label: "Neutral", color: "bg-yellow-500" },
-  { label: "Negative", color: "bg-red-500" },
-];
-
-export type SentimentPostType = {
-  id: number;
-  name: string;
-  quarter: string;
-  service_name: string;
-  service_type: string;
-  gender: Gender;
-  feedback: string;
-  sentiment: Sentiment;
-};
-
-//column definition array initialization, this is where tanstack is referencing from
+//column definition array initialization, this is where tanstack data table is referencing from
 export const getColumns = (
   isEditing: boolean,
+  filterOptions: Record<string, string[]> = {},
 ): ColumnDef<SentimentPostType, any>[] => [
   {
     accessorKey: "service_name",
@@ -46,10 +19,15 @@ export const getColumns = (
   },
   {
     accessorKey: "service_type",
-    header: () => <span>Service Type</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Service Type
+        <FilterDropdown column={column} options={filterOptions.service_type} />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
-    enableColumnFilter: false,
+    enableColumnFilter: true,
   },
   {
     accessorKey: "timestamp",
@@ -63,7 +41,7 @@ export const getColumns = (
     header: ({ column }) => (
       <div className="ml-5 flex items-center justify-center gap-1">
         Quarter
-        <FilterDropdown column={column} />
+        <FilterDropdown column={column} options={filterOptions.quarter || []} />
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -74,7 +52,7 @@ export const getColumns = (
     header: ({ column }) => (
       <div className="ml-5 flex items-center justify-center gap-1">
         Year
-        <FilterDropdown column={column} />
+        <FilterDropdown column={column} options={filterOptions.year || []} />
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -86,7 +64,7 @@ export const getColumns = (
     header: ({ column }) => (
       <div className="ml-5 flex items-center justify-center gap-1">
         Sex
-        <FilterDropdown column={column} />
+        <FilterDropdown column={column} options={filterOptions.sex || []} />
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -95,7 +73,7 @@ export const getColumns = (
   },
   {
     accessorKey: "category",
-    header: () => <span>Service Name</span>,
+    header: () => <span>Category</span>,
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
     enableColumnFilter: false,
@@ -140,7 +118,10 @@ export const getColumns = (
     header: ({ column }) => (
       <div className="ml-5 flex items-center justify-center gap-1">
         Sentiment
-        <FilterDropdown column={column} />
+        <FilterDropdown
+          column={column}
+          options={filterOptions.sentiment || []}
+        />
       </div>
     ),
     cell: (info) => (
