@@ -4,12 +4,13 @@ from django.utils import timezone
 from django.core import management
 from drf.utils import analyze_sentiment
 import os
-from django.db import connection
 from django.conf import settings
 import subprocess
-from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db import connection
 import sqlparse
+import time
+import re
 
 User = get_user_model()
 
@@ -131,6 +132,9 @@ class FileMigration(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     processed_at = models.DateTimeField(auto_now=True)
     uploaded_by = models.ForeignKey(User, null=False, blank=False, on_delete=models.PROTECT)
+    migrated_rows = models.IntegerField(default=0)
+    skipped_rows = models.IntegerField(default=0)
+    migration_duration = models.FloatField(default=0.0, help_text="Migration time in seconds")
 
     def save(self, *args, **kwargs):
         # Check if the file uploaded is a .sql file
@@ -147,8 +151,9 @@ class FileMigration(models.Model):
                 self.execute_migration()
             except Exception as e:
                 print(f"Migration failed {e}")
-
+    
     def execute_migration(self):
+        start_time = time.time()
         # Open the file, read the content, and parse it to make single SQL statements to be executed
         with open(self.sql_file.path, "r", encoding="utf-8") as file:
             content = file.read()
@@ -158,6 +163,7 @@ class FileMigration(models.Model):
         execute_count = 0
         migrate_count = 0
         failed_count = 0
+        skip_count = 0
 
         # This allows us to execute SQL commands directly which is coming from the SQL file
         # Reference: https://docs.djangoproject.com/en/6.0/topics/db/sql/#executing-custom-sql-directly
@@ -167,7 +173,72 @@ class FileMigration(models.Model):
                 
                 # Skip empty statements
                 if not statement:
-                    continue
+                    continue    
+                lowered = statement.lower()
+
+                # Skip commands/statements that contain destructive commands.
+                if lowered.startswith(("drop table", "create table", "delete from", "truncate", "update")):
+                    continue 
+
+                # If the statement starts with INSERT INTO `drf_cleaned_feedback`, 
+                # Then replace it with INSERT INTO `drf_cleaned_feedback` (column_names**)
+                if lowered.startswith("insert into `drf_cleaned_feedback`"):
+                    
+                    # Get the SQL insert statement for the drf_cleaned_feedback and split them by each value
+                    # Sample regex: https://regex101.com/r/IsjIee/1
+                    statement_values_array = re.findall(r"\((?:[^(]+|'[^']*')+\)", statement)
+                    
+                    # Change the insert statement to have all the values, just to be explicit
+                    statement = re.sub(r"INSERT INTO `drf_cleaned_feedback` VALUES", 
+                                                "INSERT INTO `drf_cleaned_feedback` (id, service_name, service_type, timestamp, " \
+                                                "quarter, year, sex, category, typeoflibrary, region, key_takeaways, comments, suggestions, " \
+                                                "created_at, updated_at) VALUES", 
+                                                statement, 
+                                                flags=re.IGNORECASE)
+
+                    # Get the key_takeaways, comments, and suggestions and convert them into a list
+                    text_list = cleaned_feedback.objects.filter(key_takeaways__isnull=False, 
+                                                                comments__isnull=False,
+                                                                suggestions__isnull=False
+                                                                ).values_list("key_takeaways", "comments", "suggestions")
+                    
+                    # This will hold the SQL values (filtered out and unique) for the insert statement
+                    statements_to_keep = []
+                    
+                    # Loop over the insert statement value array, and compare it with each of the text_list
+                    # The value will not be appended if it matches with all three of the text fields "key_takeaways", "comments", and "suggestions"
+                    for value in statement_values_array:
+                        found_match = False
+
+                        for text in text_list:
+                            if all(row.lower() in value.lower() for row in text):
+                                    found_match = True
+                                    break
+
+                        if not found_match:
+                            statements_to_keep.append(value)
+                    
+                    # Calculate skipped rows from the original SQL statement array with the statements to keep array
+                    skip_count = len(statement_values_array) - len(statements_to_keep)
+
+                    # Skip the statement, if there are now rows to be appended
+                    if not statements_to_keep:
+                        continue
+                    
+                    # Rebuild the statement, by first just getting the INSERT INTO `table`, and then appending the VALUES at the end
+                    # Final shape will be INSERT INTO `drf_cleaned_feedback` VALUES 
+                    insert_part = re.split(r'VALUES\s*\(', statement)[0] + 'VALUES '
+
+                    # Then finally join the SQL value statements with the "INSERT INTO `table` VALUES " sql statement
+                    statement = insert_part + ", ".join(statements_to_keep)
+
+                    # Reference for the regex: https://stackoverflow.com/a/11475905 and https://stackoverflow.com/questions/21974376/regex-match-any-whitespace
+                    # After changing the value for the insert command, then remove the primary key value with just a "("
+                    # E.g., (1, service_name, service_type, ...) will become (service_name, service_type, ...)
+                    # This is necessary because MySQL will auto-generate the primary key.
+                    # If we keep the old primary key value, it could conflict with existing rows, and ultimately not update the database with new rows
+                    statement = re.sub(r'\(\s*[0-9]+\s*,', '(NULL,', statement)
+
                 try:
                     cursor.execute(statement)
                     execute_count += 1
@@ -181,11 +252,26 @@ class FileMigration(models.Model):
             # Logging success/error messages
             print(f"Executed {execute_count} statements")
             print(f"Migrated {migrate_count} rows")
+            print(f"Skipped {skip_count} duplicate rows")
             if failed_count > 0:
                 print(f"Failed: {failed_count} statements")
 
             # This creates a sentiment according to the feedback of the cleaned_feedback object
-            self.populate_labeled()
+            labeled_count = self.populate_labeled()
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        
+        # Update the fields only for the migration row, duration and skipped rows.    
+        self.migrated_rows = migrate_count
+        self.skipped_rows = skip_count
+        self.migration_duration = elapsed_time
+        self.save(update_fields=["migrated_rows", "skipped_rows", "migration_duration"])
+
+        if labeled_count > 0:
+            print(f"Migration completed and sentiment analyzed in {elapsed_time:.2f} seconds")
+        else:
+            print(f"Migration completed in {elapsed_time:.2f} seconds")
 
     # Automatically create a labeled feedback entry when a new instance of cleaned_feedback is saved (Data migration version)   
     def populate_labeled(self):
@@ -194,10 +280,14 @@ class FileMigration(models.Model):
             for row in cleaned_feedback.objects.filter(labeled_feedback__isnull=True):
                 labeled_feedback.objects.create(feedback=row)
                 labeled_count += 1
-            print(f"Successfully added sentiment to {labeled_count} rows")
+
+            if labeled_count > 0:
+                print(f"Successfully added sentiment to {labeled_count} rows")
+
         except Exception as e:
             print(f"Failed to populate sentiment {e}")
-
-    # Reference for the os.path.basename    
+        
+        return labeled_count
+    
     def __str__(self):
         return f"File Migration #{self.id}"

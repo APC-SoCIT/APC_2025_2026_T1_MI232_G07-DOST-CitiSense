@@ -5,8 +5,8 @@ from .forms import FileMigrationForm
 
 class FileMigrationAdmin(admin.ModelAdmin):
     form = FileMigrationForm
-    list_display = ["sql_file_name", "uploaded_at", "processed_at", "uploaded_by"]
-    readonly_fields = [ "uploaded_at", "processed_at", "uploaded_by"]
+    list_display = ["sql_file_name", "uploaded_at", "processed_at", "uploaded_by", "skipped_rows", "migrated_rows", "migration_duration"]
+    readonly_fields = [ "uploaded_at", "processed_at", "uploaded_by", "skipped_rows", "migrated_rows", "migration_duration"]
     
     # To automatically populate the uploaded_by with the user who uploaded the file
     # Reference: https://docs.djangoproject.com/en/6.0/ref/contrib/admin/#django.contrib.admin.ModelAdmin.save_model
