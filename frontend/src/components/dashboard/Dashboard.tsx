@@ -505,7 +505,7 @@ function DashboardPage() {
         </main>
       )}
       <div className="w-full flex flex-col items-center gap-0 mt-[-150px]">
-        <div className="h-[400px] rounded-md shadow-lg mb-10 w-full lg:flex-row">
+        <div className="h-[400px] rounded-md shadow-lg mb-10 w-full lg:w-[1150px]">
           <SentimentTrends
             filterParams={filterParams}
             refreshCharts={refreshCharts}
