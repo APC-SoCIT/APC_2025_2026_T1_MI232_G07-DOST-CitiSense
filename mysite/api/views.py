@@ -8,10 +8,11 @@ from rest_framework.decorators import api_view
 from django.db.models import Count, Q, F, Min
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
-from drf.utils import summarize_text
+from drf.utils import summarize_text, generate_themes
 from django.core.cache import cache
-import hashlib
 import time
+
+bad_values = ["", " ", '', ' ', "None", "null", "undefined", "NA", "N/A", "\"\"", '""']
 
 # Get the current filter for the dashboard using dictionary unpacking
 def filter_dashboard_request(request):
@@ -134,17 +135,17 @@ def get_total_feedback(request):
     totalcount = queryset.count()
 
     return Response({"totalcount": totalcount})
-
+ 
 # Get the unique values for the filters in the dashboard to be sent to the frontend
 @api_view(['GET'])
 def dashboard_filter(request):
-    queryset = cleaned_feedback.objects.values_list
-    service_name = queryset("service_name", flat=True).distinct()
-    service_type = queryset("service_type", flat=True).distinct()
+    queryset = cleaned_feedback.objects
+    service_name = queryset.filter(service_name__isnull=False).exclude(service_name__in=bad_values).values_list("service_name", flat=True).distinct()
+    service_type = queryset.filter(service_type__isnull=False).exclude(service_type__in=bad_values).values_list("service_type", flat=True).distinct()
     return Response({"service_name": service_name, "service_type": service_type})
 
 @api_view(['GET'])
-def gauge_chart(request):
+def gauge_chart(request):   
     queryset = filter_dashboard_request(request)
     senticounts = queryset.aggregate(
         positive = Count("id", filter=Q(sentiment="Positive")),
@@ -327,6 +328,45 @@ def service_bar_chart_tooltip(request):
     print(f"Time completed: {completed_time} for service tooltip")
 
     return Response({"serviceTooltip": response_list})
+
+@api_view(["GET"])
+def thematic_analysis(request):
+    queryset = filter_dashboard_request(request)
+
+    # Get the limit and offset based on the API, default to 10 for the limit, offset is always 0.
+    limit = int(request.query_params.get("limit", 10))
+    offset = int(request.query_params.get("offset",0))
+
+    # Get the suggestions column filtered out of null and bad values (e.g., null, undefined, "")
+    filtered_suggestions = queryset.filter(feedback__suggestions__isnull=False).exclude(feedback__suggestions__in=bad_values).values_list("feedback__suggestions", flat=True)
+    
+    suggestions_queryset = filtered_suggestions[offset:offset+limit]
+    
+    # Convert the suggestions_queryset to one big string for thematic analysis/topic labeling
+    suggestions_list = " ".join(suggestions_queryset)
+    
+    start_time = time.time()
+    print(f"Starting thematic analysis")
+
+    # Generate a cache key and get the values for the current key if it already exists in the memory
+    # Else, calculate new themes for the newly selected filters and rows (limit)
+    cache_key = f"themes{hash(str(request.GET))}"
+    cached_result = cache.get(cache_key)
+    if cached_result:
+        return Response(cached_result)
+
+    # Generate themes and return a dictionary
+    themes = generate_themes(suggestions_list)
+
+    end_time = time.time()
+    completed_time = end_time - start_time
+    print(f"Time completed: {completed_time:.2f}")
+
+    # Set the cache for 1 hour
+    cache.set(cache_key, themes, 3600)
+
+    return Response(themes)
+    
 
 #summarize_text()
 

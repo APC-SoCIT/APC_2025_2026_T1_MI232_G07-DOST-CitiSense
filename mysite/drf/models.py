@@ -233,8 +233,8 @@ class FileMigration(models.Model):
                     statement = insert_part + ", ".join(statements_to_keep)
 
                     # Reference for the regex: https://stackoverflow.com/a/11475905 and https://stackoverflow.com/questions/21974376/regex-match-any-whitespace
-                    # After changing the value for the insert command, then remove the primary key value with just a "("
-                    # E.g., (1, service_name, service_type, ...) will become (service_name, service_type, ...)
+                    # After changing the value for the insert command, then remove the primary key value with just a "(NULL"
+                    # E.g., (1, service_name, service_type, ...) will become (NULL, service_name, service_type, ...)
                     # This is necessary because MySQL will auto-generate the primary key.
                     # If we keep the old primary key value, it could conflict with existing rows, and ultimately not update the database with new rows
                     statement = re.sub(r'\(\s*[0-9]+\s*,', '(NULL,', statement)

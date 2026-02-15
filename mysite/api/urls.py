@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import gauge_chart, CleanedFeedbackList, gender_chart, service_chart, CleanedFeedbackUpdate, dashboard_filter, gender_bar_chart_tooltip, service_bar_chart_tooltip, get_total_feedback, area_chart, get_unique_table_filters
+from .views import gauge_chart, CleanedFeedbackList, gender_chart, service_chart, CleanedFeedbackUpdate, dashboard_filter, gender_bar_chart_tooltip, service_bar_chart_tooltip, get_total_feedback, area_chart, get_unique_table_filters, thematic_analysis
 
 urlpatterns = [
     # path("sentimentposts/",views.SentimentPostListCreate.as_view(), name="sentiposts"),
@@ -20,6 +20,7 @@ urlpatterns = [
     path("sentimentposts/gendertooltip/", gender_bar_chart_tooltip, name="gendertooltip"),
     path("sentimentposts/servicetooltip/", service_bar_chart_tooltip, name="servicetooltip"),
     path("sentimentposts/totalcount/", get_total_feedback, name="total_feedback"),
+    path("sentimentposts/themes/", thematic_analysis, name="thematic_analysis"),
     # path("archive/", views.ArchivePostListCreate.as_view(), name="archiveposts"),
     # path("archive/<int:pk>/", views.ArchivePostListUpdate.as_view(),  name="archivepost-update"),
 ]
