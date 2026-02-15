@@ -12,13 +12,9 @@ import {
 import { Button } from "../../ui/button";
 import { Check, ChevronDown, Download, Loader2, Settings } from "lucide-react";
 import { DashboardSettingsProps } from "../../../types/DashboardProps";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../../ui/dropdown-menu";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { toast } from "sonner";
+import { ExportFile } from "./ExportFile";
+import DashboardSettingsDropdown from "./DashboardSettingsDropdown";
 
 const DashboardSettings = ({
   getGenderTooltip,
@@ -26,13 +22,13 @@ const DashboardSettings = ({
   getServiceTooltip,
   isServiceTooltipLoading,
   setShowCustomTooltip,
+  getThemes,
 }: DashboardSettingsProps) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedRows, setSelectedRows] = useState<number>(10);
+  const [selectedRows, setSelectedRows] = useState<number>(0);
 
   const handleGenerateSummaries = async () => {
     setOpen(false);
-
     try {
       // Call the genderTooltip function first, then the serviceTooltip. This is to prevent any issues with parallel text going into the AI model
       await getGenderTooltip(selectedRows);
@@ -45,7 +41,17 @@ const DashboardSettings = ({
       toast.error("Failed to generate summaries.");
     }
   };
-  const rowArray = [1, 5, 10, 50, 100, 200, 500, 1000];
+
+  const handleGenerateThematicAnalysis = async () => {
+    setOpen(false);
+    try {
+      await getThemes(selectedRows);
+      toast.success("Successfully generated themes");
+    } catch (error) {
+      console.log("Failed to generate themes: ", error);
+      toast.error("Failed to generate themes.");
+    }
+  };
   return (
     <div className="flex flex-col min-w-0">
       <Dialog open={open} onOpenChange={setOpen}>
@@ -58,69 +64,50 @@ const DashboardSettings = ({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Dashboard Tools</DialogTitle>
-            <DialogDescription>
-              Export reports or generate AI summaries for tooltip insights.
+            <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
+              Export reports, generate AI summaries or common themes — all based
+              on your current filters.
             </DialogDescription>
           </DialogHeader>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button
-                size="lg"
-                className="w-full justify-between"
-                variant="outline"
-              >
-                <span
-                  className={`truncate ${
-                    selectedRows === null ? "text-muted-foreground" : ""
-                  }`}
-                >
-                  {selectedRows === null
-                    ? "Please select something"
-                    : selectedRows}
-                </span>
-                <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] max-h-48 overflow-auto">
-              {rowArray.map((item, index) => (
-                <DropdownMenuItem
-                  className="w-full flex justify-between items-center"
-                  onSelect={() => setSelectedRows(item)}
-                  inset={false}
-                  key={index}
-                >
-                  <span>{item}</span>
-                  {selectedRows === item && <Check className="h-4 w-4" />}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button
-            variant="bluedefault"
-            className="w-full sm:w-auto"
-            onClick={() => handleGenerateSummaries()}
-            disabled={isGenderTooltipLoading}
-          >
-            {isGenderTooltipLoading || isServiceTooltipLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Generate Summaries"
-            )}{" "}
-          </Button>
-          {/* Buttons */}
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+          <DashboardSettingsDropdown
+            selectedRows={selectedRows}
+            setSelectedRows={setSelectedRows}
+          />
+          <div className="flex flex-col sm:flex-row sm:items-center min-w-full justify-between gap-2">
             <Button
-              variant="outline"
-              className="w-full sm:w-auto bg-green-500 hover:bg-green-600 hover:text-white text-white"
-              onClick={() => alert("Export clicked")}
+              variant="bluedefault"
+              className="flex-1  w-full sm:w-auto"
+              onClick={() => handleGenerateThematicAnalysis()}
+              disabled={isGenderTooltipLoading}
             >
-              <Download className="mr-2 h-4 w-4" />
-              Export
+              {isGenderTooltipLoading || isServiceTooltipLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Themes"
+              )}{" "}
             </Button>
-
+            <Button
+              variant="bluedefault"
+              className="flex-1 w-full sm:w-auto"
+              onClick={() => handleGenerateSummaries()}
+              disabled={isGenderTooltipLoading}
+            >
+              {isGenderTooltipLoading || isServiceTooltipLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Summaries"
+              )}{" "}
+            </Button>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+            {/* Export file button */}
+            <ExportFile />
             <DialogFooter>
               <DialogClose asChild>
                 <Button

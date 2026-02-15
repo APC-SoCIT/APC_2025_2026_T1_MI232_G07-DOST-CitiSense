@@ -49,8 +49,8 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
 
   const options: ApexOptions = {
     chart: {
-      type: "area",
-      stacked: true,
+      type: "line",
+      stacked: false,
       toolbar: {
         show: true,
         tools: {
@@ -87,18 +87,10 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       enabled: false,
     },
     stroke: {
-      curve: "monotoneCubic",
+      curve: "smooth",
       width: 2,
     },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.6,
-        opacityTo: 0.1,
-        stops: [0, 90, 100],
-      },
-    },
+
     xaxis: {
       type: "datetime",
       labels: {
@@ -140,12 +132,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       fontSize: "18px",
       fontFamily: "Inter, Roboto, Helvetica, Arial, sans-serif",
       fontWeight: 500,
-      markers: {
-        shape: "square",
-        size: 8,
-        offsetX: -5,
-        offsetY: 0,
-      },
+
       itemMargin: {
         horizontal: 10,
       },
@@ -216,7 +203,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       <ReactApexChart
         options={options}
         series={trendsValue.length > 0 ? trendsValue : fallbackSeries}
-        type="area"
+        type="line"
         height={"350px"}
       />
     </div>

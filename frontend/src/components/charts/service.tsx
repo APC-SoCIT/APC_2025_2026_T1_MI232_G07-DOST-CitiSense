@@ -29,16 +29,22 @@ const Service = ({
   const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
 
   useEffect(() => {
+    if (!uniqueServiceType?.length) return;
     getService();
   }, [filterParams, refreshCharts, uniqueServiceType]);
 
   const getService = async () => {
+    if (!uniqueServiceType?.length) return;
+
     try {
       const res = await api.get(`/sentimentposts/service/?${filterParams}`);
+      console.log(res);
       const resData = res.data.serviceCount;
+      console.log("This is service data", resData);
 
       // Get the length of the serviceTypes array
       const size = uniqueServiceType.length;
+      console.log("This is the size", size);
 
       // Create a dictionary with key/value pair and assign each service type with its own value
       const dynamicServiceMap: Record<string, number> = {};
@@ -99,7 +105,7 @@ const Service = ({
       text: "Sentiment by Service",
     },
     xaxis: {
-      categories: uniqueServiceType,
+      categories: uniqueServiceType || [],
     },
     yaxis: {
       labels: {
@@ -143,50 +149,50 @@ const Service = ({
         },
       },
     },
-    tooltip: showCustomTooltip
-      ? {
-          style: {
-            fontSize: "14px",
-          },
-          // Series index is the index for the row, data point index is the index for the column
-          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-            return `
-      <div style="
-        padding: 16px;
-        max-width: 300px;
-        width: 300px;
-        white-space: initial;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      ">
-        <div style="
-          font-weight: 600;
-          font-size: 16px;
-          margin-bottom: 8px;
-          color: #333;
-        ">
-          ${w.globals.labels[dataPointIndex]} - 
-          Value: ${w.globals.series[seriesIndex][dataPointIndex]}
-          <br/>
-          Comments summarized: ${serviceTooltipCount[seriesIndex][dataPointIndex]}
-        </div>
-          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 8px 0;" />
-          <div style="
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.5;
-          ">
-          ${serviceTooltipLoading ? "Loading summary..." : serviceTooltip[seriesIndex]?.[dataPointIndex] || "No summary available"}          
-          </div>
-        </div>
-      </div>
-    `;
-          },
-        }
-      : {
-          style: { fontSize: "14px" },
-        },
+    // tooltip: showCustomTooltip
+    //   ? {
+    //       style: {
+    //         fontSize: "14px",
+    //       },
+    //       // Series index is the index for the row, data point index is the index for the column
+    //       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+    //         return `
+    //   <div style="
+    //     padding: 16px;
+    //     max-width: 300px;
+    //     width: 300px;
+    //     white-space: initial;
+    //     background: white;
+    //     border-radius: 8px;
+    //     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    //   ">
+    //     <div style="
+    //       font-weight: 600;
+    //       font-size: 16px;
+    //       margin-bottom: 8px;
+    //       color: #333;
+    //     ">
+    //       ${w.globals.labels[dataPointIndex]} -
+    //       Value: ${w.globals.series[seriesIndex][dataPointIndex]}
+    //       <br/>
+    //       Comments summarized: ${serviceTooltipCount[seriesIndex][dataPointIndex]}
+    //     </div>
+    //       <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 8px 0;" />
+    //       <div style="
+    //         font-size: 14px;
+    //         color: #6b7280;
+    //         line-height: 1.5;
+    //       ">
+    //       ${serviceTooltipLoading ? "Loading summary..." : serviceTooltip[seriesIndex]?.[dataPointIndex] || "No summary available"}
+    //       </div>
+    //     </div>
+    //   </div>
+    // `;
+    //       },
+    //     }
+    //   : {
+    //       style: { fontSize: "14px" },
+    //     },
   };
 
   return (

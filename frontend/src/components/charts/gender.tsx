@@ -6,13 +6,14 @@ import {
   GenderDataProps,
   GenderSeriesProps,
   GenderChartProps,
+  genderMap,
 } from "../../types/ChartsProps";
 
 //fallback for the chart data if no data is fetched or if data is undefined
 const fallbackSeries = [
-  { name: "Negative", data: [0, 0] },
-  { name: "Neutral", data: [0, 0] },
-  { name: "Positive", data: [0, 0] },
+  { name: "Negative", data: [0, 0, 0] },
+  { name: "Neutral", data: [0, 0, 0] },
+  { name: "Positive", data: [0, 0, 0] },
 ];
 
 const Gender = ({
@@ -39,14 +40,14 @@ const Gender = ({
       //temporary holder for sentiment counts per gender, this will hold the array for the series for the chart's y-axis
       //Index 0 = Female, Index 1 = Male
       let sentimentCounts = {
-        Negative: [0, 0],
-        Neutral: [0, 0],
-        Positive: [0, 0],
+        Negative: [0, 0, 0],
+        Neutral: [0, 0, 0],
+        Positive: [0, 0, 0],
       };
 
       // if the gender is "F" set index to 0; otherwise 1 ("M")
       resData.forEach((item: GenderDataProps) => {
-        const index = item.sex === "Female" ? 0 : 1;
+        const index = genderMap[item.sex];
 
         //get the current sentiment in the loop and determine the gender index
         //then put the following sentiment count to the appropriate position in the sentimentCounts
@@ -87,7 +88,7 @@ const Gender = ({
       text: "Sentiment by Gender",
     },
     xaxis: {
-      categories: ["Female", "Male"],
+      categories: ["Female", "Male", ["Prefer not", "to say"]],
     },
     yaxis: {
       labels: {

@@ -57,4 +57,5 @@ export type DashboardSettingsProps = {
   getServiceTooltip: (limit: number) => void;
   isServiceTooltipLoading: boolean;
   setShowCustomTooltip: React.Dispatch<React.SetStateAction<boolean>>;
+  getThemes: (limit: number) => void;
 };

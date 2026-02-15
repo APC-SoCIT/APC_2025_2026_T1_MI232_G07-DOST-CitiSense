@@ -18,10 +18,15 @@ import {
   GenderTooltipDataProps,
   ServiceTooltipDataProps,
   serviceMap,
+  themeDataProps,
 } from "../../types/ChartsProps";
-import ThematicAnalysisTable from "../charts/ThematicAnalysis";
+import ThematicAnalysisTable, {
+  fallbackThemes,
+} from "../charts/ThematicAnalysis";
 
 function DashboardPage() {
+  const [themes, setThemes] = useState<themeDataProps[]>(fallbackThemes); // To hold the values for the thematic analysis table
+  const [isThemesLoading, setIsThemesLoading] = useState(false);
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
   const [totalCount, setTotalCount] = useState<number | null>(null);
 
@@ -179,13 +184,13 @@ function DashboardPage() {
   useEffect(() => {
     fetchServiceFilter();
     setRefreshCharts((prev) => prev + 1);
-    fetchTotalCount();
   }, []);
 
-  // This is to reset the tooltip values once the filters change.
+  // This is to reset the tooltip values, and fetch the totalCount() once the filters change.
   useEffect(() => {
     setGenderTooltip([]);
     setServiceTooltip([]);
+    setThemes(fallbackThemes);
     fetchTotalCount();
   }, [filterParams]);
 
@@ -193,6 +198,7 @@ function DashboardPage() {
   const handleRefresh = async () => {
     setIsSpinning(true);
     await fetchServiceFilter();
+    await fetchTotalCount();
     setLastRefreshed(new Date()); // This is for the formatDistanceToNow code, to calculate the current time when the refresh button is clicked
     setRefreshCharts((prev) => prev + 1);
     setIsSpinning(false);
@@ -218,7 +224,7 @@ function DashboardPage() {
     return () => clearTimeout(timeout);
   }, [filterParams, lastRefreshed]);
 
-  // Fetch total count for dashboard
+  // Fetch total count for guest dashboard
   const fetchTotalCount = async () => {
     try {
       const res = await api.get(`/sentimentposts/totalcount/?${filterParams}`);
@@ -334,20 +340,39 @@ function DashboardPage() {
     }
   };
 
-  return isGenderTooltipLoading || serviceTooltipLoading ? (
+  // Get the most common topics talked about. This depends on the filters selected
+  const getThemes = async (limit: number) => {
+    setIsThemesLoading(true);
+    try {
+      const res = await api.get(
+        `sentimentposts/themes/?limit=${limit}&offset=0&${filterParams}`,
+      );
+      const resData = res.data.themeCount;
+      setThemes(resData);
+    } catch (error) {
+      console.error("This is the thematic analysis error", error);
+    } finally {
+      setIsThemesLoading(false);
+    }
+  };
+
+  return isGenderTooltipLoading || serviceTooltipLoading || isThemesLoading ? (
     <div className="flex flex-col justify-center items-center min-h-screen mt-5">
       <Loader2 className="w-20 h-20 animate-spin" />
-      <p className="text-gray-600 text-lg">Generating AI summaries...</p>
+      <p className="text-gray-600 text-lg">Generating AI summaries/themes...</p>
+      <p className="text-gray-500 text-xs text-center max-w-sm mt-1">
+        This may take a moment. AI-generated content may contain inaccuracies.
+      </p>
     </div>
   ) : (
     <div className="w-full">
       <div>
         <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-between items-center">
-          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center sm:text-left flex-1">
+          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex-1">
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
               <span className="ml-4 text-lg text-blue-600 font-semibold">
-                Total Responses: {totalCount}
+                Total Responses: {totalCount?.toLocaleString() ?? 0}
               </span>
             )}
           </h3>
@@ -388,6 +413,7 @@ function DashboardPage() {
             getServiceTooltip={getServiceTooltip}
             isServiceTooltipLoading={serviceTooltipLoading}
             setShowCustomTooltip={setShowCustomtoolTip}
+            getThemes={getThemes}
           />
         </div>
       </div>
@@ -473,7 +499,7 @@ function DashboardPage() {
               />
             </div>
             <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-              <ThematicAnalysisTable />
+              <ThematicAnalysisTable themes={themes} />
             </div>
           </div>
         </main>

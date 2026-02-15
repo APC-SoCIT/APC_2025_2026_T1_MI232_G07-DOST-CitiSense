@@ -32,6 +32,12 @@ export const serviceMap = {
   "Library Tour": 3,
 };
 
+export const genderMap = {
+  Female: 0,
+  Male: 1,
+  "Prefer not to say": 2,
+};
+
 export type GenderDataProps = {
   sex: "Female" | "Male";
   sentiment: Sentiment;
@@ -85,4 +91,13 @@ export type SentimentTrendsDataProps = {
 export type SentimentTrendsChartsProps = {
   refreshCharts: number;
   filterParams: string;
+};
+
+export type themeDataProps = {
+  top: string;
+  percentage: number;
+};
+
+export type ThematicAnalysisTableProps = {
+  themes: themeDataProps[];
 };
