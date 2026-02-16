@@ -2,7 +2,7 @@ import Gauge from "../charts/gauge";
 import ChatbotUI from "./chatbot/chatbotui";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
-import SentimentTrends from "../charts/sentimenttrends";
+import SentimentTrends from "../charts/SentimentTrends";
 import { Button } from "../ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
@@ -12,9 +12,9 @@ import DashboardFilter from "./DashboardFilter";
 import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
-import { sentimentFeedbackDataProps } from "../../types/DashboardProps";
+import type { sentimentFeedbackDataProps } from "../../types/DashboardProps";
 import DashboardSettings from "./dashboardtools/DashboardSettings";
-import {
+import type {
   GenderTooltipDataProps,
   ServiceTooltipDataProps,
   serviceMap,

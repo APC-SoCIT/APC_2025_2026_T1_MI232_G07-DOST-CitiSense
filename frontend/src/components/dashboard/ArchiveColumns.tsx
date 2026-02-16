@@ -1,4 +1,4 @@
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../ui/button";
 import { FileDown, Pencil } from "lucide-react";
 
@@ -12,7 +12,7 @@ export type archiveProps = {
 //column definition array initialization, this is where tanstack table is referencing from
 export const getArchiveColumns = (
   setOriginalItem: React.Dispatch<React.SetStateAction<archiveProps | null>>,
-  handleImageDownload: (item: archiveProps) => void
+  handleImageDownload: (item: archiveProps) => void,
 ): ColumnDef<archiveProps>[] => [
   {
     accessorKey: "title",

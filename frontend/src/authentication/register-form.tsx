@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
-import TermsAndConditionsPopup from "../Authentication/TermsAndConditionsPopup";
+import TermsAndConditionsPopup from "./TermsAndConditionsPopup";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
 

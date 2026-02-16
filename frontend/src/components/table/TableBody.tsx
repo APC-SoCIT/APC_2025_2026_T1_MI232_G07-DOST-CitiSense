@@ -1,7 +1,7 @@
 import React from "react";
 import { TableBody, TableCell, TableRow } from "../ui/table";
 import { flexRender } from "@tanstack/react-table";
-import { TableProps } from "../../types/TableColumnProps";
+import type { TableProps } from "../../types/TableColumnProps";
 
 const CustomTableBody = ({ table }: TableProps) => {
   return (

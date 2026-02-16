@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { ThematicAnalysisTableProps } from "../../types/ChartsProps";
+import type { ThematicAnalysisTableProps } from "../../types/ChartsProps";
 
 export const fallbackThemes = [
   { top: "DATA-001", percentage: 22 },

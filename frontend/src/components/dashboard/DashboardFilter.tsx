@@ -15,7 +15,7 @@ import FilterDropdownMenuItem from "./FilterDropdownMenuItem";
 import FilterCalendar from "./FilterCalendar";
 import { type DateRange } from "react-day-picker";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
-import { DashboardFilterProps } from "../../types/DashboardProps";
+import type { DashboardFilterProps } from "../../types/DashboardProps";
 
 const DashboardFilter = ({
   dateRange,

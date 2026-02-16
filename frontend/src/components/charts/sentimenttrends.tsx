@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
-import axios from "axios";
+import type { ApexOptions } from "apexcharts";
 import api from "../../api";
-import {
+import type {
   SentimentTrendsDataProps,
   SentimentTrendsChartsProps,
 } from "../../types/ChartsProps";

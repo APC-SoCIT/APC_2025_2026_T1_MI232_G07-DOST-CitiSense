@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Input } from "../ui/input";
 import { useMemo, useState } from "react";
-import { FilterDropdownMenuItemProps } from "../../types/DashboardProps";
+import type { FilterDropdownMenuItemProps } from "../../types/DashboardProps";
 
 const FilterDropdownMenuItem = ({
   title,
@@ -62,8 +62,12 @@ const FilterDropdownMenuItem = ({
         >
           <Input
             className="mb-2"
-            onKeyDown={(e: Event) => e.stopPropagation()}
-            onClick={(e: Event) => e.stopPropagation()}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+              e.stopPropagation()
+            }
+            onClick={(e: React.MouseEvent<HTMLInputElement>) =>
+              e.stopPropagation()
+            }
             type="text"
             placeholder="Please input a service name"
             value={searchTerm}

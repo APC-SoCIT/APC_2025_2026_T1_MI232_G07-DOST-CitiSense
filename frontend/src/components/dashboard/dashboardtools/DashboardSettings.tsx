@@ -11,7 +11,7 @@ import {
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { Check, ChevronDown, Download, Loader2, Settings } from "lucide-react";
-import { DashboardSettingsProps } from "../../../types/DashboardProps";
+import type { DashboardSettingsProps } from "../../../types/DashboardProps";
 import { toast } from "sonner";
 import { ExportFile } from "./ExportFile";
 import DashboardSettingsDropdown from "./DashboardSettingsDropdown";

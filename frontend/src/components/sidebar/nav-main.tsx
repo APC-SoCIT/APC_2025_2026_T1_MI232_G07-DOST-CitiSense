@@ -17,14 +17,15 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import type { NavMainProps } from "./SidebarProps";
 
-export function NavMain({ items }) {
+export function NavMain({ items }: NavMainProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          if (item?.items) {
+          if (item?.items && item.items.length < 0) {
             return (
               <Collapsible
                 key={item.title}

@@ -23,7 +23,7 @@ export function UnauthorizedPage({
         <CardContent className="grid p-0 md:grid-cols-2 min-h-[500px]">
           <div className="bg-muted relative hidden md:block">
             <img
-              src="410.jpeg"
+              src="/410.jpeg"
               alt="Unauthorized"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />

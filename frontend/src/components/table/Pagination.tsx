@@ -13,7 +13,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { TableProps } from "../../types/TableColumnProps";
+import type { TableProps } from "../../types/TableColumnProps";
 
 const Pagination = ({ table }: TableProps) => {
   return (

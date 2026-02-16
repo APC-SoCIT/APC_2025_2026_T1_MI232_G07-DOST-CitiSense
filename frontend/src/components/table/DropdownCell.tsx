@@ -1,4 +1,3 @@
-import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,9 +5,9 @@ import {
   TableDropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { senArray, SentimentPostType } from "../../types/TableColumnProps";
-import { CellContext } from "@tanstack/react-table";
-import { Sentiment } from "../../types/ChartsProps";
+import { senArray, type SentimentPostType } from "../../types/TableColumnProps";
+import type { CellContext } from "@tanstack/react-table";
+import type { Sentiment } from "../../types/ChartsProps";
 
 const DropdownCell = ({
   getValue,
@@ -17,7 +16,7 @@ const DropdownCell = ({
   table,
 }: CellContext<SentimentPostType, Sentiment>) => {
   const sentiment = getValue();
-  const updateData = table.options.meta?.updateData;
+  const updateData = table.options.meta?.updateData!;
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import api from "../../api";
-import { ApexOptions } from "apexcharts";
-import {
+import type { ApexOptions } from "apexcharts";
+import type {
   GenderDataProps,
   GenderSeriesProps,
   GenderChartProps,
-  genderMap,
 } from "../../types/ChartsProps";
+import { genderMap } from "../../types/ChartsProps";
 
 //fallback for the chart data if no data is fetched or if data is undefined
 const fallbackSeries = [

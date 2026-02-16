@@ -1,6 +1,6 @@
 import React from "react";
 import { Input } from "../ui/input";
-import { FilterTextProps } from "../../types/TableProps";
+import type { FilterTextProps } from "../../types/TableProps";
 
 const FilterText = ({ column }: FilterTextProps) => {
   const columnFilterValue = column.getFilterValue();

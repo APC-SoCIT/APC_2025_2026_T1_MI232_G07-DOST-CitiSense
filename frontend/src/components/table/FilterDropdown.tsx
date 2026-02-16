@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { Funnel } from "lucide-react";
 import {
   getFacetedUniqueValues,
-  ColumnFiltersState,
+  type ColumnFiltersState,
 } from "@tanstack/react-table";
 
 interface FilterDropdownProps {

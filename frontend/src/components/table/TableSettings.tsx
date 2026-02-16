@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { writeFileXLSX, utils, write } from "xlsx";
-import { SentimentPostType } from "../../types/TableColumnProps";
+import type { SentimentPostType } from "../../types/TableColumnProps";
 import api from "../../api";
-import { TableToolbarProps } from "../../types/TableProps";
+import type { TableToolbarProps } from "../../types/TableProps";
 
 const TableSettings = ({
   table,

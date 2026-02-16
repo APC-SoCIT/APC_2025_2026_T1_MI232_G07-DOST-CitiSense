@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -59,7 +59,7 @@ export function NavUser() {
               align="end"
               sideOffset={4}
             >
-              <DropdownMenuLabel className="p-0 font-normal">
+              <DropdownMenuLabel inset="" className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-7 w-7 rounded-lg">
                     <AvatarImage
@@ -77,15 +77,23 @@ export function NavUser() {
                   </div>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="" />
               <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => navigate("/home")}>
+                <DropdownMenuItem
+                  className=""
+                  inset=""
+                  onClick={() => navigate("/home")}
+                >
                   <BadgeCheck />
                   Account
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setConfirmLogout(true)}>
+              <DropdownMenuSeparator className="" />
+              <DropdownMenuItem
+                className=""
+                inset=""
+                onClick={() => setConfirmLogout(true)}
+              >
                 <LogOut />
                 Log out
               </DropdownMenuItem>

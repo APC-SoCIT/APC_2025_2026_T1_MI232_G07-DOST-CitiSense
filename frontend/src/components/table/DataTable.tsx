@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnFiltersState, flexRender } from "@tanstack/react-table";
+import { type ColumnFiltersState, flexRender } from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import React, { useEffect, useMemo } from "react";
 import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
 import CustomTableBody, { MemoizedTableBody } from "./TableBody";
-import { TableProps } from "../../types/TableColumnProps";
+import type { TableProps } from "../../types/TableColumnProps";
 
 export function DataTable({ table }: TableProps) {
   const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state

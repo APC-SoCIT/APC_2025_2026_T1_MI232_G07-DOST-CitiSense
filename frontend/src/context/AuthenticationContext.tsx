@@ -1,9 +1,14 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
+import React, {
+  createContext,
+  type ReactNode,
+  useEffect,
+  useState,
+} from "react";
 import api from "../api";
-import { SignInProps } from "../authentication/login-form";
+import type { SignInProps } from "../authentication/login-form";
 import { setLoggedIn } from "./AuthState";
-import { EmailForgotPasswordProps } from "../authentication/email-forgotpassword";
-import { SignUpFieldProps } from "../authentication/register-form";
+import type { EmailForgotPasswordProps } from "../authentication/email-forgotpassword";
+import type { SignUpFieldProps } from "../authentication/register-form";
 
 export type User = {
   id: number;
@@ -47,18 +52,18 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   //fetch the user details on mount and for automatically refreshing the access token of the user
   useEffect(() => {
     // Some endpoints to skip auth checks
-    const authEndpoint =
-      window.location.href.includes("/login") ||
-      window.location.href.includes("/register") ||
-      window.location.href.includes("/password") ||
-      window.location.href.includes("/email") ||
-      window.location.href.includes("/guest-dashboard");
+    // const authEndpoint =
+    //   location.pathname.startsWith("/login") ||
+    //   location.pathname.startsWith("/register") ||
+    //   location.pathname.startsWith("/password") ||
+    //   location.pathname.startsWith("/email") ||
+    //   location.pathname.startsWith("/guest-dashboard");
 
-    //skip auth checks for auth endpoints
-    if (authEndpoint) {
-      setIsLoading(false);
-      return;
-    }
+    // //skip auth checks for auth endpoints
+    // if (authEndpoint) {
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     //check for the auth status; if there are no details, the refresh the access token.
     const checkAuthStatus = async () => {

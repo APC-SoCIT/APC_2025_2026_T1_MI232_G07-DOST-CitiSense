@@ -6,7 +6,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { archiveProps } from "./ArchiveColumns";
+import type { archiveProps } from "./ArchiveColumns";
 import { getArchiveColumns } from "./ArchiveColumns";
 import Pagination from "../table/Pagination";
 import { toast } from "sonner";
@@ -65,7 +65,7 @@ const Archive = () => {
   //this is to also pass the setOriginalItem, and handleImageDownload function to the column definition
   const columns = useMemo(
     () => getArchiveColumns(setOriginalItem, handleImageDownload),
-    [setOriginalItem]
+    [setOriginalItem],
   );
 
   //gets the data from archive endpoint from the backend

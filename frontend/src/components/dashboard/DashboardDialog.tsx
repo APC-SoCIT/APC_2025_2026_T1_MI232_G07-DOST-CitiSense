@@ -2,7 +2,7 @@ import React from "react";
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { DashboardDialogProps } from "../../types/DashboardProps";
+import type { DashboardDialogProps } from "../../types/DashboardProps";
 
 const DashboardDialog = ({
   image,

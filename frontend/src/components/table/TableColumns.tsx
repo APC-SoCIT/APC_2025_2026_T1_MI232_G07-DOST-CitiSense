@@ -1,9 +1,12 @@
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import DropdownCell from "./DropdownCell";
 import Dialog1 from "./TableDialog";
 import FilterDropdown from "./FilterDropdown";
-import { SentimentPostType, filterOptions } from "../../types/TableColumnProps";
-import { Sentiment } from "../../types/ChartsProps";
+import type {
+  SentimentPostType,
+  filterOptions,
+} from "../../types/TableColumnProps";
+import type { Sentiment } from "../../types/ChartsProps";
 
 //column definition array initialization, this is where tanstack data table is referencing from
 export const getColumns = (

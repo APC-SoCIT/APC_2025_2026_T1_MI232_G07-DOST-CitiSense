@@ -1,6 +1,6 @@
-import { Table } from "@tanstack/react-table";
-import { SentimentPostType } from "./TableColumnProps";
-import { RowData, Column } from "@tanstack/react-table";
+import type { Table } from "@tanstack/react-table";
+import type { SentimentPostType } from "./TableColumnProps";
+import type { RowData, Column } from "@tanstack/react-table";
 
 declare module "@tanstack/react-table" {
   interface TableMeta<TData extends RowData> {

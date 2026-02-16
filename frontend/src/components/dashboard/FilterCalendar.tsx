@@ -6,7 +6,7 @@ import {
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Calendar } from "../../components/ui/calendar";
-import { FilterCalendarProps } from "../../types/DashboardProps";
+import type { FilterCalendarProps } from "../../types/DashboardProps";
 
 const FilterCalendar = ({
   title,

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "./DataTable";
 import { getColumns } from "./TableColumns";
-import { SentimentPostType } from "../../types/TableColumnProps";
+import type { SentimentPostType } from "../../types/TableColumnProps";
 import api from "../../api";
 import {
   useReactTable,
@@ -22,7 +22,6 @@ import TableSettings from "./TableSettings";
 import { toast } from "sonner";
 import Dialog1 from "./TableDialog";
 import Pagination from "./Pagination";
-import { mockData1 } from "../../mockdata/mockData";
 import axios from "axios";
 
 const DataTablePage = () => {
@@ -295,6 +294,7 @@ const DataTablePage = () => {
           postChange={postChange}
           handleEditOrCancel={handleEditOrCancel}
           filterParams={filterParams}
+          rowCount={rowCount}
         />
         <DataTable table={table} />
         <Dialog1

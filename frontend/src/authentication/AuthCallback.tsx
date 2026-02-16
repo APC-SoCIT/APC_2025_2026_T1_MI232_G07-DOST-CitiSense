@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import axios from "axios";
-import { duration } from "html2canvas-pro/dist/types/css/property-descriptors/duration";
 
 const AuthCallback = () => {
   const navigate = useNavigate();

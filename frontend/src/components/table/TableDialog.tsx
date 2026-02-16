@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { TableDialogProps } from "../../types/TableProps";
+import type { TableDialogProps } from "../../types/TableProps";
 
 // Dialog popup for when there is an error in updating row/s in the table.
 const Dialog1 = ({ showDialog, setShowDialog, text }: TableDialogProps) => {
