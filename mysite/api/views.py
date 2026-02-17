@@ -6,13 +6,28 @@ from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from django.db.models import Count, Q, F, Min
+from django.db.models.functions import Lower, Trim
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from drf.utils import summarize_text, generate_themes
 from django.core.cache import cache
 import time
 
-bad_values = ["", " ", '', ' ', "None", "null", "undefined", "NA", "N/A", "\"\"", '""']
+bad_values = {
+    "", " ", '', ' ',
+    "None", "NONE", "null", "undefined",
+    "NA", "N/A", "n/a", "n.a.", "N.A.",
+    "na", "n a",
+    "none", "NULL",
+    "-", "--", "---",
+    "not applicable", "not available",
+    "no data", "no value",
+    "unknown", "tbd",
+    "idk", "IDK", "Idk",
+    "i dont know", "I dont know", "I don't know",
+    "i don't know", "dont know", "dunno",
+    "\"\"", '""'
+}
 
 # Get the current filter for the dashboard using dictionary unpacking
 def filter_dashboard_request(request):

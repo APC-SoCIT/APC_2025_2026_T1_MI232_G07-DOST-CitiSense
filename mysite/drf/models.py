@@ -136,6 +136,11 @@ class FileMigration(models.Model):
     skipped_rows = models.IntegerField(default=0)
     migration_duration = models.FloatField(default=0.0, help_text="Migration time in seconds")
 
+    # Change what the label for the django admin interface for the filemigration model
+    class Meta:
+        verbose_name = "Upload migration file"
+        verbose_name_plural = "Upload migration files"
+
     def save(self, *args, **kwargs):
         # Check if the file uploaded is a .sql file
         if not self.sql_file.name.endswith(".sql"):

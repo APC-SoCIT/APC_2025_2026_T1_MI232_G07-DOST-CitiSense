@@ -32,3 +32,9 @@ class FileMigrationAdmin(admin.ModelAdmin):
     sql_file_name.admin_order_field  = 'sql_file'
     
 admin.site.register(FileMigration, FileMigrationAdmin)
+
+# To change the admin panel to CitiSense specific branding
+# Reference: https://stackoverflow.com/a/36251770
+admin.site.site_header = "CitiSense Administration"
+admin.site.site_title = "CitiSense Administration"
+admin.site.index_title = "Feature selection"
