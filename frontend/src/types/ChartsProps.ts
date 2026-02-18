@@ -39,7 +39,7 @@ export const genderMap = {
 };
 
 export type GenderDataProps = {
-  sex: "Female" | "Male";
+  sex: "Female" | "Male" | "Prefer not to say";
   sentiment: Sentiment;
   sencount: number;
 };
@@ -50,7 +50,7 @@ export type GenderSeriesProps = {
 };
 
 export type GenderTooltipDataProps = {
-  sex: "Female" | "Male";
+  sex: "Female" | "Male" | "Prefer not to say";
   sentiment: Sentiment;
   summary: string;
   count: number;

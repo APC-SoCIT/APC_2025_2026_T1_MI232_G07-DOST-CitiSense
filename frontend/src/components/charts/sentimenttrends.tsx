@@ -8,12 +8,6 @@ import type {
 } from "../../types/ChartsProps";
 import { generateFakeData } from "../../mockdata/fakeSentimentTrends";
 
-const fallbackSeries = [
-  { name: "Negative", data: [0, 0, 0, 0, 0, 0, 0] },
-  { name: "Neutral", data: [0, 0, 0, 0, 0, 0, 0] },
-  { name: "Positive", data: [0, 0, 0, 0, 0, 0, 0] },
-];
-
 const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
   filterParams,
   refreshCharts,
@@ -108,6 +102,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       },
     },
     yaxis: {
+      show: trendsValue.length > 0,
       min: 0,
       title: {
         text: "Sentiment Count",
@@ -193,6 +188,9 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
         },
       },
     ],
+    noData: {
+      text: "No data available",
+    },
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -201,7 +199,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       {isError && <div className="text-red-500 text-sm mb-2">{isError}</div>}
       <ReactApexChart
         options={options}
-        series={trendsValue.length > 0 ? trendsValue : fallbackSeries}
+        series={trendsValue}
         type="line"
         height={"350px"}
       />

@@ -35,7 +35,6 @@ admin.site.register(Group, GroupAdmin)
 
 # Put the token section in the authentication section
 Token._meta.app_label = "authentication"
-
+# You need to pass the tokenproxy not token as per this reference: https://stackoverflow.com/a/68565310
 admin.site.unregister(TokenProxy)
-# Register Token with its admin class
 admin.site.register(Token, TokenAdmin)

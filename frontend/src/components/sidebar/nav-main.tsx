@@ -17,7 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import type { NavMainProps } from "./SidebarProps";
+import type { NavMainProps } from "../../types/SidebarProps";
 
 export function NavMain({ items }: NavMainProps) {
   return (

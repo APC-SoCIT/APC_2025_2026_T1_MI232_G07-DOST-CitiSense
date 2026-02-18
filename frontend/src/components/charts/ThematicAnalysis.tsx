@@ -19,7 +19,9 @@ export const fallbackThemes = [
   { top: "DATA-006", percentage: 15 },
 ];
 
-const ThematicAnalysisTable = ({ themes }: ThematicAnalysisTableProps) => {
+const ThematicAnalysisTable = ({
+  themes = fallbackThemes,
+}: ThematicAnalysisTableProps) => {
   const isFallback = themes === fallbackThemes;
   return (
     <div className="flex flex-col h-full">

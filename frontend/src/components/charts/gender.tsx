@@ -9,13 +9,6 @@ import type {
 } from "../../types/ChartsProps";
 import { genderMap } from "../../types/ChartsProps";
 
-//fallback for the chart data if no data is fetched or if data is undefined
-const fallbackSeries = [
-  { name: "Negative", data: [0, 0, 0] },
-  { name: "Neutral", data: [0, 0, 0] },
-  { name: "Positive", data: [0, 0, 0] },
-];
-
 const Gender = ({
   filterParams,
   refreshCharts,
@@ -25,7 +18,7 @@ const Gender = ({
   showCustomTooltip,
 }: GenderChartProps) => {
   const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
-
+  const [genderTypes, setGenderTypes] = useState<string[]>([]);
   useEffect(() => {
     getGender();
   }, [filterParams, refreshCharts]);
@@ -34,24 +27,44 @@ const Gender = ({
     try {
       const res = await api.get(`/sentimentposts/gen/?${filterParams}`);
       const resData = res.data.genderCount;
-      console.log(res);
-      console.log(resData);
+
+      // If there is no data from the api response just break from the function early and exit with no values inside the array
+      if (!resData || resData.length === 0) {
+        setGenderValue([]);
+        setGenderTypes([]);
+        return;
+      }
+      // Get the unique genders for rendering the y-axis of the chart
+      const uniqueGenderArray: string[] = Array.from(
+        new Set(resData.map((item: GenderDataProps) => item.sex)),
+      );
+
+      setGenderTypes(uniqueGenderArray);
+
+      const size = uniqueGenderArray.length;
+
+      // Create a dictionary with key/value pair and assign each gender type with its own value
+      const dynamicGenderMap: Record<string, number> = {};
+      uniqueGenderArray.forEach((sex: string, index: number) => {
+        dynamicGenderMap[sex] = index;
+      });
 
       //temporary holder for sentiment counts per gender, this will hold the array for the series for the chart's y-axis
-      //Index 0 = Female, Index 1 = Male
       let sentimentCounts = {
-        Negative: [0, 0, 0],
-        Neutral: [0, 0, 0],
-        Positive: [0, 0, 0],
+        Negative: Array(size).fill(0),
+        Neutral: Array(size).fill(0),
+        Positive: Array(size).fill(0),
       };
 
       // if the gender is "F" set index to 0; otherwise 1 ("M")
       resData.forEach((item: GenderDataProps) => {
-        const index = genderMap[item.sex];
+        const index = dynamicGenderMap[item.sex];
 
         //get the current sentiment in the loop and determine the gender index
         //then put the following sentiment count to the appropriate position in the sentimentCounts
-        sentimentCounts[item.sentiment][index] = item.sencount;
+        if (index !== undefined) {
+          sentimentCounts[item.sentiment][index] = item.sencount;
+        }
       });
 
       //transform data into key-value pair to pass onto the chart
@@ -68,6 +81,16 @@ const Gender = ({
       setGenderValue([]);
     }
   };
+
+  const genderYAxis = genderTypes.map((label) => {
+    if (label.length > 16) {
+      // If the label for the gender is more than 16 then split it into two parts.
+      // The first index of the array being the first 6 letters of the word, and the other characters the second value of the array
+      return [label.slice(0, 6), label.slice(6).trim()];
+    }
+    return label;
+  });
+  console.log("dd", genderValue);
   const options: ApexOptions = {
     chart: {
       type: "bar",
@@ -75,6 +98,25 @@ const Gender = ({
       stacked: true,
       stackType: "100%",
     },
+    responsive: [
+      {
+        breakpoint: 768,
+        options: {
+          dataLabels: {
+            style: {
+              fontSize: "12px",
+            },
+          },
+          yaxis: {
+            labels: {
+              style: {
+                fontSize: "13px",
+              },
+            },
+          },
+        },
+      },
+    ],
     plotOptions: {
       bar: {
         horizontal: true,
@@ -88,13 +130,14 @@ const Gender = ({
       text: "Sentiment by Gender",
     },
     xaxis: {
-      categories: ["Female", "Male", ["Prefer not", "to say"]],
+      categories: genderYAxis,
     },
     yaxis: {
+      show: genderValue.length > 0,
       labels: {
         style: {
           fontFamily: "Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif",
-          fontSize: "20px",
+          fontSize: "15px",
           fontWeight: 10,
         },
       },
@@ -139,11 +182,6 @@ const Gender = ({
           },
           // Series index is the index for the row, data point index is the index for the column
           custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-            console.log(
-              "This is the gendertooltip seriesindex",
-              genderTooltip[seriesIndex][dataPointIndex],
-            );
-
             return `
       <div style="
         padding: 16px;
@@ -183,12 +221,15 @@ const Gender = ({
             fontSize: "14px",
           },
         },
+    noData: {
+      text: "No data available",
+    },
   };
   return (
     <div>
       <ReactApexChart
         options={options}
-        series={genderValue.length > 0 ? genderValue : fallbackSeries}
+        series={genderValue}
         type="bar"
         height={350}
       />

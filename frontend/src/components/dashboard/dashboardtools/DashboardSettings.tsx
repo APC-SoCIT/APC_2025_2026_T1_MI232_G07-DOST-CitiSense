@@ -38,7 +38,7 @@ const DashboardSettings = ({
     } catch (error) {
       console.log("Failed to generate summaries: ", error);
       setShowCustomTooltip(false);
-      toast.error("Failed to generate summaries.");
+      toast.error("Failed to generate summaries. Please try again.");
     }
   };
 

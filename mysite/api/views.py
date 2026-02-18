@@ -179,7 +179,7 @@ def gauge_chart(request):
 
 @api_view(['GET'])
 def gender_chart(request): 
-    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False)
+    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False, feedback__sex__isnull=False)
     gendercount = queryset.values('sentiment', sex=F('feedback__sex')).annotate(sencount=Count('sentiment'))
     return Response({"genderCount" : gendercount})
 
@@ -191,7 +191,7 @@ def service_chart(request):
 
 @api_view(["GET"])
 def area_chart(request):
-    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False)
+    queryset = filter_dashboard_request(request).filter(sentiment__isnull=False, feedback__created_at__isnull=False)
     areacount = list(queryset.values('sentiment', date_created=F("feedback__created_at")))
 
     # Initialize a dictionary to hold the API shape for the area chart
@@ -361,7 +361,7 @@ def thematic_analysis(request):
     suggestions_list = " ".join(suggestions_queryset)
     
     start_time = time.time()
-    print(f"Starting thematic analysis")
+    print(f"Starting thematic analysis for {suggestions_list} for {request.GET}")
 
     # Generate a cache key and get the values for the current key if it already exists in the memory
     # Else, calculate new themes for the newly selected filters and rows (limit)
@@ -371,7 +371,20 @@ def thematic_analysis(request):
         return Response(cached_result)
 
     # Generate themes and return a dictionary
-    themes = generate_themes(suggestions_list)
+    try:
+        themes = generate_themes(suggestions_list)
+
+        if not isinstance(themes, dict) or "themeCount" not in themes:
+            raise ValueError("Invalid theme structure")
+
+    except Exception as e:
+        return Response(
+            {
+                "error": "Theme generation failed",
+                "details": str(e)
+            },
+            status=500
+        )
 
     end_time = time.time()
     completed_time = end_time - start_time

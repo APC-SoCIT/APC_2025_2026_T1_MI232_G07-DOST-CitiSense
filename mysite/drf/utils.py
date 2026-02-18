@@ -59,6 +59,9 @@ RULES:
 2. Percentages MUST sum to 100 EXACTLY!
 3. Percentages are NUMBERS not strings (use 20, not "20%")
 4. Each theme is 2-4 words
+5. Output ONLY valid minified JSON.
+6. Always close all brackets.
+7. JSON must be directly parsable by Python's json.loads().
 
 Furthermore, a theme should be:
 - A concept or topic (2-4 words)
@@ -69,10 +72,14 @@ Examples: "Product Quality Issues", "Customer Service Experience", "Pricing Feed
 
 Return ONLY this JSON structure:
 {{
-"themeCount": [
-    {{"top": "theme name", "percentage": number}},
-    ...
-]
+  "themeCount": [
+    {{"top": "Theme Name", "percentage": number}},
+    {{"top": "Theme Name", "percentage": number}},
+    {{"top": "Theme Name", "percentage": number}},
+    {{"top": "Theme Name", "percentage": number}},
+    {{"top": "Theme Name", "percentage": number}},
+    {{"top": "Theme Name", "percentage": number}}
+  ]
 }}
 
 Feedback:
