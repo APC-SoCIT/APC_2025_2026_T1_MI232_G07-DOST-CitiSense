@@ -49,9 +49,15 @@ export function EmailForgotPasswordForm({ ...props }) {
     } catch (error) {
       // Handle specific Axios error
       if (axios.isAxiosError(error)) {
-        setError("root", {
-          message: error.response?.data.email || "Something went wrong.",
-        });
+        if (error.response?.status === 429) {
+          setError("root", {
+            message: "Too many requests. Please try again in 1 minute.",
+          });
+        } else {
+          setError("root", {
+            message: error.response?.data.email || "Something went wrong.",
+          });
+        }
       }
     }
   };
@@ -62,7 +68,7 @@ export function EmailForgotPasswordForm({ ...props }) {
       {...props}
     >
       <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
-        <CardHeader className="text-center pb-2">
+        <CardHeader className="text-center p-3">
           {errors.root?.message && (
             <CardDescription className="text-left bg-red-100 text-red px-3 py-2 mb-3 rounded-lg text-red-600">
               {errors.root.message}

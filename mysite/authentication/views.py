@@ -6,6 +6,9 @@ from dj_rest_auth.registration.views import SocialLoginView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.contrib.auth import get_user_model
+from dj_rest_auth.registration.views import RegisterView, ResendEmailVerificationView, VerifyEmailView
+from dj_rest_auth.views import LoginView, PasswordResetView, PasswordResetConfirmView
+from .throttles import AuthThrottle, PasswordResetThrottle, EmailVerificationThrottle
 
 User = get_user_model()
 
@@ -45,3 +48,29 @@ class GoogleLogin(SocialLoginView):
 class UserPostListCreate(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+# Throttle for unauthenticated routes
+# Register, and login API has a throttle of 5 per minute
+# Password reset views (send email, and password form) have a throttle of 10 per minute
+# Email verification views (send email after registration, and resend email) have a throttle of 10 per minute
+class ThrottledRegisterView(RegisterView):
+    throttle_classes = [AuthThrottle]
+
+class ThrottledLoginView(LoginView):
+    throttle_classes = [AuthThrottle]
+
+class ThrottledGoogleLoginView(GoogleLogin):
+    throttle_classes = [AuthThrottle]
+
+class ThrottledSendPasswordReset(PasswordResetView):
+    throttle_classes = [PasswordResetThrottle]
+
+class ThrottledPasswordResetForm(PasswordResetConfirmView):
+    throttle_classes = [PasswordResetThrottle]
+
+class ThrottledVerifyEmailView(VerifyEmailView):
+    throttle_classes = [EmailVerificationThrottle]
+
+class ThrottledResendEmailVerificationView(ResendEmailVerificationView):
+    throttle_classes = [EmailVerificationThrottle]

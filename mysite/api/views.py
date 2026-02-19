@@ -4,7 +4,7 @@ from rest_framework import generics, status
 from drf.models import cleaned_feedback, labeled_feedback
 from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, throttle_classes
 from django.db.models import Count, Q, F, Min
 from django.db.models.functions import Lower, Trim
 from rest_framework import permissions
@@ -12,6 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from drf.utils import summarize_text, generate_themes
 from django.core.cache import cache
 import time
+from .throttles import AISummaryThrottle
 
 bad_values = {
     "", " ", '', ' ',
@@ -235,14 +236,15 @@ def area_chart(request):
     return Response({"areaCount": areacount_list})
 
 @api_view(['GET'])
+@throttle_classes([AISummaryThrottle])
 def gender_bar_chart_tooltip(request):
     queryset = filter_dashboard_request(request)
 
     start_time = time.time()
 
-    # Get the limit and offset based on the API, default to 10 for the limit, offset is always 0.
-    limit = int(request.query_params.get("limit", 10))
-    offset = int(request.query_params.get("offset",0))
+    # Get the limit and offset based on the API, default to 10 for the limit, and max 1k rows, offset is always 0.
+    limit = min(int(request.query_params.get("limit", 10)), 1000)
+    offset = 0
 
     # Generate a cache key from the request's filter parameters
     # If there is a cache key already used with, use that and don't compute for summarization anymore
@@ -291,12 +293,13 @@ def gender_bar_chart_tooltip(request):
     return Response({"genderTooltip": response_list})
 
 @api_view(['GET'])
+@throttle_classes([AISummaryThrottle])
 def service_bar_chart_tooltip(request):
     queryset = filter_dashboard_request(request)
 
-    # Get the limit and offset based on the API, default to 10 for the limit, offset is always 0.
-    limit = int(request.query_params.get("limit", 10))
-    offset = int(request.query_params.get("offset",0))
+    # Get the limit and offset based on the API, default to 10 for the limit and max is 1k rows, offset is always 0.
+    limit = min(int(request.query_params.get("limit", 10)), 1000)
+    offset = 0
 
     start_time = time.time()
 
@@ -345,12 +348,13 @@ def service_bar_chart_tooltip(request):
     return Response({"serviceTooltip": response_list})
 
 @api_view(["GET"])
+@throttle_classes([AISummaryThrottle])
 def thematic_analysis(request):
     queryset = filter_dashboard_request(request)
 
-    # Get the limit and offset based on the API, default to 10 for the limit, offset is always 0.
-    limit = int(request.query_params.get("limit", 10))
-    offset = int(request.query_params.get("offset",0))
+    # Get the limit and offset based on the API, default to 10 for the limit, and max 1k rows, offset is always 0.
+    limit = min(int(request.query_params.get("limit", 10)), 1000)
+    offset = 0
 
     # Get the suggestions column filtered out of null and bad values (e.g., null, undefined, "")
     filtered_suggestions = queryset.filter(feedback__suggestions__isnull=False).exclude(feedback__suggestions__in=bad_values).values_list("feedback__suggestions", flat=True)

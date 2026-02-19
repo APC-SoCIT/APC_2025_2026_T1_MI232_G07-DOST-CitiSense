@@ -184,6 +184,12 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "dj_rest_auth.jwt_auth.JWTCookieAuthentication", 
     ],
+    'DEFAULT_THROTTLE_RATES': {
+        'ai_summarization': '10/min',
+        'auth': '5/min',
+        'password_reset': '10/min',
+        'verify_email': '10/min',
+    }
 }
 
 

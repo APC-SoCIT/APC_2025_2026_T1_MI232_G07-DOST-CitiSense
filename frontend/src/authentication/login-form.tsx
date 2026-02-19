@@ -50,10 +50,16 @@ export function LoginForm1({ ...props }) {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error.response?.data);
+        if (error.response?.status === 429) {
+          setError("root", {
+            message: "Too many login attempts, please try again in 1 minute.",
+          });
+        } else {
+          setError("root", {
+            message: "Invalid credentials. Please try again.",
+          });
+        }
       }
-      setError("root", {
-        message: "Invalid credentials. Please try again.",
-      });
     }
   };
 

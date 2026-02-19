@@ -49,7 +49,6 @@ export function EmailForgotPasswordSuccessForm({ ...props }) {
             variant="bluedefault"
             className="w-full h-11 bg-[#0038a8] hover:bg-[#002d86] text-white font-bold transition-colors"
             onClick={handleTimer}
-            disabled={seconds > 0}
           >
             {seconds > 0 ? `Resend in ${seconds}` : "Resend email"}
           </Button>
