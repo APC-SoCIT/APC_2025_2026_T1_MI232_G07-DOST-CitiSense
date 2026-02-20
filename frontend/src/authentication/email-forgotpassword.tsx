@@ -10,7 +10,7 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { ChevronLeft, CircleAlert } from "lucide-react";
+import { ChevronLeft, CircleAlert, ShieldCheck } from "lucide-react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,7 @@ import axios from "axios";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import DOSTLogo from "@/components/auth/DOST-IRAD";
 
 //zod schema for email verification for the forgot password form validation
 const emailForgotPasswordSchema = z.object({
@@ -67,6 +68,7 @@ export function EmailForgotPasswordForm({ ...props }) {
       className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
       {...props}
     >
+      <DOSTLogo />
       <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
         <CardHeader className="text-center p-3">
           {errors.root?.message && (

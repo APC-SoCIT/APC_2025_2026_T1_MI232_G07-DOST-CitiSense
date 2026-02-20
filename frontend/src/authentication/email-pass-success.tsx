@@ -9,6 +9,8 @@ import {
   CardFooter,
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
+import { ShieldCheck } from "lucide-react";
+import DOSTLogo from "@/components/auth/DOST-IRAD";
 
 export function EmailForgotPasswordSuccessForm({ ...props }) {
   const { forgotPassword, forgotEmail } = useAuth();
@@ -34,6 +36,7 @@ export function EmailForgotPasswordSuccessForm({ ...props }) {
       className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
       {...props}
     >
+      <DOSTLogo />
       <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
         <CardHeader className="text-center pb-2">
           <CardTitle className="text-2xl mb-1 mt-4 text-[#1e293b]">
@@ -49,6 +52,7 @@ export function EmailForgotPasswordSuccessForm({ ...props }) {
             variant="bluedefault"
             className="w-full h-11 bg-[#0038a8] hover:bg-[#002d86] text-white font-bold transition-colors"
             onClick={handleTimer}
+            disabled={seconds > 0}
           >
             {seconds > 0 ? `Resend in ${seconds}` : "Resend email"}
           </Button>
