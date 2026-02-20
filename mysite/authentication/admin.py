@@ -20,21 +20,4 @@ class UserAdmin(BaseUserAdmin):
 
 admin.site.register(User, UserAdmin)
 
-# Customize the EmailAddress admin from django all-auth and put it in the authentication admin section
-EmailAddress._meta.verbose_name = "Registered Email"
-EmailAddress._meta.verbose_name_plural = "Registered Emails"
-EmailAddress._meta.app_label = "authentication"
-
-admin.site.unregister(EmailAddress)
-admin.site.register(EmailAddress, EmailAddressAdmin)
-
-# Put the group section in the authentication section
-Group._meta.app_label = "authentication"
-admin.site.unregister(Group)
-admin.site.register(Group, GroupAdmin)
-
-# Put the token section in the authentication section
-Token._meta.app_label = "authentication"
-# You need to pass the tokenproxy not token as per this reference: https://stackoverflow.com/a/68565310
 admin.site.unregister(TokenProxy)
-admin.site.register(Token, TokenAdmin)
