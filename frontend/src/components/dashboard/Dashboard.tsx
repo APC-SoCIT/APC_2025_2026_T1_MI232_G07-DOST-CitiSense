@@ -2,7 +2,7 @@ import Gauge from "../charts/gauge";
 import ChatbotUI from "./chatbot/chatbotui";
 import Service from "../charts/service";
 import Gender from "../charts/gender";
-import SentimentTrends from "../charts/SentimentTrends";
+import SentimentTrends from "../charts/sentimenttrends";
 import { Button } from "../ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
@@ -367,16 +367,16 @@ function DashboardPage() {
   ) : (
     <div className="w-full">
       <div>
-        <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-between items-center">
-          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex-1">
+        <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-center md:justify-between items-center">
+          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex flex-col md:flex-row">
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
-              <span className="ml-4 text-lg text-blue-600 font-semibold">
+              <span className="ml-4 md:mt-1.5 text-lg text-blue-600 font-semibold">
                 Total Responses: {totalCount?.toLocaleString() ?? 0}
               </span>
             )}
           </h3>
-          <div>
+          <div className="flex flex-row justify-center items-center gap-2 md:gap-4">
             <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all ">
               {lastRefreshed
                 ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
@@ -406,15 +406,15 @@ function DashboardPage() {
               setFilterServiceNameArray={setFilterServiceNameArray}
               setFilterServiceTypeArray={setFilterServiceTypeArray}
             />
+            <DashboardSettings
+              getGenderTooltip={getGenderTooltip}
+              isGenderTooltipLoading={isGenderTooltipLoading}
+              getServiceTooltip={getServiceTooltip}
+              isServiceTooltipLoading={serviceTooltipLoading}
+              setShowCustomTooltip={setShowCustomtoolTip}
+              getThemes={getThemes}
+            />
           </div>
-          <DashboardSettings
-            getGenderTooltip={getGenderTooltip}
-            isGenderTooltipLoading={isGenderTooltipLoading}
-            getServiceTooltip={getServiceTooltip}
-            isServiceTooltipLoading={serviceTooltipLoading}
-            setShowCustomTooltip={setShowCustomtoolTip}
-            getThemes={getThemes}
-          />
         </div>
       </div>
       {/* Applied filter section*/}
@@ -455,17 +455,19 @@ function DashboardPage() {
           </span>
         )}
       </div>
-
-      {/* Dashboard section*/}
+      {/* Dashboard section */}
       {chartsLoading ? (
         <div className="flex justify-center items-center min-h-screen">
           <Loader2 className="w-20 h-20 animate-spin" />
         </div>
       ) : (
-        <main className="scale-85 origin-top flex flex-col lg:flex-row">
-          <div className="flex flex-col w-full lg:w-1/2 mr-5">
-            <div className="h-[400px] rounded-md shadow-lg mt-20 p-10">
-              <div className="flex justify-center items-center h-[250px]">
+        /* Wrap main in a div that hides the overflow or handles the height collapse */
+        <div className="overflow-hidden">
+          <main className="scale-85 origin-top p-4 -mb-[15vh]">
+            {" "}
+            {/* Added negative margin-bottom to pull the bottom up */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="h-[400px] rounded-md shadow-lg p-10 flex justify-center items-center">
                 <div className="h-[330px] w-[400px]">
                   <Gauge
                     filterParams={filterParams}
@@ -473,45 +475,44 @@ function DashboardPage() {
                   />
                 </div>
               </div>
-            </div>
-            <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-              <Service
-                filterParams={filterParams}
-                refreshCharts={refreshCharts}
-                serviceTooltip={serviceTooltip}
-                serviceTooltipLoading={serviceTooltipLoading}
-                serviceTooltipCount={serviceTooltipCount}
-                showCustomTooltip={showCustomTooltip}
-                uniqueServiceType={uniqueServiceType}
-              />
-            </div>
-          </div>
 
-          <div className="flex flex-col w-full lg:w-1/2 lg:ml-5 pb-10">
-            <div className="h-[400px] rounded-md shadow-lg mt-20 p-4">
-              <Gender
-                filterParams={filterParams}
-                refreshCharts={refreshCharts}
-                genderTooltip={genderTooltip}
-                isGenderTooltipLoading={isGenderTooltipLoading}
-                genderTooltipCount={genderTooltipCount}
-                showCustomTooltip={showCustomTooltip}
-              />
+              <div className="h-[400px] rounded-md shadow-lg p-4">
+                <Gender
+                  filterParams={filterParams}
+                  refreshCharts={refreshCharts}
+                  genderTooltip={genderTooltip}
+                  isGenderTooltipLoading={isGenderTooltipLoading}
+                  genderTooltipCount={genderTooltipCount}
+                  showCustomTooltip={showCustomTooltip}
+                />
+              </div>
+
+              <div className="h-[400px] rounded-md shadow-lg p-4">
+                <Service
+                  filterParams={filterParams}
+                  refreshCharts={refreshCharts}
+                  serviceTooltip={serviceTooltip}
+                  serviceTooltipLoading={serviceTooltipLoading}
+                  serviceTooltipCount={serviceTooltipCount}
+                  showCustomTooltip={showCustomTooltip}
+                  uniqueServiceType={uniqueServiceType}
+                />
+              </div>
+
+              <div className="h-[400px] rounded-md shadow-lg p-4">
+                <ThematicAnalysisTable themes={themes} />
+              </div>
+
+              <div className="lg:col-span-2 h-[400px] rounded-md shadow-lg p-4 w-full">
+                <SentimentTrends
+                  filterParams={filterParams}
+                  refreshCharts={refreshCharts}
+                />
+              </div>
             </div>
-            <div className="h-[400px] rounded-md shadow-lg mt-10 p-4">
-              <ThematicAnalysisTable themes={themes} />
-            </div>
-          </div>
-        </main>
-      )}
-      <div className="w-full flex flex-col items-center gap-0 mt-[-150px]">
-        <div className="h-[400px] rounded-md shadow-lg mb-10 w-full lg:w-[1150px]">
-          <SentimentTrends
-            filterParams={filterParams}
-            refreshCharts={refreshCharts}
-          />
+          </main>
         </div>
-      </div>
+      )}{" "}
       <ChatbotUI />
     </div>
   );
