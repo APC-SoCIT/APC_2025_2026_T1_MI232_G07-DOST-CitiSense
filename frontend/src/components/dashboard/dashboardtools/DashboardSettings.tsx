@@ -23,6 +23,10 @@ const DashboardSettings = ({
   isServiceTooltipLoading,
   setShowCustomTooltip,
   getThemes,
+  totalCount,
+  gaugeValue,
+  genderValue,
+  serviceValue,
 }: DashboardSettingsProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<number>(0);
@@ -107,7 +111,12 @@ const DashboardSettings = ({
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
             {/* Export file button */}
-            <ExportFile />
+            <ExportFile
+              totalCount={totalCount}
+              gauge={gaugeValue}
+              genderValue={genderValue}
+              serviceValue={serviceValue}
+            />
             <DialogFooter>
               <DialogClose asChild>
                 <Button

@@ -20,7 +20,7 @@ const DashboardSettingsDropdown = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button size="lg" className="w-full justify-between" variant="outline">
           <span
             className={`truncate ${

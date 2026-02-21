@@ -28,7 +28,7 @@ const ChatbotUI: React.FC = () => {
       <Button
         variant="default"
         size="icon-lg"
-        className="fixed bottom-6 right-6 z-[60] shadow-lg rounded-full bg-blue-600 hover:bg-blue-700 text-white p-0 flex items-center justify-center"
+        className="fixed bottom-20 right-6 z-[60] shadow-lg rounded-full bg-blue-600 hover:bg-blue-700 text-white p-0 flex items-center justify-center md:bottom-6"
         aria-label={open ? "Close chat" : "Open chat"}
         style={{
           boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
@@ -41,7 +41,7 @@ const ChatbotUI: React.FC = () => {
       </Button>
 
       <div
-        className="fixed bottom-6 right-6 z-50 flex items-end justify-end pointer-events-none"
+        className="fixed bottom-20 right-6 z-50 flex items-end justify-end pointer-events-none md:bottom-6"
         style={{ width: 64, height: 64 }}
       >
         <div

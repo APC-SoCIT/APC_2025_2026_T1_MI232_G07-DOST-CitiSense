@@ -16,75 +16,9 @@ const Service = ({
   serviceTooltip,
   serviceTooltipCount,
   showCustomTooltip,
+  serviceValue,
+  serviceTypes,
 }: ServiceChartProps) => {
-  const [serviceValue, setServiceValue] = useState<ServiceSeriesProps[]>([]);
-  const [serviceTypes, setServiceTypes] = useState<string[]>([]);
-
-  useEffect(() => {
-    getService();
-  }, [filterParams, refreshCharts]);
-
-  const getService = async () => {
-    try {
-      const res = await api.get(`/sentimentposts/service/?${filterParams}`);
-      const resData = res.data.serviceCount;
-
-      // If there is no data from the api response just break from the function early and exit with no values inside the array
-      if (!resData || resData.length === 0) {
-        setServiceValue([]);
-        setServiceTypes([]);
-        return;
-      }
-
-      // Get the unique service names for rendering the y-axis of the chart
-      const uniqueServiceTypesArray: string[] = Array.from(
-        new Set(resData.map((item: ServiceDataProps) => item.service)),
-      );
-
-      setServiceTypes(uniqueServiceTypesArray);
-
-      // Get the length of the serviceTypes array
-      const size = uniqueServiceTypesArray.length;
-
-      // Create a dictionary with key/value pair and assign each service type with its own value
-      const dynamicServiceMap: Record<string, number> = {};
-      uniqueServiceTypesArray.forEach((service: string, index: number) => {
-        dynamicServiceMap[service] = index;
-      });
-
-      //used to temporarily store the current object needed for the chart data
-      //this object contains the sentiment count per service in each sentiment category
-      // Reference: https://stackoverflow.com/a/44172015 - create an array filled with zeroes based on the serviceType count
-      let serviceCounts = {
-        Negative: Array(size).fill(0),
-        Neutral: Array(size).fill(0),
-        Positive: Array(size).fill(0),
-      };
-
-      //loop for updating the serviceCounts based on the serviceMap
-      //looks for the value pair of the current index and assigns it as the current index
-      resData.forEach((item: ServiceDataProps) => {
-        const index = dynamicServiceMap[item.service];
-        if (index !== undefined) {
-          serviceCounts[item.sentiment][index] = item.sencount;
-        }
-      });
-
-      //maps through the modified serviceCounts and transforms it into a new array to pass onto the chart
-      const serviceSeries = Object.entries(serviceCounts).map(
-        ([sentiment, array]) => ({
-          name: sentiment,
-          data: array,
-        }),
-      );
-
-      setServiceValue(serviceSeries);
-    } catch (error) {
-      console.error("Error fetching Service chart data:", error);
-      setServiceValue([]);
-    }
-  };
-
   // Split the Material requests or hybrid seminar to two parts, so that the chart y axis labels will render a shorter y-axis title
   const serviceYAxis = serviceTypes.map((label) => {
     if (label === "Material Requests") {

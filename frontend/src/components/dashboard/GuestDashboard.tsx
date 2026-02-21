@@ -24,6 +24,8 @@ import ThematicAnalysisTable, {
   fallbackThemes,
 } from "../charts/ThematicAnalysis";
 
+import useDashboardCharts from "@/hooks/useDashboardCharts";
+
 function GuestDashboard() {
   const [themes, setThemes] = useState<themeDataProps[]>(fallbackThemes); // To hold the values for the thematic analysis table
   const [isThemesLoading, setIsThemesLoading] = useState(false);
@@ -356,6 +358,10 @@ function GuestDashboard() {
     }
   };
 
+  // Get the chart values from the useDashboardCharts.ts file, and also pass the filterParams and refreshCharts.
+  const { gaugeValue, genderTypes, genderValue, serviceTypes, serviceValue } =
+    useDashboardCharts({ filterParams, refreshCharts });
+
   return isGenderTooltipLoading || serviceTooltipLoading || isThemesLoading ? (
     <div className="flex flex-col justify-center items-center min-h-screen mt-5">
       <Loader2 className="w-20 h-20 animate-spin" />
@@ -413,6 +419,10 @@ function GuestDashboard() {
               isServiceTooltipLoading={serviceTooltipLoading}
               setShowCustomTooltip={setShowCustomtoolTip}
               getThemes={getThemes}
+              totalCount={totalCount}
+              gaugeValue={gaugeValue}
+              genderValue={genderValue}
+              serviceValue={serviceValue}
             />
           </div>
         </div>
@@ -469,10 +479,7 @@ function GuestDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="h-[400px] rounded-md shadow-lg p-10 flex justify-center items-center">
                 <div className="h-[330px] w-[400px]">
-                  <Gauge
-                    filterParams={filterParams}
-                    refreshCharts={refreshCharts}
-                  />
+                  <Gauge gaugeValue={gaugeValue} />
                 </div>
               </div>
 
@@ -484,6 +491,8 @@ function GuestDashboard() {
                   isGenderTooltipLoading={isGenderTooltipLoading}
                   genderTooltipCount={genderTooltipCount}
                   showCustomTooltip={showCustomTooltip}
+                  genderTypes={genderTypes}
+                  genderValue={genderValue}
                 />
               </div>
 
@@ -496,6 +505,8 @@ function GuestDashboard() {
                   serviceTooltipCount={serviceTooltipCount}
                   showCustomTooltip={showCustomTooltip}
                   uniqueServiceType={uniqueServiceType}
+                  serviceTypes={serviceTypes}
+                  serviceValue={serviceValue}
                 />
               </div>
 

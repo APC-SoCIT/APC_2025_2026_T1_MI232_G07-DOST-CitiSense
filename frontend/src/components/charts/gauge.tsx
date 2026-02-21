@@ -3,29 +3,7 @@ import GaugeComponent from "react-gauge-component";
 import api from "../../api";
 import type { GaugeChartProps } from "../../types/ChartsProps";
 
-const Gauge = ({ filterParams, refreshCharts }: GaugeChartProps) => {
-  const [gaugeValue, setGaugeValue] = useState(0);
-
-  useEffect(() => {
-    getGauge();
-  }, [filterParams, refreshCharts]);
-
-  const getGauge = async () => {
-    try {
-      const res = await api.get(`/sentimentposts/gauge/?${filterParams}`);
-      const resData = res.data?.["Gauge percentage"]; // optional chaining proceeds through if res.data is not undefined
-      if (typeof resData === "number") {
-        //check if the value is a number
-        setGaugeValue(resData);
-      } else {
-        console.error("Failed to fetch Gauge chart data", resData);
-        setGaugeValue(0);
-      }
-    } catch (error) {
-      console.error("Error fetching Gauge chart data:", error);
-    }
-  };
-
+const Gauge = ({ gaugeValue }: GaugeChartProps) => {
   return (
     <div>
       <h1 className="font-sans font-bold text-center mb-5 mt-10 text-xl">

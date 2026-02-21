@@ -16,72 +16,9 @@ const Gender = ({
   isGenderTooltipLoading,
   genderTooltipCount,
   showCustomTooltip,
+  genderValue,
+  genderTypes,
 }: GenderChartProps) => {
-  const [genderValue, setGenderValue] = useState<GenderSeriesProps[]>([]);
-  const [genderTypes, setGenderTypes] = useState<string[]>([]);
-  useEffect(() => {
-    getGender();
-  }, [filterParams, refreshCharts]);
-
-  const getGender = async () => {
-    try {
-      const res = await api.get(`/sentimentposts/gen/?${filterParams}`);
-      const resData = res.data.genderCount;
-
-      // If there is no data from the api response just break from the function early and exit with no values inside the array
-      if (!resData || resData.length === 0) {
-        setGenderValue([]);
-        setGenderTypes([]);
-        return;
-      }
-      // Get the unique genders for rendering the y-axis of the chart
-      const uniqueGenderArray: string[] = Array.from(
-        new Set(resData.map((item: GenderDataProps) => item.sex)),
-      );
-
-      setGenderTypes(uniqueGenderArray);
-
-      const size = uniqueGenderArray.length;
-
-      // Create a dictionary with key/value pair and assign each gender type with its own value
-      const dynamicGenderMap: Record<string, number> = {};
-      uniqueGenderArray.forEach((sex: string, index: number) => {
-        dynamicGenderMap[sex] = index;
-      });
-
-      //temporary holder for sentiment counts per gender, this will hold the array for the series for the chart's y-axis
-      let sentimentCounts = {
-        Negative: Array(size).fill(0),
-        Neutral: Array(size).fill(0),
-        Positive: Array(size).fill(0),
-      };
-
-      // if the gender is "F" set index to 0; otherwise 1 ("M")
-      resData.forEach((item: GenderDataProps) => {
-        const index = dynamicGenderMap[item.sex];
-
-        //get the current sentiment in the loop and determine the gender index
-        //then put the following sentiment count to the appropriate position in the sentimentCounts
-        if (index !== undefined) {
-          sentimentCounts[item.sentiment][index] = item.sencount;
-        }
-      });
-
-      //transform data into key-value pair to pass onto the chart
-      const genderSeries = Object.entries(sentimentCounts).map(
-        ([sentiment, array]) => ({
-          name: sentiment,
-          data: array,
-        }),
-      );
-
-      setGenderValue(genderSeries);
-    } catch (error) {
-      console.error("Error fetching Gender chart data:", error);
-      setGenderValue([]);
-    }
-  };
-
   const genderYAxis = genderTypes.map((label) => {
     if (label.length > 16) {
       // If the label for the gender is more than 16 then split it into two parts.
@@ -90,6 +27,7 @@ const Gender = ({
     }
     return label;
   });
+
   console.log("dd", genderValue);
   const options: ApexOptions = {
     chart: {

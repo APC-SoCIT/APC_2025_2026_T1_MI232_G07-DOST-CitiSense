@@ -1,8 +1,7 @@
 export type Sentiment = "Positive" | "Neutral" | "Negative";
 
 export type GaugeChartProps = {
-  filterParams: string;
-  refreshCharts: number;
+  gaugeValue: number;
 };
 
 export type GenderChartProps = {
@@ -12,6 +11,8 @@ export type GenderChartProps = {
   isGenderTooltipLoading: boolean;
   genderTooltipCount: number[][];
   showCustomTooltip: boolean;
+  genderValue: GenderSeriesProps[];
+  genderTypes: string[];
 };
 
 export type ServiceChartProps = {
@@ -22,6 +23,8 @@ export type ServiceChartProps = {
   serviceTooltipCount: number[][];
   showCustomTooltip: boolean;
   uniqueServiceType: string[];
+  serviceValue: ServiceSeriesProps[];
+  serviceTypes: string[];
 };
 
 //map each service with a key for faster lookup

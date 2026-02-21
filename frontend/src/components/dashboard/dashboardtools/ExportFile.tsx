@@ -5,17 +5,23 @@ import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
 import { Button } from "../../ui/button";
 import { Download } from "lucide-react";
+import { type ExportFileProps } from "@/types/DashboardProps";
 
-function loadFile(url, callback) {
+function loadFile(url: string, callback: (err: Error, data: string) => void) {
   PizZipUtils.getBinaryContent(url, callback);
 }
 
-export const ExportFile = () => {
+export const ExportFile = ({
+  totalCount,
+  gauge,
+  genderValue,
+  serviceValue,
+}: ExportFileProps) => {
   const [isExporting, setIsExporting] = useState(false);
   const downloadTemplate = async () => {
     loadFile(
       "/templates/ReportTemplate.docx",
-      function (error: string, content) {
+      function (error: string, content: string) {
         if (error) {
           throw error;
         }
@@ -26,6 +32,12 @@ export const ExportFile = () => {
         });
         doc.render({
           date_now: `${new Date().toLocaleDateString()}, ${new Date().toLocaleTimeString()}`,
+          totalCount: totalCount,
+          gauge: gauge.toFixed(2),
+          genderValue: genderValue.map((item, index) => {
+            return item.name;
+          }),
+          serviceValue: serviceValue,
         });
         const out = doc.getZip().generate({
           type: "blob",

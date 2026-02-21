@@ -18,20 +18,22 @@ import type { TableProps } from "../../types/TableColumnProps";
 const Pagination = ({ table }: TableProps) => {
   return (
     <div className="flex flex-wrap w-full items-center justify-between">
-      {/* page count */}
-      <span className="flex justify-center gap-1 text-muted-foreground">
-        <span>Page </span>
-        <span>
-          {table.getPageCount() === 0
-            ? 1
-            : table.getState().pagination.pageIndex + 1}{" "}
-          of {(table.getPageCount() || 1).toLocaleString()}
+      <div>
+        {/* page count */}
+        <span className="flex justify-center gap-1 text-muted-foreground">
+          <span>Page </span>
+          <span>
+            {table.getPageCount() === 0
+              ? 1
+              : table.getState().pagination.pageIndex + 1}{" "}
+            of {(table.getPageCount() || 1).toLocaleString()}
+          </span>
         </span>
-      </span>
+      </div>
       {/* no. of rows to be shown */}
       <div className="flex">
         <div className="mr-2">
-          <span className="mr-2">Rows per page</span>
+          <span className="mr-2 hidden md:inline">Rows per page</span>
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button className="" variant="outline">
