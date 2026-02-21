@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getLoggedIn } from "./context/AuthState";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -16,8 +15,6 @@ api.interceptors.response.use(
       window.location.href.includes("/register") ||
       window.location.href.includes("/email");
 
-    // Get the current state if the user is logged in or not
-    const loggedIn = getLoggedIn();
     // Get the config of the request
     const originalRequest = error.config;
 
@@ -25,12 +22,7 @@ api.interceptors.response.use(
     // The !originalRequest.sent will prevent infinite looping of attempting to refresh token with an expired refresh token
     // The authPath check is there to prevent any token refresh from happening from an authentication url.
     // Also checks if the user is logged in or not; default to false
-    if (
-      error.response?.status === 401 &&
-      !originalRequest.sent &&
-      !authPath &&
-      loggedIn
-    ) {
+    if (error.response?.status === 401 && !originalRequest.sent && !authPath) {
       originalRequest.sent = true;
 
       try {
@@ -45,7 +37,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

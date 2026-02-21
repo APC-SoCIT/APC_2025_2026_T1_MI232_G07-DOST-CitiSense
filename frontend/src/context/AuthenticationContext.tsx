@@ -6,7 +6,6 @@ import React, {
 } from "react";
 import api from "../api";
 import type { SignInProps } from "../authentication/login-form";
-import { setLoggedIn } from "./AuthState";
 import type { EmailForgotPasswordProps } from "../authentication/email-forgotpassword";
 import type { SignUpFieldProps } from "../authentication/register-form";
 
@@ -52,41 +51,31 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
   //fetch the user details on mount and for automatically refreshing the access token of the user
   useEffect(() => {
     // Some endpoints to skip auth checks
-    // const authEndpoint =
-    //   location.pathname.startsWith("/login") ||
-    //   location.pathname.startsWith("/register") ||
-    //   location.pathname.startsWith("/password") ||
-    //   location.pathname.startsWith("/email") ||
-    //   location.pathname.startsWith("/guest-dashboard");
+    const authEndpoint =
+      window.location.href.startsWith("/login") ||
+      window.location.href.startsWith("/register") ||
+      window.location.href.startsWith("/password") ||
+      window.location.href.startsWith("/email") ||
+      window.location.href.startsWith("/guest-dashboard");
 
     // //skip auth checks for auth endpoints
-    // if (authEndpoint) {
-    //   setIsLoading(false);
-    //   return;
-    // }
+    if (authEndpoint) {
+      setIsLoading(false);
+      return;
+    }
 
     //check for the auth status; if there are no details, the refresh the access token.
     const checkAuthStatus = async () => {
       try {
         const userDetails = await api.get("/api/auth/user/");
         setUser(userDetails.data);
-        setLoggedIn(true);
       } catch (error) {
         setUser(null);
-        setLoggedIn(false);
-        console.log("failed to verify and refresh token");
       } finally {
         setIsLoading(false);
       }
     };
     checkAuthStatus();
-    console.log("AuthCheck is run");
-    //set interval for automatically refreshing user every 9 minutes before the token expires;
-    //this is for when a user is not actively accessing api endpoints
-    const interval = setInterval(checkAuthStatus, 540000);
-
-    //clear the interval to prevent it from running after a component unmounts
-    return () => clearInterval(interval);
   }, []);
 
   const Login = async (data: SignInProps) => {
@@ -97,10 +86,8 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
-      setLoggedIn(true);
     } catch (error) {
       setUser(null);
-      setLoggedIn(false);
       throw error; //give the error to the login form
     } finally {
       setIsLoading(false);
@@ -115,11 +102,9 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
       //get the current logged in users' details from the endpoint
       const userDetails = await api.get("/api/auth/user/");
       setUser(userDetails.data);
-      setLoggedIn(true);
       setIsLoading(false);
     } catch (error) {
       setSocialAuthError("Failed to login with Google");
-      setLoggedIn(false);
       throw error; //give the error to the social form
     } finally {
       setIsLoading(false);
@@ -130,7 +115,6 @@ export const AuthenticationProvider = ({ children }: AuthProviderProps) => {
     await api.post("/api/auth/logout/");
     setUser(null);
     setSocialAuthError("");
-    setLoggedIn(false);
   };
 
   const forgotPassword = async (email: string) => {
