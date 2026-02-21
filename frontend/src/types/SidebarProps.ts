@@ -1,7 +1,7 @@
 export type SidebarNavMainItemProps = {
   title: string;
   icon: React.ElementType;
-  url?: string;
+  url: string;
   items?: SidebarNavMainItemProps[];
 };
 

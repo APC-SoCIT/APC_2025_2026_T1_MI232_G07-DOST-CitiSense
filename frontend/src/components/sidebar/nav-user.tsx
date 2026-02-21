@@ -61,7 +61,7 @@ export function NavUser() {
             >
               <DropdownMenuLabel inset="" className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-7 w-7 rounded-lg">
+                  <Avatar className="-ml-7 h-7 w-7 rounded-lg">
                     <AvatarImage
                       src={user?.picture}
                       alt={user?.username}
@@ -80,7 +80,7 @@ export function NavUser() {
               <DropdownMenuSeparator className="" />
               <DropdownMenuGroup>
                 <DropdownMenuItem
-                  className=""
+                  className="-ml-5"
                   inset=""
                   onClick={() => navigate("/home")}
                 >
@@ -90,7 +90,7 @@ export function NavUser() {
               </DropdownMenuGroup>
               <DropdownMenuSeparator className="" />
               <DropdownMenuItem
-                className=""
+                className="-ml-5"
                 inset=""
                 onClick={() => setConfirmLogout(true)}
               >

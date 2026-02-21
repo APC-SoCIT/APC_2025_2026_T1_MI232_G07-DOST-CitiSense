@@ -16,10 +16,13 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import type { NavMainProps } from "../../types/SidebarProps";
+import { Link } from "react-router-dom";
 
 export function NavMain({ items }: NavMainProps) {
+  const { setOpenMobile } = useSidebar();
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -48,9 +51,9 @@ export function NavMain({ items }: NavMainProps) {
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <Link to={subItem.url}>
                               <span className="text-sm">{subItem.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
@@ -63,12 +66,12 @@ export function NavMain({ items }: NavMainProps) {
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <a href={item.url}>
+                  <Link to={item.url} onClick={() => setOpenMobile(false)}>
                     <item.icon className="!size-4" />
                     <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">
                       {item.title}
                     </span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
