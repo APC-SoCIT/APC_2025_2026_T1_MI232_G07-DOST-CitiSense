@@ -23,9 +23,17 @@ class UserSerializer(serializers.ModelSerializer):
         
 class CustomRegisterUserSerializer(RegisterSerializer):
     #unique validator with a message
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all(), 
                                                                message="A user with this email already exists.")])
     
+    def get_cleaned_data(self):
+        data = super().get_cleaned_data()
+        data["first_name"] = self.validated_data.get("first_name", "")
+        data["last_name"] = self.validated_data.get("last_name", "")
+        return data
+        
 # Reference: https://github.com/iMerica/dj-rest-auth/issues/308#issuecomment-924092699
 # https://github.com/iMerica/dj-rest-auth/blob/be436756793140621c6d6b1e82ba459676090b43/dj_rest_auth/serializers.py#L225
 # Uses the custom password reset form

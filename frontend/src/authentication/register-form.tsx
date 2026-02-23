@@ -23,6 +23,8 @@ import useAuth from "../hooks/useAuth";
 const signUpSchema = z
   .object({
     username: z.string(),
+    first_name: z.string(),
+    last_name: z.string(),
     email: z.email(),
     password1: z
       .string()
@@ -121,6 +123,42 @@ export function RegisterForm({ ...props }) {
             <CardContent className="pt-0">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid gap-4">
+                  <div className="flex gap-4">
+                    <div className="flex-1 grid gap-2">
+                      <Label htmlFor="first_name" className={undefined}>
+                        First Name
+                      </Label>
+                      <Input
+                        {...register("first_name")}
+                        id="first_name"
+                        type="text"
+                        className="h-9 px-3 text-base"
+                      />
+                      {errors.first_name && (
+                        <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                          <CircleAlert className="w-4 h-4" />{" "}
+                          {errors.first_name.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex-1 grid gap-2">
+                      <Label htmlFor="last_name" className={undefined}>
+                        Last Name
+                      </Label>
+                      <Input
+                        {...register("last_name")}
+                        id="last_name"
+                        type="text"
+                        className="h-9 px-3 text-base"
+                      />
+                      {errors.last_name && (
+                        <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                          <CircleAlert className="w-4 h-4" />{" "}
+                          {errors.last_name.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                   <div className="grid gap-2">
                     <Label htmlFor="username" className={undefined}>
                       Username
@@ -167,7 +205,7 @@ export function RegisterForm({ ...props }) {
                         type={showPassword1 ? "text" : "password"}
                         className="h-9 px-3 text-base pr-10"
                         onBlur={() => trigger("password2")}
-                        placeholder="••••••••"
+                        placeholder=""
                       />
                       <Button
                         type="button"
@@ -203,7 +241,7 @@ export function RegisterForm({ ...props }) {
                         type={showPassword2 ? "text" : "password"}
                         className="h-9 px-3 text-base pr-10"
                         onBlur={() => trigger("password2")}
-                        placeholder="••••••••"
+                        placeholder=""
                       />
                       <Button
                         type="button"
