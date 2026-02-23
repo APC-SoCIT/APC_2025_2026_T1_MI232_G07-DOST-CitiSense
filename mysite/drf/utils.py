@@ -4,6 +4,17 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import ollama
 import json
 
+EMPTY_VALUES = ('NULL', '', 'N/A', 'NA', 'n/a', 'na', 'None', 'null')
+
+
+def normalize(v):
+        """
+        Normalize a value by converting empty/null-like values to None.
+        Used for comparing database values with SQL dump values.
+        """
+        return None if v in EMPTY_VALUES or v == "" else v
+    
+
 tokenizer = AutoTokenizer.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
 model = AutoModelForSequenceClassification.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
 

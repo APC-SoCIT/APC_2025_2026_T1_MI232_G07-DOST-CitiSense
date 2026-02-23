@@ -1,16 +1,17 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.core import management
 from drf.utils import analyze_sentiment
 import os
 from django.conf import settings
-import subprocess
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import connection
 import sqlparse
 import time
 import re
+import csv
+from django.db.models.functions import Upper
+from .utils import normalize
 
 User = get_user_model()
 
@@ -140,12 +141,16 @@ class FileMigration(models.Model):
     class Meta:
         verbose_name = "Upload migration file"
         verbose_name_plural = "Upload migration files"
+        default_permissions = ('add',)
 
     def save(self, *args, **kwargs):
         # Check if the file uploaded is a .sql file
         if not self.sql_file.name.endswith(".sql"):
             raise ValidationError("The file must be a .sql file")
         
+        if not self.uploaded_by.groups.filter(name="File migration").exists():
+            raise PermissionDenied
+
         # This will equate to true on new .sql file saves
         is_new = not self.pk
         super().save(*args, **kwargs)
@@ -170,6 +175,15 @@ class FileMigration(models.Model):
         failed_count = 0
         skip_count = 0
 
+        # Get the all the values to be matched with the SQL statements
+        # Conert the '' to None for checking.
+        # You need to put it in a tuple to be able to use the normalized values in a set.
+        existing_records = set(tuple(normalize(v) for v in row) 
+                               for row in cleaned_feedback.objects.values_list(
+                                "service_name", "service_type", "sex", "category",
+                                "key_takeaways", "comments", "suggestions"
+                                ))
+
         # This allows us to execute SQL commands directly which is coming from the SQL file
         # Reference: https://docs.djangoproject.com/en/6.0/topics/db/sql/#executing-custom-sql-directly
         with connection.cursor() as cursor:
@@ -187,42 +201,55 @@ class FileMigration(models.Model):
 
                 # If the statement starts with INSERT INTO `drf_cleaned_feedback`, 
                 # Then replace it with INSERT INTO `drf_cleaned_feedback` (column_names**)
-                if lowered.startswith("insert into `drf_cleaned_feedback`"):
+                if re.search(r"insert into `?drf_cleaned_feedback`?", lowered):
                     
                     # Get the SQL insert statement for the drf_cleaned_feedback and split them by each value
                     # Sample regex: https://regex101.com/r/IsjIee/1
                     statement_values_array = re.findall(r"\((?:[^(]+|'[^']*')+\)", statement)
-                    
-                    # Change the insert statement to have all the values, just to be explicit
-                    statement = re.sub(r"INSERT INTO `drf_cleaned_feedback` VALUES", 
-                                                "INSERT INTO `drf_cleaned_feedback` (id, service_name, service_type, timestamp, " \
-                                                "quarter, year, sex, category, typeoflibrary, region, key_takeaways, comments, suggestions, " \
-                                                "created_at, updated_at) VALUES", 
-                                                statement, 
-                                                flags=re.IGNORECASE)
 
-                    # Get the key_takeaways, comments, and suggestions and convert them into a list
-                    text_list = cleaned_feedback.objects.filter(key_takeaways__isnull=False, 
-                                                                comments__isnull=False,
-                                                                suggestions__isnull=False
-                                                                ).values_list("key_takeaways", "comments", "suggestions")
-                    
+                    if re.search(r"INSERT\s+INTO\s+`?drf_cleaned_feedback`?\s+VALUES", lowered):
+                        # Change the insert statement to have all the values, just to be explicit
+                        statement = re.sub(r"INSERT\s+INTO\s+`?drf_cleaned_feedback`?\s+VALUES", 
+                                                    "INSERT INTO `drf_cleaned_feedback` (id, service_name, service_type, timestamp, " \
+                                                    "quarter, year, sex, category, typeoflibrary, region, key_takeaways, comments, suggestions, " \
+                                                    "created_at, updated_at) VALUES", 
+                                                    statement, 
+                                                    flags=re.IGNORECASE)
+
+
                     # This will hold the SQL values (filtered out and unique) for the insert statement
                     statements_to_keep = []
                     
-                    # Loop over the insert statement value array, and compare it with each of the text_list
-                    # The value will not be appended if it matches with all three of the text fields "key_takeaways", "comments", and "suggestions"
+                    # Loop over the insert statement value array, and compare it with each of the existing_keys
+                    # The value will not be appended if it matches with all the fields
                     for value in statement_values_array:
-                        found_match = False
 
-                        for text in text_list:
-                            if all(row.lower() in value.lower() for row in text):
-                                    found_match = True
-                                    break
+                        # Parse one SQL value tuple from the INSERT statement into a Python list
+                        parsed_values = self.parse_sql_value(value)
+                        
+                        # Get the current fields in the parsed_values 
+                        if parsed_values and len(parsed_values) >= 13:
+                            # Convert SQL 'NULL' strings to a None for proper comparison
+                            # This is because gives NULL which will be converted to a 'NULL' by the parse_sql_value.
+                            service_name = normalize(parsed_values[1])
+                            service_type = normalize(parsed_values[2])
+                            sex = normalize(parsed_values[6])
+                            category = normalize(parsed_values[7])
+                            key_takeaways = normalize(parsed_values[10])
+                            comments = normalize(parsed_values[11])
+                            suggestions = normalize(parsed_values[12])
+                            
+                            # Create a tuple of the key fields that we will use for duplicate checking
+                            record_tuple = (
+                                        service_name, service_type, sex, category,
+                                        key_takeaways, comments, suggestions
+                                    )   
+                             
+                            # Check if this record already exists in the DB (existing records is a set of tuples)
+                            # If it does not exist then append it to the new SQL statement list to be executed and insert into the DB.
+                            if record_tuple not in existing_records:
+                                statements_to_keep.append(value)
 
-                        if not found_match:
-                            statements_to_keep.append(value)
-                    
                     # Calculate skipped rows from the original SQL statement array with the statements to keep array
                     skip_count = len(statement_values_array) - len(statements_to_keep)
 
@@ -281,6 +308,7 @@ class FileMigration(models.Model):
     # Automatically create a labeled feedback entry when a new instance of cleaned_feedback is saved (Data migration version)   
     def populate_labeled(self):
         labeled_count = 0
+        print(f"Starting sentiment analysis...")
         try:
             for row in cleaned_feedback.objects.filter(labeled_feedback__isnull=True):
                 labeled_feedback.objects.create(feedback=row)
@@ -294,5 +322,22 @@ class FileMigration(models.Model):
         
         return labeled_count
     
+    def parse_sql_value(self, value_string):
+        """
+        Parse a SQL VALUES tuple like: (1,'Service','Type','2021-02-12',...)
+        Returns a list of individual values
+        """
+        # Remove outer parenthesis
+        value_string = value_string.strip('()')
+        
+        # Use csv reader to handle quoted strings with commas, and escape \\ character
+        reader = csv.reader([value_string], quotechar="'", escapechar='\\', skipinitialspace=True)
+        
+        # Get the first (and only) row, as the reader variable is just an iterator itself and not a list, hence you need to iterate over it to access even just one value
+        for row in reader:
+            return row
+        
+        return None
+
     def __str__(self):
         return f"File Migration #{self.id}"

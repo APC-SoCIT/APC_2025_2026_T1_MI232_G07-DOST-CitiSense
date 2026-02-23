@@ -27,6 +27,10 @@ class FileMigrationAdmin(admin.ModelAdmin):
     def sql_file_name(self, obj):
         return os.path.basename(obj.sql_file.name)
     
+    # Only the users in the file migration group can add and run migration files.
+    def has_add_permission(self, request):
+        return request.user.groups.filter(name="File migration").exists()
+        
     # Make the column name "SQL File", and make it sortable
     sql_file_name.short_description = "SQL File"
     sql_file_name.admin_order_field  = 'sql_file'
