@@ -17,7 +17,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
   );
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState<string | null>(null);
-
+  const seriesOrder = ["Neutral", "Negative", "Positive"];
   useEffect(() => {
     const fetchSentimentTrendsData = async () => {
       setIsLoading(true);
@@ -26,10 +26,21 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
         const response = await api.get(
           `sentimentposts/areachart/?${filterParams}`,
         );
-        const responseData = response.data.areaCount;
+
+        const responseData: SentimentTrendsDataProps[] =
+          response.data.areaCount;
+
+        // Convert the response array to always be Neutral first, then Negative, and lastly Positive
+        // Reference: https://stackoverflow.com/a/44063445
+        const responseDataSorted = responseData
+          .filter((item) => seriesOrder.includes(item.name))
+          .toSorted(
+            (a, b) => seriesOrder.indexOf(a.name) - seriesOrder.indexOf(b.name),
+          );
 
         // setTrendsValue(generateFakeData());
-        setTrendsValue(responseData);
+        setTrendsValue(responseDataSorted);
+        console.log("This is the sentiment trends data", responseDataSorted);
       } catch (err) {
         console.log(err);
         setIsError("Failed to fetch sentiment trends data.");
@@ -66,6 +77,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       },
       fontFamily: "Inter, system-ui, sans-serif",
     },
+
     title: {
       text: "Sentiment Trends",
       align: "left",
@@ -75,7 +87,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
         fontWeight: 600,
       },
     },
-    colors: ["#4CAF50", "#EA4228", "#d4ab57ff"],
+    colors: ["#d4ab57ff", "#EA4228", "#4CAF50"],
     dataLabels: {
       enabled: false,
     },
@@ -99,6 +111,10 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
       },
       axisTicks: {
         show: false,
+      },
+      crosshairs: {
+        show: true,
+        position: "front",
       },
     },
     yaxis: {
@@ -154,6 +170,7 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
     tooltip: {
       shared: true,
       intersect: false,
+      followCursor: true,
       theme: "light",
       style: {
         fontSize: "12px",

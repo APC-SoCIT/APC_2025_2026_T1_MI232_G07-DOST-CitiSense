@@ -443,7 +443,7 @@ function DashboardPage() {
             {/* Service names filter */}
             {filterServiceNameArray.length > 0 &&
             filterServiceNameArray.length === serviceName.length
-              ? " All services names selected"
+              ? " all services names selected"
               : filterServiceNameArray.join(", ")}
             {/* Separator between the service names and service types */}
             {filterServiceNameArray.length > 0 &&
@@ -452,7 +452,7 @@ function DashboardPage() {
             {/* Service type filter */}
             {filterServiceTypeArray.length > 0 &&
             filterServiceTypeArray.length === serviceType.length
-              ? "All service types selected"
+              ? "all service types selected"
               : filterServiceTypeArray.join(", ")}
             {/* Separator between the service types date range */}
             {(filterServiceNameArray.length > 0 ||
