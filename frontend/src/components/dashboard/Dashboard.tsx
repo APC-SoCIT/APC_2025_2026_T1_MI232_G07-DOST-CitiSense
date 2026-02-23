@@ -478,7 +478,7 @@ function DashboardPage() {
             {/* Added negative margin-bottom to pull the bottom up */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="h-[400px] rounded-md shadow-lg p-10 flex justify-center items-center">
-                <div className="h-[330px] w-[400px]">
+                <div className="h-[] w-[400px]">
                   <Gauge gaugeValue={gaugeValue} />
                 </div>
               </div>
