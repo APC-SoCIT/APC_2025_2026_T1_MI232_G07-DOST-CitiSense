@@ -18,6 +18,8 @@ def create_filemigration_group(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("drf", "0012_alter_filemigration_options"),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("contenttypes", "0002_remove_content_type_name"),
         ]
     operations = [
         migrations.RunPython(create_filemigration_group)
