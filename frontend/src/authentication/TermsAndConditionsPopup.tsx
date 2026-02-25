@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from "../components/ui/dialog";
 import { Button } from "../components/ui/button";
-import { Checkbox } from "../components/ui/checkbox";
+import { TermsCheckbox } from "@/components/ui/TermsCheckbox";
 import { Label } from "../components/ui/label";
 
 interface TermsAndConditionsPopupProps {
@@ -122,7 +122,7 @@ const TermsAndConditionsPopup: React.FC<TermsAndConditionsPopupProps> = ({
         <DialogFooter className="border-t px-8 py-6 bg-white">
           <div className="flex flex-col w-full">
             <div className="flex items-center gap-2 mb-5">
-              <Checkbox
+              <TermsCheckbox
                 id="agree-checkbox"
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}

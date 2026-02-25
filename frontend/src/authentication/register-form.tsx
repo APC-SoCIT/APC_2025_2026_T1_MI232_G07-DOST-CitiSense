@@ -10,7 +10,7 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { CircleAlert, EyeIcon, EyeOffIcon } from "lucide-react";
+import { CircleAlert, EyeIcon, EyeOffIcon, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,13 @@ import React, { useState } from "react";
 import TermsAndConditionsPopup from "./TermsAndConditionsPopup";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 //zod schema for the form validation
 const signUpSchema = z
@@ -25,7 +32,11 @@ const signUpSchema = z
     username: z.string(),
     first_name: z.string(),
     last_name: z.string(),
-    email: z.email(),
+    email: z.email({
+      pattern: new RegExp(import.meta.env.VITE_EMAIL_REGEX),
+      message: "Input an email with the correct domain name.",
+    }),
+
     password1: z
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -53,6 +64,9 @@ export function RegisterForm({ ...props }) {
   //for showing password
   const [showPassword1, setShowPassword1] = React.useState(false);
   const [showPassword2, setShowPassword2] = React.useState(false);
+  const [showTooltip1, setShowTooltip1] = useState(false);
+  const [showTooltip2, setShowTooltip2] = useState(false);
+
   const navigate = useNavigate();
   const { Register } = useAuth();
   const {
@@ -61,10 +75,16 @@ export function RegisterForm({ ...props }) {
     formState: { errors, isSubmitting },
     setError,
     trigger,
+    watch,
   } = useForm<SignUpFieldProps>({
     //hook up the zod schema to react hook form, outsource validation to zod
     resolver: zodResolver(signUpSchema),
   });
+
+  const password = watch("password1");
+  const passwordHas8Characters = password?.length >= 8;
+  const passwordHasANumber = /[0-9]/.test(password);
+  const passwordHasAnUpperCase = /[A-Z]/.test(password);
 
   const onSubmit = async (data: SignUpFieldProps) => {
     try {
@@ -199,29 +219,67 @@ export function RegisterForm({ ...props }) {
                         Password
                       </Label>
                     </div>
-                    <div className="relative h-12 flex items-center">
-                      <Input
-                        {...register("password1")}
-                        type={showPassword1 ? "text" : "password"}
-                        className="h-9 px-3 text-base pr-10"
-                        onBlur={() => trigger("password2")}
-                        placeholder=""
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
-                        onClick={() => setShowPassword1((prev) => !prev)}
-                        tabIndex={-1}
-                      >
-                        {showPassword1 ? (
-                          <EyeIcon className="w-4 h-4" />
-                        ) : (
-                          <EyeOffIcon className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
+
+                    <TooltipProvider>
+                      <Tooltip open={showTooltip1}>
+                        <TooltipTrigger asChild>
+                          <div
+                            onFocus={() => setShowTooltip1(true)}
+                            onMouseLeave={() => setShowTooltip1(false)}
+                            onMouseEnter={() => setShowTooltip1(true)}
+                          >
+                            {" "}
+                            <div className="relative h-12 flex items-center">
+                              <Input
+                                {...register("password1")}
+                                type={showPassword1 ? "text" : "password"}
+                                className="h-9 px-3 text-base pr-10"
+                                onBlur={() => trigger("password2")}
+                                placeholder=""
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
+                                onClick={() =>
+                                  setShowPassword1((prev) => !prev)
+                                }
+                                tabIndex={-1}
+                              >
+                                {showPassword1 ? (
+                                  <EyeIcon className="w-4 h-4" />
+                                ) : (
+                                  <EyeOffIcon className="w-4 h-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          sideOffset={8}
+                          className="bg-white text-black border shadow-lg rounded-md p-3 w-64"
+                        >
+                          {" "}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Checkbox checked={passwordHas8Characters} />
+                              <span>At least 8 characters</span>
+                            </div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Checkbox checked={passwordHasANumber} />
+                              <span>Must include a number</span>
+                            </div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Checkbox checked={passwordHasAnUpperCase} />
+                              <span>Must include a capital letter</span>
+                            </div>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
                     {errors.password1 && (
                       <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
                         <CircleAlert className="w-4 h-4" />{" "}
@@ -229,35 +287,73 @@ export function RegisterForm({ ...props }) {
                       </p>
                     )}
                   </div>
+
                   <div className="grid gap-2">
                     <div className="flex items-center">
                       <Label htmlFor="password2" className={undefined}>
                         Confirm Password
                       </Label>
                     </div>
-                    <div className="relative h-12 flex items-center">
-                      <Input
-                        {...register("password2")}
-                        type={showPassword2 ? "text" : "password"}
-                        className="h-9 px-3 text-base pr-10"
-                        onBlur={() => trigger("password2")}
-                        placeholder=""
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
-                        onClick={() => setShowPassword2((prev) => !prev)}
-                        tabIndex={-1}
-                      >
-                        {showPassword2 ? (
-                          <EyeIcon className="w-4 h-4" />
-                        ) : (
-                          <EyeOffIcon className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
+
+                    <TooltipProvider>
+                      <Tooltip open={showTooltip2}>
+                        <TooltipTrigger asChild>
+                          <div
+                            onFocus={() => setShowTooltip2(true)}
+                            onMouseLeave={() => setShowTooltip2(false)}
+                            onMouseEnter={() => setShowTooltip2(true)}
+                          >
+                            <div className="relative h-12 flex items-center">
+                              <Input
+                                {...register("password2")}
+                                type={showPassword2 ? "text" : "password"}
+                                className="h-9 px-3 text-base pr-10"
+                                onBlur={() => trigger("password2")}
+                                placeholder=""
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-0 h-6 w-6 hover:bg-transparent"
+                                onClick={() =>
+                                  setShowPassword2((prev) => !prev)
+                                }
+                                tabIndex={-1}
+                              >
+                                {showPassword2 ? (
+                                  <EyeIcon className="w-4 h-4" />
+                                ) : (
+                                  <EyeOffIcon className="w-4 h-4" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          sideOffset={8}
+                          className="bg-white text-black border shadow-lg rounded-md p-3 w-64"
+                        >
+                          {" "}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Checkbox checked={passwordHas8Characters} />
+                              <span>At least 8 characters</span>
+                            </div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Checkbox checked={passwordHasANumber} />
+                              <span>Must include a number</span>
+                            </div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Checkbox checked={passwordHasAnUpperCase} />
+                              <span>Must include a capital letter</span>
+                            </div>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
                     {errors.password2 && (
                       <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
                         <CircleAlert className="w-4 h-4" />{" "}
@@ -265,6 +361,7 @@ export function RegisterForm({ ...props }) {
                       </p>
                     )}
                   </div>
+
                   <Button
                     type="submit"
                     variant="default"

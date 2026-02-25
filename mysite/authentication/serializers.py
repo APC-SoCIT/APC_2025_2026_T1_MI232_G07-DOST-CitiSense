@@ -4,6 +4,9 @@ from rest_framework.validators import UniqueValidator
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import PasswordResetSerializer
 from django.conf import settings
+import re
+import os
+
 #get the active customUser model in settings.py
 User = get_user_model()
 from .forms import CustomAllAuthPasswordResetForm
@@ -27,6 +30,13 @@ class CustomRegisterUserSerializer(RegisterSerializer):
     last_name = serializers.CharField(required=True)
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all(), 
                                                                message="A user with this email already exists.")])
+    
+    # Check if the email matches client domain name to the email that the user has registered.
+    def validate_email(self, email):
+        email = super().validate_email(email)
+        if not re.compile(os.environ.get("EMAIL_REGEX"), re.IGNORECASE).match(email):
+            raise serializers.ValidationError("The email must have a valid domain name.")
+        return email
     
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
