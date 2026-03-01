@@ -1,7 +1,10 @@
-import { GalleryVerticalEnd, ShieldCheck } from "lucide-react";
+import { CircleUserRound, GalleryVerticalEnd, ShieldCheck } from "lucide-react";
 import { LoginForm1 } from "../authentication/login-form";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   return (
     <div className="flex min-h-svh">
       {/* Side Panel */}
@@ -19,7 +22,7 @@ export default function LoginPage() {
       >
         <div className="flex w-full max-w-sm flex-col gap-6">
           {/* BRANDING */}
-          <div className="flex items-center gap-2 mt-5 self-center font-medium">
+          <div className="flex items-center gap-2 my-5 self-center font-medium">
             <div className="bg-[#0038A8] text-white p-2 rounded-lg shadow-md">
               <ShieldCheck className="size-5" />
             </div>
@@ -33,8 +36,31 @@ export default function LoginPage() {
               </span>
             </div>
           </div>
-          <LoginForm1 />
+          <LoginForm1 />{" "}
+          <div className="md:hidden flex flex-col">
+            <Button
+              variant="outline"
+              className="h-9 text-base flex items-center justify-center gap-2"
+              onClick={() => navigate("/guest-dashboard")}
+              type="button"
+            >
+              <CircleUserRound />
+              Access as guest{" "}
+            </Button>{" "}
+          </div>
         </div>
+      </div>
+      <div className="hidden md:flex fixed top-6 right-6 z-50">
+        {" "}
+        <Button
+          variant="outline"
+          className="h-9 text-base flex items-center justify-center gap-2"
+          onClick={() => navigate("/guest-dashboard")}
+          type="button"
+        >
+          <CircleUserRound />
+          Access as guest{" "}
+        </Button>{" "}
       </div>
     </div>
   );

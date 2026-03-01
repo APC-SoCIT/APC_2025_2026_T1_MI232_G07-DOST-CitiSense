@@ -11,8 +11,8 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { EyeIcon, EyeOffIcon, Loader } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { CircleUserRound, EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -78,10 +78,7 @@ export function LoginForm1({ ...props }) {
   const displayError = socialAuthError || errors.root?.message;
 
   return (
-    <div
-      className="flex flex-col items-center justify-center min-h-[80vh] gap-4"
-      {...props}
-    >
+    <div className="flex flex-col items-center justify-center gap-4" {...props}>
       <Card className="w-full max-w-xl p-0 shadow-lg border border-border">
         <CardHeader className="text-center p-3">
           {displayError && (
