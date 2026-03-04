@@ -33,7 +33,7 @@ const signUpSchema = z
     first_name: z.string(),
     last_name: z.string(),
     email: z.email({
-      pattern: new RegExp(import.meta.env.VITE_EMAIL_REGEX),
+      pattern: new RegExp(import.meta.env.VITE_EMAIL_REGEX, "i"),
       message: "Input an email with the correct domain name.",
     }),
 
@@ -207,7 +207,7 @@ export function RegisterForm({ ...props }) {
                       placeholder="you@example.com"
                     />
                     {errors.email && (
-                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <p className="text-red-500 text-sm flex items-center gap-1">
                         <CircleAlert className="w-4 h-4" />{" "}
                         {errors.email.message}
                       </p>
@@ -281,7 +281,7 @@ export function RegisterForm({ ...props }) {
                     </TooltipProvider>
 
                     {errors.password1 && (
-                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <p className="text-red-500 text-sm flex items-center gap-1 ">
                         <CircleAlert className="w-4 h-4" />{" "}
                         {errors.password1.message}
                       </p>
@@ -355,7 +355,7 @@ export function RegisterForm({ ...props }) {
                     </TooltipProvider>
 
                     {errors.password2 && (
-                      <p className="text-red-500 text-sm flex items-center gap-1 mt-2">
+                      <p className="text-red-500 text-sm flex items-center gap-1">
                         <CircleAlert className="w-4 h-4" />{" "}
                         {errors.password2.message}
                       </p>

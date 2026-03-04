@@ -21,8 +21,11 @@ import axios from "axios";
 
 //zod schema for login form validation
 const signInSchema = z.object({
-  email: z.string().min(1),
-  password: z.string().min(1),
+  email: z.email({
+    pattern: new RegExp(import.meta.env.VITE_EMAIL_REGEX, "i"),
+    message: "Please input a valid email domain name.",
+  }),
+  password: z.string().min(8),
 });
 
 //follow the schema of zod
@@ -75,7 +78,8 @@ export function LoginForm1({ ...props }) {
   };
 
   //used for displaying the error in the card div; either the social auth error, or the normal username and password login
-  const displayError = socialAuthError || errors.root?.message;
+  const displayError =
+    socialAuthError || errors.root?.message || errors.email?.message;
 
   return (
     <div className="flex flex-col items-center justify-center gap-4" {...props}>
@@ -101,7 +105,7 @@ export function LoginForm1({ ...props }) {
                   </Label>
                   <Input
                     {...register("email")}
-                    type="text"
+                    type="email"
                     className="h-9 px-3 text-base"
                     placeholder="you@example.com"
                   />
