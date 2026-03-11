@@ -59,7 +59,7 @@ export function PasswordChangeDialog() {
     register,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
     trigger,
     watch,
@@ -155,7 +155,7 @@ export function PasswordChangeDialog() {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button>Save changes</Button>
+            <Button disabled={isSubmitting}>Save changes</Button>
           </DialogFooter>
         </form>
       </DialogContent>

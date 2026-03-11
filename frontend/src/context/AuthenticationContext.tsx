@@ -5,9 +5,9 @@ import React, {
   useState,
 } from "react";
 import api from "../api";
-import type { SignInProps } from "../authentication/login-form";
-import type { EmailForgotPasswordProps } from "../authentication/email-forgotpassword";
-import type { SignUpFieldProps } from "../authentication/register-form";
+import type { SignInProps } from "../AuthenticationForms/login-form";
+import type { EmailForgotPasswordProps } from "../AuthenticationForms/email-forgotpassword";
+import type { SignUpFieldProps } from "../AuthenticationForms/register-form";
 
 export type User = {
   id: number;

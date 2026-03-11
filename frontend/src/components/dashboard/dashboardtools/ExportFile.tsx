@@ -176,7 +176,6 @@ export const ExportFile = ({
           gauge: gauge.toFixed(2),
           genderValue: genderValue.map((item, index) => {
             return item.name;
-<<<<<<< Updated upstream
           }),
           genderData,
           gender_name1: genderRow1?.name ?? "",
@@ -222,9 +221,6 @@ export const ExportFile = ({
           sNeuC4: serviceRow4?.neuC ?? 0,
           sPosP4: serviceRow4?.posP ?? 0,
           sPosC4: serviceRow4?.posC ?? 0,
-=======
-          }), //Sample lang to gab. maglloop ka pa sa mga array na to
->>>>>>> Stashed changes
           serviceValue: serviceValue,
         });
         const out = doc.getZip().generate({
