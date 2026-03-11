@@ -1,15 +1,16 @@
-import { useEffect, useState, ChangeEvent } from "react";
-import api from "../api";
-import useAuth from "../hooks/useAuth";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Button } from "../components/ui/button";
+import { useEffect, useState, type ChangeEvent } from "react";
+import api from "../../api";
+import useAuth from "../../hooks/useAuth";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Button } from "../../components/ui/button";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, CircleAlert, Pencil, User } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { PasswordChangeDialog } from "./PasswordChange";
 
 function Profile() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -119,7 +120,6 @@ function Profile() {
       >
         {isEditing ? "Cancel" : <Pencil />}
       </Button>
-
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-2xl flex flex-col items-center gap-6 sm:gap-8 bg-transparent"
@@ -208,33 +208,6 @@ function Profile() {
 
         <div className="w-full border-b border-gray-200" />
 
-        {/* Email & Password */}
-        <div className="flex flex-col md:flex-row items-center w-full gap-4 md:gap-8 justify-center">
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-5 text-center sm:text-left">
-            <Label className="font-semibold">Email:</Label>
-            <Button
-              size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md text-sm shadow"
-              type="button"
-              disabled={!isEditing}
-            >
-              Change email
-            </Button>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-5 text-center sm:text-left">
-            <Label className="font-semibold">Password:</Label>
-            <Button
-              size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-md text-sm shadow"
-              type="button"
-              disabled={!isEditing}
-            >
-              Change password
-            </Button>
-          </div>
-        </div>
-
         {isEditing && (
           <Button
             className="w-full sm:w-40 shadow mb-4"
@@ -244,7 +217,14 @@ function Profile() {
             Submit
           </Button>
         )}
-      </form>
+      </form>{" "}
+      {/* Email & Password */}
+      <div className="flex flex-col mt-5 md:flex-row items-center w-full gap-4 md:gap-8 justify-center">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-5 text-center sm:text-left">
+          <Label className="font-semibold">Password:</Label>
+          <PasswordChangeDialog />
+        </div>
+      </div>
     </main>
   );
 }

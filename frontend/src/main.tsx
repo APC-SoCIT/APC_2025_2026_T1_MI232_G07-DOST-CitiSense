@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login.js";
 import Register from "./pages/Register.js";
 import NotFound from "./pages/NotFound.js";
-import Layout from "./pages/Layout.js";
+import Layout from "./layouts/Layout.js";
 import DataTablePage from "./components/table/DataTablePage.js";
 import AuthCallback from "./authentication/AuthCallback.js";
 import Archive from "./components/dashboard/Archive.js";
@@ -14,7 +14,7 @@ import DashboardPage from "./components/dashboard/Dashboard.js";
 import { AuthenticationProvider } from "./context/AuthenticationContext.js";
 import AnalystRoute from "./routes/AnalystRoute.js";
 import Logout from "./pages/Logout.js";
-import Profile from "./pages/Profile.js";
+import Profile from "./pages/ProfilePage/Profile.js";
 import ForgotPassword from "./pages/ForgotPassword.js";
 import EmailForgotPassword from "./pages/EmailForgotPassword.js";
 import EmailVerification from "./pages/EmailVerification.js";
@@ -22,7 +22,7 @@ import EmailForgotPasswordSuccess from "./pages/EmailForgotPasswordSuccess.js";
 import { EmailVerificationSent } from "./authentication/email-verification.js";
 import EmailVerificationCallback from "./authentication/EmailVerificationCallback.js";
 import GuestDashboard from "./components/dashboard/GuestDashboard.js";
-import NonProtectedLayout from "./pages/NonProtectedLayout.js";
+import NonProtectedLayout from "./layouts/NonProtectedLayout.js";
 
 const router = createBrowserRouter([
   {
