@@ -10,7 +10,7 @@ import Layout from "./layouts/Layout.js";
 import DataTablePage from "./components/table/DataTablePage.js";
 import AuthCallback from "./AuthenticationForms/AuthCallback.js";
 import Archive from "./components/dashboard/Archive.js";
-import DashboardPage from "./components/dashboard/Dashboard.js";
+import DashboardPage from "./pages/Dashboard/Dashboard.js";
 import { AuthenticationProvider } from "./context/AuthenticationContext.js";
 import AnalystRoute from "./routes/AnalystRoute.js";
 import Logout from "./pages/AuthPage/Logout.js";
@@ -21,7 +21,7 @@ import EmailVerification from "./pages/AuthPage/EmailVerification.js";
 import EmailForgotPasswordSuccess from "./pages/AuthPage/EmailForgotPasswordSuccess.js";
 import { EmailVerificationSent } from "./AuthenticationForms/email-verification.js";
 import EmailVerificationCallback from "./AuthenticationForms/EmailVerificationCallback.js";
-import GuestDashboard from "./components/dashboard/GuestDashboard.js";
+import GuestDashboard from "./pages/Dashboard/GuestDashboard.js";
 import NonProtectedLayout from "./layouts/NonProtectedLayout.js";
 
 const router = createBrowserRouter([

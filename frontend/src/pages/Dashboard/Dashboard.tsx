@@ -1,19 +1,19 @@
-import Gauge from "../charts/gauge";
-import ChatbotUI from "./chatbot/chatbotui";
-import Service from "../charts/service";
-import Gender from "../charts/gender";
-import SentimentTrends from "../charts/sentimenttrends";
-import { Button } from "../ui/button";
+import Gauge from "../../components/charts/gauge";
+import ChatbotUI from "../../components/dashboard/chatbot/chatbotui";
+import Service from "../../components/charts/service";
+import Gender from "../../components/charts/gender";
+import SentimentTrends from "../../components/charts/sentimenttrends";
+import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
 import { Download, Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
-import DashboardFilter from "./DashboardFilter";
+import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
 import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import type { sentimentFeedbackDataProps } from "../../types/DashboardProps";
-import DashboardSettings from "./dashboardtools/DashboardSettings";
+import DashboardSettings from "../../components/dashboard/dashboardtools/DashboardSettings";
 import type {
   GenderTooltipDataProps,
   ServiceTooltipDataProps,
@@ -22,11 +22,11 @@ import type {
 } from "../../types/ChartsProps";
 import ThematicAnalysisTable, {
   fallbackThemes,
-} from "../charts/ThematicAnalysis";
+} from "../../components/charts/ThematicAnalysis";
 
 import useDashboardCharts from "@/hooks/useDashboardCharts";
 
-function GuestDashboard() {
+function DashboardPage() {
   const [themes, setThemes] = useState<themeDataProps[]>(fallbackThemes); // To hold the values for the thematic analysis table
   const [isThemesLoading, setIsThemesLoading] = useState(false);
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
@@ -478,7 +478,7 @@ function GuestDashboard() {
             {/* Added negative margin-bottom to pull the bottom up */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="h-[400px] rounded-md shadow-lg p-10 flex justify-center items-center">
-                <div className="h-[330px] w-[400px]">
+                <div className="h-[] w-[400px]">
                   <Gauge gaugeValue={gaugeValue} />
                 </div>
               </div>
@@ -529,4 +529,4 @@ function GuestDashboard() {
   );
 }
 
-export default GuestDashboard;
+export default DashboardPage;
