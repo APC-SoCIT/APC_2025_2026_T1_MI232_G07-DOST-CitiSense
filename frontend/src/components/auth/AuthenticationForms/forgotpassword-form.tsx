@@ -81,7 +81,7 @@ export function ForgotPasswordForm({ ...props }) {
 
       // Wait for 2 seconds before redirecting
       setTimeout(() => {
-        navigate("/", { replace: true });
+        navigate("/login", { replace: true });
       }, 2000);
     } catch (error) {
       if (axios.isAxiosError(error)) {

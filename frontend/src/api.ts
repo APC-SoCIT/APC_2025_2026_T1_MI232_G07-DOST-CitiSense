@@ -13,7 +13,9 @@ api.interceptors.response.use(
     const authPath =
       window.location.href.includes("/login") ||
       window.location.href.includes("/register") ||
-      window.location.href.includes("/email");
+      window.location.href.includes("/email") ||
+      window.location.href.includes("/password") ||
+      window.location.href.includes("/forgotpassword");
 
     // Get the config of the request
     const originalRequest = error.config;
