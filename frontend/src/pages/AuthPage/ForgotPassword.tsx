@@ -1,5 +1,5 @@
 import { ShieldCheck } from "lucide-react";
-import { ForgotPasswordForm } from "../../AuthenticationForms/forgotpassword-form";
+import { ForgotPasswordForm } from "../../components/auth/AuthenticationForms/forgotpassword-form";
 
 export default function ForgotPassword() {
   return (

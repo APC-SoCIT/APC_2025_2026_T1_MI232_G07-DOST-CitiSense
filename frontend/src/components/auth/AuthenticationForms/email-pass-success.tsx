@@ -1,4 +1,4 @@
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -7,8 +7,8 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "../components/ui/card";
-import { Button } from "../components/ui/button";
+} from "../../ui/card";
+import { Button } from "../../ui/button";
 import { ShieldCheck } from "lucide-react";
 import DOSTLogo from "@/components/auth/DOST-IRAD";
 

@@ -1,5 +1,5 @@
-import { cn } from "../lib/utils";
-import { Button } from "../components/ui/button";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 import {
   Card,
   CardContent,
@@ -7,16 +7,16 @@ import {
   CardHeader,
   CardTitle,
   CardAction,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+} from "../../ui/card";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircleAlert, EyeIcon, EyeOffIcon } from "lucide-react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import api from "../api";
+import api from "../../../api";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -76,7 +76,7 @@ export function ForgotPasswordForm({ ...props }) {
 
       await api.post(
         `api/auth/password/reset/confirm/${uid}/${token}/`,
-        payload
+        payload,
       );
 
       // Wait for 2 seconds before redirecting

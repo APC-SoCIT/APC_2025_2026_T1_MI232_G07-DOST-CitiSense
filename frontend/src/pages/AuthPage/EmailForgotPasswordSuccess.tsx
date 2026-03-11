@@ -1,4 +1,4 @@
-import { EmailForgotPasswordSuccessForm } from "../../AuthenticationForms/email-pass-success";
+import { EmailForgotPasswordSuccessForm } from "../../components/auth/AuthenticationForms/email-pass-success";
 
 export default function EmailForgotPasswordSuccess() {
   return (

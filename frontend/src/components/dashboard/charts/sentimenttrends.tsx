@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import api from "../../api";
+import api from "../../../api";
 import type {
   SentimentTrendsDataProps,
   SentimentTrendsChartsProps,
-} from "../../types/ChartsProps";
-import { generateFakeData } from "../../mockdata/fakeSentimentTrends";
+} from "../../../types/ChartsProps";
+import { generateFakeData } from "../../../mockdata/fakeSentimentTrends";
 
 const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
   filterParams,

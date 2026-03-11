@@ -1,8 +1,8 @@
-import Gauge from "../../components/charts/gauge";
+import Gauge from "../../components/dashboard/charts/gauge";
 import ChatbotUI from "../../components/dashboard/chatbot/chatbotui";
-import Service from "../../components/charts/service";
-import Gender from "../../components/charts/gender";
-import SentimentTrends from "../../components/charts/sentimenttrends";
+import Service from "../../components/dashboard/charts/service";
+import Gender from "../../components/dashboard/charts/gender";
+import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
 import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
@@ -22,7 +22,7 @@ import type {
 } from "../../types/ChartsProps";
 import ThematicAnalysisTable, {
   fallbackThemes,
-} from "../../components/charts/ThematicAnalysis";
+} from "../../components/dashboard/charts/ThematicAnalysis";
 
 import useDashboardCharts from "@/hooks/useDashboardCharts";
 

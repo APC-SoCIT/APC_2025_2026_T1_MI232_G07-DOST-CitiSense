@@ -1,5 +1,5 @@
-import { cn } from "../lib/utils";
-import { Button } from "../components/ui/button";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 import {
   Card,
   CardContent,
@@ -7,16 +7,16 @@ import {
   CardHeader,
   CardTitle,
   CardAction,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+} from "../../ui/card";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CircleUserRound, EyeIcon, EyeOffIcon, Loader } from "lucide-react";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
 
 //zod schema for login form validation

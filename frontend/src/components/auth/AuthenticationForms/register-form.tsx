@@ -1,14 +1,14 @@
-import { cn } from "../lib/utils";
-import { Button } from "../components/ui/button";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 import {
   Card,
   CardHeader,
   CardContent,
   CardTitle,
   CardDescription,
-} from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+} from "../../ui/card";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { CircleAlert, EyeIcon, EyeOffIcon, Info } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import TermsAndConditionsPopup from "./TermsAndConditionsPopup";
 import axios from "axios";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../../hooks/useAuth";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   TooltipProvider,

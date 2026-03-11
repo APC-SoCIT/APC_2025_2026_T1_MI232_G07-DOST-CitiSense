@@ -1,5 +1,5 @@
 import { GalleryVerticalEnd } from "lucide-react";
-import { EmailForgotPasswordForm } from "../../AuthenticationForms/email-forgotpassword";
+import { EmailForgotPasswordForm } from "../../components/auth/AuthenticationForms/email-forgotpassword";
 
 export default function EmailForgotPassword() {
   return (

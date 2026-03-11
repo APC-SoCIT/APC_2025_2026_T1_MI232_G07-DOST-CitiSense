@@ -1,5 +1,5 @@
 import { ShieldCheck, Database } from "lucide-react";
-import { EmailVerificationSent } from "../../AuthenticationForms/email-verification";
+import { EmailVerificationSent } from "../../components/auth/AuthenticationForms/email-verification";
 
 export default function EmailVerification() {
   return (

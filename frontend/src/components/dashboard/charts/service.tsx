@@ -1,34 +1,34 @@
 import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import api from "../../api";
+import api from "../../../api";
 import type { ApexOptions } from "apexcharts";
 import type {
-  GenderDataProps,
-  GenderSeriesProps,
-  GenderChartProps,
-} from "../../types/ChartsProps";
-import { genderMap } from "../../types/ChartsProps";
+  ServiceDataProps,
+  ServiceSeriesProps,
+  ServiceChartProps,
+} from "../../../types/ChartsProps";
+import { serviceMap } from "../../../types/ChartsProps";
 
-const Gender = ({
+const Service = ({
   filterParams,
   refreshCharts,
-  genderTooltip,
-  isGenderTooltipLoading,
-  genderTooltipCount,
+  serviceTooltipLoading,
+  serviceTooltip,
+  serviceTooltipCount,
   showCustomTooltip,
-  genderValue,
-  genderTypes,
-}: GenderChartProps) => {
-  const genderYAxis = genderTypes.map((label) => {
-    if (label.length > 16) {
-      // If the label for the gender is more than 16 then split it into two parts.
-      // The first index of the array being the first 6 letters of the word, and the other characters the second value of the array
-      return [label.slice(0, 6), label.slice(6).trim()];
+  serviceValue,
+  serviceTypes,
+}: ServiceChartProps) => {
+  // Split the Material requests or hybrid seminar to two parts, so that the chart y axis labels will render a shorter y-axis title
+  const serviceYAxis = serviceTypes.map((label) => {
+    if (label === "Material Requests") {
+      return ["Material", "Requests"];
+    } else if (label === "Hybrid Seminar") {
+      return ["Hybrid", "Seminar"];
     }
     return label;
   });
 
-  console.log("dd", genderValue);
   const options: ApexOptions = {
     chart: {
       type: "bar",
@@ -65,19 +65,19 @@ const Gender = ({
         fontSize: "20px",
         fontWeight: 600,
       },
-      text: "Sentiment by Gender",
+      text: "Sentiment by Service",
     },
     xaxis: {
-      categories: genderYAxis,
+      categories: serviceYAxis,
     },
     yaxis: {
-      show: genderValue.length > 0,
+      show: serviceTypes.length > 0,
       labels: {
         style: {
-          fontFamily: "Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif",
-          fontSize: "15px",
-          fontWeight: 10,
+          fontSize: "14px",
+          fontWeight: 500,
         },
+        offsetX: 4,
       },
     },
     fill: {
@@ -139,7 +139,7 @@ const Gender = ({
           ${w.globals.labels[dataPointIndex]} - 
           Value: ${w.globals.series[seriesIndex][dataPointIndex]}
           <br/>
-          Comments summarized: ${genderTooltipCount[seriesIndex][dataPointIndex]}
+          Comments summarized: ${serviceTooltipCount[seriesIndex][dataPointIndex]}
         </div>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 8px 0;" />
           <div style="
@@ -147,27 +147,27 @@ const Gender = ({
             color: #6b7280;
             line-height: 1.5;
           ">
-          ${isGenderTooltipLoading ? "Loading summary..." : genderTooltip[seriesIndex]?.[dataPointIndex] || "No summary available"}          
+          ${serviceTooltipLoading ? "Loading summary..." : serviceTooltip[seriesIndex]?.[dataPointIndex] || "No summary available"}          
           </div>
         </div>
       </div>
     `;
           },
+          hideEmptySeries: false,
         }
       : {
-          style: {
-            fontSize: "14px",
-          },
+          style: { fontSize: "14px" },
         },
     noData: {
       text: "No data available",
     },
   };
+
   return (
     <div>
       <ReactApexChart
         options={options}
-        series={genderValue}
+        series={serviceValue}
         type="bar"
         height={350}
       />
@@ -175,4 +175,4 @@ const Gender = ({
   );
 };
 
-export default Gender;
+export default Service;

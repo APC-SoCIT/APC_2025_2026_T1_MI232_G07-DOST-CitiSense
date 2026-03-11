@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../../hooks/useAuth";
 import { EmailActionStatusCard } from "./SuccessForm";
-import api from "../api";
+import api from "../../../api";
 import axios from "axios";
 
 export function EmailVerificationSent({ ...props }) {

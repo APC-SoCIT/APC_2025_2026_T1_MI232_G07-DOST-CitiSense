@@ -1,12 +1,12 @@
 import { ChevronLeft } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from "../../ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "../components/ui/card";
+} from "../../ui/card";
 
 type EmailActionStatusCardProps = {
   title: string;

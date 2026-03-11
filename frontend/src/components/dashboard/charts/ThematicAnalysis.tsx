@@ -7,8 +7,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import type { ThematicAnalysisTableProps } from "../../types/ChartsProps";
+} from "../../ui/table";
+import type { ThematicAnalysisTableProps } from "../../../types/ChartsProps";
 
 export const fallbackThemes = [
   { top: "DATA-001", percentage: 22 },

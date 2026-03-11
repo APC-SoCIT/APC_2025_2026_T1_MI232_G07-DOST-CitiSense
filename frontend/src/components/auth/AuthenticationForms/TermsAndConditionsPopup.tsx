@@ -7,10 +7,10 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "../components/ui/dialog";
-import { Button } from "../components/ui/button";
+} from "../../ui/dialog";
+import { Button } from "../../ui/button";
 import { TermsCheckbox } from "@/components/ui/TermsCheckbox";
-import { Label } from "../components/ui/label";
+import { Label } from "../../ui/label";
 
 interface TermsAndConditionsPopupProps {
   open: boolean;
