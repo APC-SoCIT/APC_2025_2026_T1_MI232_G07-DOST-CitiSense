@@ -8,6 +8,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
+type ConfirmDialogProps = {
+  confirmDelete: boolean;
+  setConfirmDelete: (confirmDelete: boolean) => void;
+  onConfirm: () => void;
+  descriptionText: string;
+  title: string;
+  actionText: string;
+};
 const ConfirmDialog = ({
   confirmDelete,
   setConfirmDelete,
@@ -15,7 +23,7 @@ const ConfirmDialog = ({
   descriptionText,
   title,
   actionText,
-}) => {
+}: ConfirmDialogProps) => {
   return (
     <div>
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>

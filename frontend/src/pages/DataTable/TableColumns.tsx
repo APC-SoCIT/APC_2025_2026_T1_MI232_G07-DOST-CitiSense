@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import DropdownCell from "./DropdownCell";
-import Dialog1 from "./TableDialog";
-import FilterDropdown from "./FilterDropdown";
+import DropdownCell from "../../components/table/DropdownCell";
+import Dialog1 from "../../components/table/TableDialog";
+import FilterDropdown from "../../components/table/FilterDropdown";
 import type {
   SentimentPostType,
   filterOptions,
@@ -98,21 +98,21 @@ export const getColumns = (
   {
     accessorKey: "key_takeaways",
     header: () => <span>Key takeaways</span>,
-    cell: (info) => <Dialog1 text={String(info.getValue())} />,
+    cell: (info) => <Dialog1 text={String(info.getValue() ?? " ")} />,
     enableColumnFilter: false,
     minSize: 74,
   },
   {
     accessorKey: "comments",
     header: () => <span>Comments</span>,
-    cell: (info) => <Dialog1 text={String(info.getValue())} />,
+    cell: (info) => <Dialog1 text={String(info.getValue() ?? " ")} />,
     enableColumnFilter: false,
     minSize: 74,
   },
   {
     accessorKey: "suggestions",
     header: () => <span>Suggestions</span>,
-    cell: (info) => <Dialog1 text={String(info.getValue())} />,
+    cell: (info) => <Dialog1 text={String(info.getValue() ?? " ")} />,
     enableColumnFilter: false,
     minSize: 74,
   },

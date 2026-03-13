@@ -7,7 +7,7 @@ import Login from "./pages/AuthPage/Login.js";
 import Register from "./pages/AuthPage/Register.js";
 import NotFound from "./pages/NotFound.js";
 import Layout from "./layouts/Layout.js";
-import DataTablePage from "./components/table/DataTablePage.js";
+import DataTablePage from "./pages/DataTable/DataTablePage.js";
 import AuthCallback from "./components/auth/AuthenticationForms/AuthCallback.js";
 import Archive from "./components/dashboard/Archive.js";
 import DashboardPage from "./pages/Dashboard/Dashboard.js";
@@ -74,9 +74,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
-  <StrictMode>
-    <AuthenticationProvider>
-      <RouterProvider router={router} />
-    </AuthenticationProvider>
-  </StrictMode>,
+  <AuthenticationProvider>
+    <RouterProvider router={router} />
+  </AuthenticationProvider>,
 );

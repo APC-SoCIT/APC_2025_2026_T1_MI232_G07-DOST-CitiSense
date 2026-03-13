@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { DataTable } from "./DataTable";
+import { DataTable } from "../../components/table/DataTable";
 import { getColumns } from "./TableColumns";
 import type { SentimentPostType } from "../../types/TableColumnProps";
 import api from "../../api";
@@ -18,10 +18,10 @@ import type {
   VisibilityState,
 } from "@tanstack/react-table";
 
-import TableSettings from "./TableSettings";
+import TableSettings from "../../components/table/TableSettings";
 import { toast } from "sonner";
-import Dialog1 from "./TableDialog";
-import Pagination from "./Pagination";
+import Dialog1 from "../../components/table/TableDialog";
+import Pagination from "../../components/table/Pagination";
 import axios from "axios";
 
 const DataTablePage = () => {
