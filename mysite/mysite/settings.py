@@ -151,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Singapore'
 
 USE_I18N = True
 
@@ -218,7 +218,7 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": True,
     "SIGNING_KEY": os.getenv("JWT_SIGNING_KEY", SECRET_KEY),
     "ALGORITHM": "HS512",   
-    "LEEWAY": 1,
+    "LEEWAY": timedelta(seconds=300),
 }
 
 ACCOUNT_ADAPTER = "authentication.adapters.CustomAccountAdapter"
@@ -261,6 +261,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online',
         },
+        "LEEWAY": 60,
     }
 }
 

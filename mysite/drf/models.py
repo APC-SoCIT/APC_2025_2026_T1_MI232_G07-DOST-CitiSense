@@ -5,7 +5,7 @@ from drf.utils import analyze_sentiment
 import os
 from django.conf import settings
 from django.core.exceptions import ValidationError, PermissionDenied
-from django.db import connection
+from django.db import connection, transaction
 import sqlparse
 import time
 import re
@@ -149,7 +149,7 @@ class FileMigration(models.Model):
             raise ValidationError("The file must be a .sql file")
         
         if not self.uploaded_by.groups.filter(name="File migration").exists():
-            raise PermissionDenied
+            raise PermissionDenied("You do not have permission to upload a migration file")
 
         # This will equate to true on new .sql file saves
         is_new = not self.pk
@@ -161,11 +161,11 @@ class FileMigration(models.Model):
                 self.execute_migration()
             except Exception as e:
                 print(f"Migration failed {e}")
-    
+                
     def execute_migration(self):
         start_time = time.time()
         # Open the file, read the content, and parse it to make single SQL statements to be executed
-        with open(self.sql_file.path, "r", encoding="utf-8") as file:
+        with open(self.sql_file.path, "r", encoding="utf-8", newline='') as file:
             content = file.read()
         statements = sqlparse.split(content)
         
@@ -196,26 +196,34 @@ class FileMigration(models.Model):
                 lowered = statement.lower()
 
                 # Skip commands/statements that contain destructive commands.
-                if lowered.startswith(("drop table", "create table", "delete from", "truncate", "update")):
-                    continue 
+                if lowered.startswith(("drop table", "create table", "delete from", "truncate", "update", "/*")):
+                    continue   
 
                 # If the statement starts with INSERT INTO `drf_cleaned_feedback`, 
                 # Then replace it with INSERT INTO `drf_cleaned_feedback` (column_names**)
                 if re.search(r"insert into `?drf_cleaned_feedback`?", lowered):
                     
-                    # Get the SQL insert statement for the drf_cleaned_feedback and split them by each value
-                    # Sample regex: https://regex101.com/r/IsjIee/1
-                    statement_values_array = re.findall(r"\((?:[^(]+|'[^']*')+\)", statement)
-
-                    if re.search(r"INSERT\s+INTO\s+`?drf_cleaned_feedback`?\s+VALUES", lowered):
+                     # Normalize INSERTs to `drf_cleaned_feedback` to always include the full column list, with or without an explicit list in the original SQL
+                    # Regex visualization: https://regex101.com/r/bROygq/1
+                    if re.search(r"INSERT INTO `drf_cleaned_feedback`(?:\s*\((?:`[\w]+`,?\s*)*\))?\s*VALUES", lowered):
+                    
                         # Change the insert statement to have all the values, just to be explicit
-                        statement = re.sub(r"INSERT\s+INTO\s+`?drf_cleaned_feedback`?\s+VALUES", 
+                        statement = re.sub(r"INSERT INTO `drf_cleaned_feedback`(?:\s*\((?:`[\w]+`,?\s*)*\))?\s*VALUES", 
                                                     "INSERT INTO `drf_cleaned_feedback` (id, service_name, service_type, timestamp, " \
                                                     "quarter, year, sex, category, typeoflibrary, region, key_takeaways, comments, suggestions, " \
                                                     "created_at, updated_at) VALUES", 
                                                     statement, 
-                                                    flags=re.IGNORECASE)
+                                                    flags=re.IGNORECASE)    
+                        
+                    # Get the SQL insert statement for the drf_cleaned_feedback and split them by each value
+                    # Regex visualization: https://regex101.com/r/IsjIee/3
+                    statement_values_array = re.findall(r"\((?:[^()'\\]|\\.|'(?:[^'\\]|\\.)*')*\)", statement)
 
+                    # Skip the first match only if it looks like the column name list for an SQL statement, only skip it if it has backticks meaning its the column list
+                    if statement_values_array and re.search("`", statement_values_array[0]):
+                        statement_values_array = statement_values_array[1:]
+                    else:
+                        statement_values_array = statement_values_array
 
                     # This will hold the SQL values (filtered out and unique) for the insert statement
                     statements_to_keep = []
@@ -244,14 +252,14 @@ class FileMigration(models.Model):
                                         service_name, service_type, sex, category,
                                         key_takeaways, comments, suggestions
                                     )   
-                             
+                            
                             # Check if this record already exists in the DB (existing records is a set of tuples)
                             # If it does not exist then append it to the new SQL statement list to be executed and insert into the DB.
                             if record_tuple not in existing_records:
                                 statements_to_keep.append(value)
 
                     # Calculate skipped rows from the original SQL statement array with the statements to keep array
-                    skip_count = len(statement_values_array) - len(statements_to_keep)
+                    skip_count += len(statement_values_array) - len(statements_to_keep)
 
                     # Skip the statement, if there are now rows to be appended
                     if not statements_to_keep:
@@ -279,8 +287,9 @@ class FileMigration(models.Model):
                     
                 except Exception as e:
                     print(f"Data population failed for ID: {self.pk}: {e}")
+                    print(f"Failed statement: {statement}")
                     failed_count += 1
-            
+
             # Logging success/error messages
             print(f"Executed {execute_count} statements")
             print(f"Migrated {migrate_count} rows")
@@ -289,7 +298,10 @@ class FileMigration(models.Model):
                 print(f"Failed: {failed_count} statements")
 
             # This creates a sentiment according to the feedback of the cleaned_feedback object
-            labeled_count = self.populate_labeled()
+            if migrate_count > 0:
+                labeled_count = self.populate_labeled()
+            else:
+                labeled_count = 0
 
         end_time = time.time()
         elapsed_time = end_time - start_time
@@ -315,7 +327,7 @@ class FileMigration(models.Model):
                 labeled_count += 1
 
             if labeled_count > 0:
-                print(f"Successfully added sentiment to {labeled_count} rows")
+                print(f"Successfully added sentiment to {labeled_count} row(s).")
 
         except Exception as e:
             print(f"Failed to populate sentiment {e}")
@@ -330,13 +342,23 @@ class FileMigration(models.Model):
         # Remove outer parenthesis
         value_string = value_string.strip('()')
         
-        # Use csv reader to handle quoted strings with commas, and escape \\ character
-        reader = csv.reader([value_string], quotechar="'", escapechar='\\', skipinitialspace=True)
+        # This prevents csv.reader from misinterpreting \' as a closing quote, splitting the string incorrectly
+        # Some more escaped chars converted to a string representation
+        value_string = value_string.replace("\\'", "||ESCAPED_SINGLE_QUOTE||")
+        value_string = value_string.replace("\\n", "||ESCAPED_NEWLINE||")
+        value_string = value_string.replace('\\"', "||ESCAPED_DOUBLE_QUOTE||")
+    
+        # Use csv reader to handle quoted strings with commas
+        reader = csv.reader([value_string], quotechar="'", skipinitialspace=True, doublequote=False)
         
         # Get the first (and only) row, as the reader variable is just an iterator itself and not a list, hence you need to iterate over it to access even just one value
         for row in reader:
-            return row
-        
+            # Restore the escaped characters back to their original form after csv.reader has safely parsed the row
+            return [value.replace("||ESCAPED_NEWLINE||", "\n")
+                         .replace("||ESCAPED_SINGLE_QUOTE||", "'")
+                         .replace("||ESCAPED_DOUBLE_QUOTE||", '"') 
+                         if isinstance(value, str) else value for value in row]
+
         return None
 
     def __str__(self):
