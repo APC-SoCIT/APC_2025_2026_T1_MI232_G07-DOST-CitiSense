@@ -7,10 +7,9 @@ import { Button } from "../../components/ui/button";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, CircleAlert, Pencil, User } from "lucide-react";
+import { Camera, CircleAlert, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
-import { PasswordChangeDialog } from "./PasswordChange";
 
 function Profile() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -90,6 +89,15 @@ function Profile() {
     }
   };
 
+  const handlePrimaryAction = () => {
+    if (isEditing) {
+      handleSubmit(onSubmit)();
+      return;
+    }
+
+    setIsEditing(true);
+  };
+
   const imagePreview = (e: ChangeEvent<HTMLInputElement>) => {
     const image = e.target.files;
     if (image?.length) {
@@ -107,123 +115,130 @@ function Profile() {
   }, [previewImage]);
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-100 px-4 sm:px-6">
-      <Button
-        type="button"
-        variant="outline"
-        className={`fixed top-6 right-6 sm:top-8 sm:right-8 z-10 shadow-lg ${
-          isEditing
-            ? "bg-red-600 hover:bg-red-400 text-white"
-            : "bg-blue-700 hover:bg-blue-500 text-white"
-        }`}
-        onClick={handleEditOrCancel}
-      >
-        {isEditing ? "Cancel" : <Pencil />}
-      </Button>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-2xl flex flex-col items-center gap-6 sm:gap-8 bg-transparent"
-      >
-        <h1 className="flex items-center gap-3 text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight drop-shadow-sm">
-          <User className="w-10 h-10 sm:w-12 sm:h-12 text-blue-600" />
-          Profile
-        </h1>
-
-        {/* Profile Image */}
-        <div className="flex flex-col items-center w-full">
-          <label className="relative group cursor-pointer">
-            <img
-              src={previewImage || user.picture}
-              alt={user.username}
-              className="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover border-4 border-blue-200 shadow-lg transition-transform group-hover:scale-105 bg-white"
-            />
-            {isEditing && (
-              <>
-                <span className="absolute flex items-center justify-center bottom-2 right-2 sm:bottom-3 sm:right-3 border w-8 h-8 sm:w-10 sm:h-10 bg-white shadow-md rounded-full group-hover:bg-blue-50 transition-colors">
-                  <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
-                </span>
-                <Input
-                  {...register("image", { onChange: (e) => imagePreview(e) })}
-                  className="hidden"
-                  type="file"
-                />
-              </>
-            )}
-          </label>
-        </div>
-
-        <div className="w-full border-b border-gray-200" />
-
-        {/* Name Fields */}
-        <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full">
-          <div className="flex flex-col flex-1">
-            <Label className="mb-1 font-semibold">First Name</Label>
-            <Input
-              {...register("first_name")}
-              className="font-semibold bg-gray-50 border border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 py-3 px-4 rounded-lg"
-              disabled={!isEditing}
-            />
-            {errors.first_name && (
-              <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
-                <CircleAlert className="w-4 h-4" />
-                {errors.first_name.message}
-              </p>
-            )}
+    <main className="min-h-screen bg-slate-100 px-4 py-6 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-6xl">
+        <nav className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:px-6">
+          <div className="text-sm text-slate-500">
+            <span className="font-semibold text-slate-700">Profile</span>
           </div>
 
-          <div className="flex flex-col flex-1">
-            <Label className="mb-1 font-semibold">Last Name</Label>
-            <Input
-              {...register("last_name")}
-              className="font-semibold bg-gray-50 border border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 py-3 px-4 rounded-lg"
-              disabled={!isEditing}
-            />
-            {errors.last_name && (
-              <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
-                <CircleAlert className="w-4 h-4" />
-                {errors.last_name.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="w-full border-b border-gray-200" />
-
-        {/* Username */}
-        <div className="flex flex-col w-full">
-          <Label className="mb-1 font-semibold">Username</Label>
-          <Input
-            {...register("username")}
-            disabled={!isEditing}
-            onBlur={() => trigger("username")}
-            className="font-semibold bg-gray-50 border border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 py-3 px-4 rounded-lg"
-          />
-          {errors.username && (
-            <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
-              <CircleAlert className="w-4 h-4" />
-              {errors.username.message}
-            </p>
-          )}
-        </div>
-
-        <div className="w-full border-b border-gray-200" />
-
-        {isEditing && (
           <Button
-            className="w-full sm:w-40 shadow mb-4"
-            type="submit"
-            variant="greendefault"
+            type="button"
+            onClick={handlePrimaryAction}
+            className="bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600"
           >
-            Submit
+            {isEditing ? "Save" : "Edit"}
           </Button>
-        )}
-      </form>{" "}
-      {/* Email & Password */}
-      <div className="flex flex-col mt-5 md:flex-row items-center w-full gap-4 md:gap-8 justify-center">
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-5 text-center sm:text-left">
-          <Label className="font-semibold">Password:</Label>
-          <PasswordChangeDialog />
-        </div>
+        </nav>
+
+        <form
+          id="profile-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm"
+        >
+          <header className="border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-blue-50 px-5 py-6 sm:px-8 lg:px-10">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-center gap-4">
+                <label className="group relative block cursor-pointer">
+                  <img
+                    src={previewImage || user.picture || "https://ui-avatars.com/api/?name=" + encodeURIComponent(`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username || "User") + "&background=2563eb&color=fff"}
+                    alt={user.username}
+                    className="h-20 w-20 rounded-full border-4 border-white object-cover shadow-md ring-2 ring-blue-100 transition-transform group-hover:scale-105 sm:h-24 sm:w-24"
+                  />
+                  <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-white shadow-sm">
+                    <Camera className="h-4 w-4" />
+                  </span>
+                  <Input
+                    {...register("image", { onChange: (e) => imagePreview(e) })}
+                    className="hidden"
+                    type="file"
+                    accept="image/*"
+                  />
+                </label>
+
+                <div className="space-y-2">
+                  <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+                    {`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username}
+                  </h1>
+                  <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-blue-700">
+                    <span className="rounded-full bg-blue-100 px-2.5 py-1">Name</span>
+                    <span>{`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username}</span>
+                  </div>
+                  {user.role ? (
+                    <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-blue-700">
+                      <span className="rounded-full bg-blue-100 px-2.5 py-1">Role</span>
+                      <span>{user.role}</span>
+                    </div>
+                  ) : null}
+                  <p className="text-sm text-slate-500">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <section className="px-5 py-6 sm:px-8 lg:px-10">
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-slate-800">Account</h2>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                <Label className="text-left text-sm font-medium text-slate-700">Username</Label>
+                <div className="space-y-1">
+                  <Input
+                    {...register("username")}
+                    disabled={!isEditing}
+                    onBlur={() => trigger("username")}
+                    className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  />
+                  {errors.username && (
+                    <p className="flex items-center gap-1 text-xs text-red-500">
+                      <CircleAlert className="h-3.5 w-3.5" />
+                      {errors.username.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                <Label className="text-left text-sm font-medium text-slate-700">First Name</Label>
+                <Input
+                  value={user.first_name || ""}
+                  readOnly
+                  className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                <Label className="text-left text-sm font-medium text-slate-700">Last Name</Label>
+                <Input
+                  value={user.last_name || ""}
+                  readOnly
+                  className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+                <Label className="text-left text-sm font-medium text-slate-700">Email</Label>
+                <div className="space-y-1">
+                  <Input
+                    {...register("email")}
+                    type="email"
+                    disabled={!isEditing}
+                    className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  />
+                  {errors.email && (
+                    <p className="flex items-center gap-1 text-xs text-red-500">
+                      <CircleAlert className="h-3.5 w-3.5" />
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </section>
+        </form>
       </div>
     </main>
   );
