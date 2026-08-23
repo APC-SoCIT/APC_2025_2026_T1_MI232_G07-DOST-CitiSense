@@ -1,13 +1,13 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import api from "../../api";
 import useAuth from "../../hooks/useAuth";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "../../components/ui/button";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, CircleAlert, UploadCloud } from "lucide-react";
+import { Camera, CircleAlert } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 

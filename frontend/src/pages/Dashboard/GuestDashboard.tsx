@@ -6,7 +6,7 @@ import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
 import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Download, Loader2, RefreshCcw } from "lucide-react";
+import { Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";

@@ -9,13 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleAlert } from "lucide-react";
-import axios, { Axios, AxiosError } from "axios";
+import axios from "axios";
 import api from "@/api";
 import { toast } from "sonner";
 import { useState } from "react";

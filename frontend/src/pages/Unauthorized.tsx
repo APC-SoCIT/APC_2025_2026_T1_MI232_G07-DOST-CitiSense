@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "../lib/utils";
 import { useNavigate } from "react-router-dom";
 import { MoveLeft } from "lucide-react";
@@ -15,7 +15,7 @@ export function UnauthorizedPage({
     <div
       className={cn(
         "flex flex-col items-center justify-center min-h-screen p-4",
-        className
+        className,
       )}
       {...props}
     >

@@ -1,4 +1,4 @@
-import { CircleUserRound, GalleryVerticalEnd, ShieldCheck } from "lucide-react";
+import { CircleUserRound, ShieldCheck } from "lucide-react";
 import { LoginForm1 } from "../../components/auth/AuthenticationForms/login-form";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
