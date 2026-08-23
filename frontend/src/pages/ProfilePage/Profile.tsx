@@ -89,15 +89,6 @@ function Profile() {
     }
   };
 
-  const handlePrimaryAction = () => {
-    if (isEditing) {
-      handleSubmit(onSubmit)();
-      return;
-    }
-
-    setIsEditing(true);
-  };
-
   const imagePreview = (e: ChangeEvent<HTMLInputElement>) => {
     const image = e.target.files;
     if (image?.length) {
@@ -124,10 +115,14 @@ function Profile() {
 
           <Button
             type="button"
-            onClick={handlePrimaryAction}
-            className="bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600"
+            onClick={handleEditOrCancel}
+            className={
+              isEditing
+                ? "bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-500"
+                : "bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600"
+            }
           >
-            {isEditing ? "Save" : "Edit"}
+            {isEditing ? "Cancel" : "Edit"}
           </Button>
         </nav>
 
@@ -141,35 +136,48 @@ function Profile() {
               <div className="flex items-center gap-4">
                 <label className="group relative block cursor-pointer">
                   <img
-                    src={previewImage || user.picture || "https://ui-avatars.com/api/?name=" + encodeURIComponent(`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username || "User") + "&background=2563eb&color=fff"}
+                    src={
+                      previewImage ||
+                      user.picture ||
+                      "https://ui-avatars.com/api/?name=" +
+                        encodeURIComponent(
+                          `${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                            user.username ||
+                            "User",
+                        ) +
+                        "&background=2563eb&color=fff"
+                    }
                     alt={user.username}
                     className="h-20 w-20 rounded-full border-4 border-white object-cover shadow-md ring-2 ring-blue-100 transition-transform group-hover:scale-105 sm:h-24 sm:w-24"
                   />
-                  <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-white shadow-sm">
-                    <Camera className="h-4 w-4" />
-                  </span>
+                  {isEditing && (
+                    <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-white shadow-sm">
+                      <Camera className="h-4 w-4" />
+                    </span>
+                  )}
                   <Input
                     {...register("image", { onChange: (e) => imagePreview(e) })}
                     className="hidden"
                     type="file"
                     accept="image/*"
+                    disabled={!isEditing}
                   />
                 </label>
 
                 <div className="space-y-2">
                   <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-                    {`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username}
+                    {`${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                      user.username}
                   </h1>
                   <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-blue-700">
-                    <span className="rounded-full bg-blue-100 px-2.5 py-1">Name</span>
-                    <span>{`${user.first_name || ""} ${user.last_name || ""}`.trim() || user.username}</span>
+                    <span className="rounded-full bg-blue-100 px-2.5 py-1">
+                      Name
+                    </span>
+                    <span>
+                      {`${user.first_name || ""} ${user.last_name || ""}`.trim() ||
+                        user.username}
+                    </span>
                   </div>
-                  {user.role ? (
-                    <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-blue-700">
-                      <span className="rounded-full bg-blue-100 px-2.5 py-1">Role</span>
-                      <span>{user.role}</span>
-                    </div>
-                  ) : null}
                   <p className="text-sm text-slate-500">{user.email}</p>
                 </div>
               </div>
@@ -183,7 +191,9 @@ function Profile() {
 
             <div className="grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-                <Label className="text-left text-sm font-medium text-slate-700">Username</Label>
+                <Label className="text-left text-sm font-medium text-slate-700">
+                  Username
+                </Label>
                 <div className="space-y-1">
                   <Input
                     {...register("username")}
@@ -201,30 +211,38 @@ function Profile() {
               </div>
 
               <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-                <Label className="text-left text-sm font-medium text-slate-700">First Name</Label>
+                <Label className="text-left text-sm font-medium text-slate-700">
+                  First Name
+                </Label>
                 <Input
                   value={user.first_name || ""}
                   readOnly
                   className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  disabled={true}
                 />
               </div>
 
               <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-                <Label className="text-left text-sm font-medium text-slate-700">Last Name</Label>
+                <Label className="text-left text-sm font-medium text-slate-700">
+                  Last Name
+                </Label>
                 <Input
                   value={user.last_name || ""}
                   readOnly
                   className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                  disabled={true}
                 />
               </div>
 
               <div className="md:col-span-2 grid gap-2 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-                <Label className="text-left text-sm font-medium text-slate-700">Email</Label>
+                <Label className="text-left text-sm font-medium text-slate-700">
+                  Email
+                </Label>
                 <div className="space-y-1">
                   <Input
                     {...register("email")}
                     type="email"
-                    disabled={!isEditing}
+                    disabled={true}
                     className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3 text-slate-900 shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-70"
                   />
                   {errors.email && (
@@ -235,9 +253,18 @@ function Profile() {
                   )}
                 </div>
               </div>
-
             </div>
           </section>
+          {isEditing && (
+            <div className="flex justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:px-8 lg:px-10">
+              <Button
+                type="submit"
+                className="bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-600"
+              >
+                Save
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </main>
