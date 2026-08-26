@@ -1,11 +1,10 @@
-# APC-MSYADD1
-Template repository for APC MSYADD1
+## QuadThink
 
 Group Leader:
-- Mark Lyster Marabi
+- Lorenzo Bernal
 
 Team Members:
-- Lorenzo Bernal
+- Ervynne Chan
 - Gab Cabangcala
 - Luis Lazaro
 
@@ -33,7 +32,7 @@ As a division tasked with collecting and managing data that supports public scie
 
 **CitiSense** addresses these limitations by integrating a **fine-tuned NLP model** to automatically classify feedback as **positive, neutral,** or **negative** in both **English and Tagalog**. The processed data is then displayed through **interactive visual dashboards**, giving stakeholders real-time insights for faster, more data-driven decision-making.  
 
-Aligned with **DOST-STII’s mission** to strengthen science and technology information systems, CitiSense supports their goal of improving public engagement through modern, automated tools. By integrating seamlessly with DOST’s existing feedback forms, the system ensures an **inclusive, efficient,** and **intelligent feedback analysis process** that empowers the government agency to act quickly and effectively based on public sentiment.
+Aligned with **DOST-STII’s mission** to strengthen science and technology information systems, CitiSense supports their goal of improving public engagement through modern, automated tools. By integrating seamlessly with DOST’s existing feedback forms, the system ensures an **inclusive, efficient,** and **intelligent feedback analysis process** that empowers DOST-STII IRAD to act quickly and effectively based on public sentiment.
 
 ---
 
@@ -42,4 +41,8 @@ Aligned with **DOST-STII’s mission** to strengthen science and technology info
 - **Frontend:** React  
 - **Backend:** Django  
 - **Database:** MySQL  
-- **Frontend–Backend Communication:** RESTful API  
+- **Frontend–Backend Communication:** RESTful API
+### AI & Machine Learning
+- **Frameworks/Libraries:** PyTorch, Hugging Face Transformers
+- **Sentiment Analysis:** `dost-asti/RoBERTa-tl-sentiment-analysis`
+- **Summarization & Theme Generation:** Llama 3.2 1B
