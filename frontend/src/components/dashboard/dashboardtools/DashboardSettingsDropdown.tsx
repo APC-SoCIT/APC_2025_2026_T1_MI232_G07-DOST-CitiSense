@@ -1,10 +1,10 @@
-import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "../../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+
 import { ChevronDown, Check } from "lucide-react";
 import { Button } from "../../ui/button";
 

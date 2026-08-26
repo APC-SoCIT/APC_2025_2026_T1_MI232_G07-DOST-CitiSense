@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
-import { Check, ChevronDown, Download, Loader2, Settings } from "lucide-react";
+import { Loader2, Settings } from "lucide-react";
 import type { DashboardSettingsProps } from "../../../types/DashboardProps";
 import { toast } from "sonner";
 import { ExportFile } from "./ExportFile";

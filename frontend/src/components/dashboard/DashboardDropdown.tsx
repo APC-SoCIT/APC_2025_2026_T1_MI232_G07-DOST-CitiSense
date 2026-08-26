@@ -4,7 +4,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Filter } from "lucide-react";
 import type { DashboardDropdownProps } from "../../types/DashboardProps";
 

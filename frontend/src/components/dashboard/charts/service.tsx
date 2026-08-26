@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import api from "../../../api";
 import type { ApexOptions } from "apexcharts";
 import type {
   ServiceDataProps,

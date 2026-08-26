@@ -2,7 +2,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenu,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Calendar } from "../../components/ui/calendar";

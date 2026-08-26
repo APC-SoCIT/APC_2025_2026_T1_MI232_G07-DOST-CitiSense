@@ -3,7 +3,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenu,
   TableDropdownMenuCheckBoxItem,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { Input } from "../ui/input";
