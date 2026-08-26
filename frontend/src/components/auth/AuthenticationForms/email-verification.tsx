@@ -4,7 +4,7 @@ import { EmailActionStatusCard } from "./SuccessForm";
 import api from "../../../api";
 import axios from "axios";
 
-export function EmailVerificationSent({ ...props }) {
+export function EmailVerificationSent() {
   const [seconds, setSeconds] = useState(0);
   const { registerEmail } = useAuth();
 

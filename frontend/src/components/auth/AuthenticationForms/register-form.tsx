@@ -1,4 +1,3 @@
-import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
 import {
   Card,
@@ -10,7 +9,7 @@ import {
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { CircleAlert, EyeIcon, EyeOffIcon, Info } from "lucide-react";
+import { CircleAlert, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -1,6 +1,5 @@
-import { GalleryVerticalEnd, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { RegisterForm } from "../../components/auth/AuthenticationForms/register-form";
-import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
   return (

@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose,
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
 import { TermsCheckbox } from "@/components/ui/TermsCheckbox";

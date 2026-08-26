@@ -9,7 +9,6 @@ import {
   CardFooter,
 } from "../../ui/card";
 import { Button } from "../../ui/button";
-import { ShieldCheck } from "lucide-react";
 import DOSTLogo from "@/components/auth/DOST-IRAD";
 
 export function EmailForgotPasswordSuccessForm({ ...props }) {
