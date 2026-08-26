@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import type { CellContext } from "@tanstack/react-table";
-import type {
-  Sentiment,
-  SentimentPostType,
-} from "../../types/TableColumnProps";
+import type { SentimentPostType } from "../../types/TableColumnProps";
 
 const EditableCell = ({
   getValue,

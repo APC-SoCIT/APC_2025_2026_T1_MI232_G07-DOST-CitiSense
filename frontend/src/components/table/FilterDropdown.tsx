@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,10 +8,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Funnel } from "lucide-react";
-import {
-  getFacetedUniqueValues,
-  type ColumnFiltersState,
-} from "@tanstack/react-table";
+import { type ColumnFiltersState } from "@tanstack/react-table";
 
 interface FilterDropdownProps {
   column: any;

@@ -1,15 +1,8 @@
 "use client";
 
 import { type ColumnFiltersState, flexRender } from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import React, { useEffect, useMemo } from "react";
+import { Table, TableHead, TableHeader, TableRow } from "../ui/table";
+import { useEffect, useMemo } from "react";
 import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
 import CustomTableBody, { MemoizedTableBody } from "./TableBody";

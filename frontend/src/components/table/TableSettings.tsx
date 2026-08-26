@@ -9,14 +9,11 @@ import {
   ChevronDown,
   EyeOff,
   MoveHorizontal,
-  SaveIcon,
   Settings,
   SquareCheckBig,
-  Trash2,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { writeFileXLSX, utils, write } from "xlsx";
-import type { SentimentPostType } from "../../types/TableColumnProps";
 import api from "../../api";
 import type { TableToolbarProps } from "../../types/TableProps";
 
