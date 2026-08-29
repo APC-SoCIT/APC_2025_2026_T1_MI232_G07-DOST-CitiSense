@@ -11,11 +11,19 @@ import type { Sentiment } from "../../types/ChartsProps";
 //column definition array initialization, this is where tanstack data table is referencing from
 export const getColumns = (
   isEditing: boolean,
-  filterOptions: Record<string, string[]> = {},
+  filterOptions: filterOptions,
 ): ColumnDef<SentimentPostType, any>[] => [
   {
     accessorKey: "service_name",
-    header: () => <span>Service Name</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Service Name
+        <FilterDropdown
+          column={column}
+          options={filterOptions.service_name || []}
+        />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
     enableColumnFilter: false,
@@ -25,7 +33,10 @@ export const getColumns = (
     header: ({ column }) => (
       <div className="ml-5 flex items-center justify-center gap-1">
         Service Type
-        <FilterDropdown column={column} options={filterOptions.service_type} />
+        <FilterDropdown
+          column={column}
+          options={filterOptions.service_type || []}
+        />
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -76,21 +87,42 @@ export const getColumns = (
   },
   {
     accessorKey: "category",
-    header: () => <span>Category</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Category
+        <FilterDropdown
+          column={column}
+          options={filterOptions.category || []}
+        />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
     enableColumnFilter: false,
   },
   {
     accessorKey: "typeoflibrary",
-    header: () => <span>Type of Library</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Type of Library
+        <FilterDropdown
+          column={column}
+          options={filterOptions.typeoflibrary || []}
+        />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
     enableColumnFilter: false,
   },
   {
     accessorKey: "region",
-    header: () => <span>Region</span>,
+    header: ({ column }) => (
+      <div className="ml-5 flex items-center justify-center gap-1">
+        Region
+        <FilterDropdown column={column} options={filterOptions.region || []} />
+      </div>
+    ),
     cell: (info) => info.getValue(),
     filterFn: "arrIncludesSome",
     enableColumnFilter: false,

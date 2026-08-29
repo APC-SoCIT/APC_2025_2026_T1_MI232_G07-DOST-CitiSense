@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { DataTable } from "../../components/table/DataTable";
 import { getColumns } from "./TableColumns";
-import type { SentimentPostType } from "../../types/TableColumnProps";
+import type {
+  filterOptions,
+  SentimentPostType,
+} from "../../types/TableColumnProps";
 import api from "../../api";
 import {
   useReactTable,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
 } from "@tanstack/react-table";
 import type {
-  ColumnFilter,
   ColumnFiltersState,
-  PaginationState,
   VisibilityState,
 } from "@tanstack/react-table";
 
@@ -26,9 +25,7 @@ import axios from "axios";
 
 const DataTablePage = () => {
   const [rowCount, setRowCount] = useState<number>(0); // State for providing rowCount context to tanstack for manual pagination
-  const [filterOptions, setFilterOptions] = useState<Record<string, string[]>>(
-    {},
-  ); // State for the unique filter values
+  const [filterOptions, setFilterOptions] = useState<filterOptions>({}); // State for the unique filter values
   const [isEditing, setIsEditing] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showDialog, setShowDialog] = useState(false);
@@ -189,6 +186,7 @@ const DataTablePage = () => {
     };
     getFilterOptions();
   }, []);
+
   // getting the data for tanstack table to render
   useEffect(() => {
     const getSentimentData = async () => {

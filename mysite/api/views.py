@@ -72,7 +72,10 @@ def filter_table_request(request):
     quarter = request.query_params.getlist("quarter")
     service_type = request.query_params.getlist("service_type")
     year = request.query_params.getlist("year")
-    sex = request.query_params.getlist("sex") 
+    sex = request.query_params.getlist("sex")
+    category = request.query_params.getlist("category")
+    typeoflibrary = request.query_params.getlist("typeoflibrary")
+    region = request.query_params.getlist("region")
     sentiment = request.query_params.getlist("sentiment")
 
     # Instantiate a dictionary; this will be used to hold the key/value pairs for the filters
@@ -90,6 +93,12 @@ def filter_table_request(request):
         filter_dict["year__in"] = year
     if sex:
         filter_dict["sex__in"] = sex
+    if category:
+        filter_dict["category__in"] = category
+    if typeoflibrary:
+        filter_dict["typeoflibrary__in"] = typeoflibrary
+    if region:
+        filter_dict["region__in"] = region
     if sentiment:
         filter_dict["labeled_feedback__sentiment__in"] = sentiment
 
@@ -132,16 +141,25 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
 @api_view(['GET'])
 def get_unique_table_filters(request):
     quarter = cleaned_feedback.objects.values_list('quarter', flat=True).distinct()
+    service_name = cleaned_feedback.objects.values_list("service_name", flat=True).distinct()
     service_type = cleaned_feedback.objects.values_list('service_type', flat=True).distinct()
     year = cleaned_feedback.objects.values_list('year', flat=True).distinct()
     sex = cleaned_feedback.objects.values_list('sex', flat=True).distinct()
+    category = cleaned_feedback.objects.values_list('category', flat=True).distinct()
+    typeoflibrary = cleaned_feedback.objects.values_list('typeoflibrary', flat=True).distinct()
+    region = cleaned_feedback.objects.values_list('region', flat=True).distinct()
     sentiment = cleaned_feedback.objects.values_list('labeled_feedback__sentiment', flat=True).distinct()
+
 
     return Response({
         "quarter": quarter,
+        "service_name": service_name,
         "service_type": service_type,
         "year": year,
         "sex": sex,
+        "category": category,
+        "typeoflibrary": typeoflibrary,
+        "region": region,
         "sentiment": sentiment,
     })
 

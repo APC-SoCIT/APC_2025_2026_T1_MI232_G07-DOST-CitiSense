@@ -37,9 +37,13 @@ export type SentimentPostType = {
 };
 
 export type filterOptions = {
-  quarter: number[];
-  service_type: string[];
-  year: number[];
-  sex: Gender;
-  sentiment: Sentiment;
+  quarter?: string[];
+  service_name?: string[];
+  service_type?: string[];
+  year?: string[];
+  sex?: string[];
+  category?: string[];
+  typeoflibrary?: string[];
+  region?: string[];
+  sentiment?: string[];
 };
