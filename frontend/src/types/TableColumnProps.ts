@@ -20,6 +20,7 @@ export const senArray: SentimentOption[] = [
 // Type for the shape of the API response for the category/feedback data
 export type SentimentPostType = {
   id: number;
+  labeled_feedback_id: number;
   name: string;
   quarter: string;
   gender: Gender;

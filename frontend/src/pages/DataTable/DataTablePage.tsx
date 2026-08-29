@@ -224,7 +224,8 @@ const DataTablePage = () => {
       //handled by allSettled, edits and updates the data still even when there is an error.
       const results = await Promise.allSettled(
         toBeUpdated.map((row) => {
-          return api.put(`/sentimentposts/${row.id}/`, row);
+          console.log("THIS IS THE THE ROW ID", row.id);
+          return api.put(`/sentimentposts/${row.labeled_feedback_id}/`, row);
         }),
       );
 
