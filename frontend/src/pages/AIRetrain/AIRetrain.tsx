@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import api from "@/api";
 import { DataTable } from "@/components/table/DataTable";
 import { type SentimentCorrection } from "@/types/AIRetrainProps";
-import { getCorrectionolumns as columns } from "./AIRetrainColumns";
+import { getCorrectionColumns } from "./AIRetrainColumns";
+import Pagination from "@/components/table/Pagination";
 
 interface AIRetrainProps {
   pendingCount: number;
@@ -13,11 +14,23 @@ interface AIRetrainProps {
 
 export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
   const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [rowCount, setRowCount] = useState(0);
   const disabled = pendingCount === 0 || loading;
 
   const [sentimentCorrectionList, setSentimentCorrectionList] = useState<
     SentimentCorrection[]
   >([]);
+
+  const handleDelete = async (id: number) => {
+    try {
+      await api.delete(`sentimentcorrections/${id}/`);
+      setSentimentCorrectionList((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const columns = useMemo(() => getCorrectionColumns(handleDelete), []);
 
   useEffect(() => {
     const fetchSentimentCorrections = async () => {
@@ -32,12 +45,31 @@ export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
     fetchSentimentCorrections();
   }, []);
 
-  console.log(sentimentCorrectionList);
+  useEffect(() => {
+    const fetchSentimentCorrections = async () => {
+      try {
+        const { pageIndex, pageSize } = pagination;
+        const offset = pageIndex * pageSize;
+        const response = await api.get(
+          `sentimentcorrections/?limit=${pageSize}&offset=${offset}`,
+        );
+        setSentimentCorrectionList(response.data.results);
+        setRowCount(response.data.count);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchSentimentCorrections();
+  }, [pagination]);
 
   const table = useReactTable({
     data: sentimentCorrectionList,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    rowCount,
+    onPaginationChange: setPagination,
+    state: { pagination },
   });
 
   const handleClick = async () => {
@@ -75,6 +107,10 @@ export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
       </div>
       <div className="flex flex-col mt-5">
         <DataTable table={table} />
+      </div>
+      {/* Pagination */}
+      <div className="mt-2">
+        <Pagination table={table} />
       </div>
     </div>
   );

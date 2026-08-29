@@ -156,7 +156,12 @@ class SentimentCorrectionList(generics.ListAPIView):
     def get_queryset(self):
         queryset = SentimentCorrection.objects.filter(status="pending")
         return queryset
-
+    
+class DeleteSentimentCorrection(generics.DestroyAPIView):
+    queryset = SentimentCorrection.objects.all()
+    serializer_class = SentimentCorrectionSerializer
+    permission_classes = [IsAnalyst, IsAuthenticated]
+    
 @api_view(['GET'])
 def get_unique_table_filters(request):
     quarter = cleaned_feedback.objects.values_list('quarter', flat=True).distinct()

@@ -4,11 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import Dialog1 from "@/components/table/TableDialog";
 
-export const getCorrectionolumns: ColumnDef<SentimentCorrection>[] = [
-  {
-    accessorKey: "id",
-    header: "ID",
-  },
+export const getCorrectionColumns = (
+  onDelete: (id: number) => void,
+): ColumnDef<SentimentCorrection>[] => [
   {
     accessorKey: "comments",
     header: "Comments",
@@ -29,6 +27,10 @@ export const getCorrectionolumns: ColumnDef<SentimentCorrection>[] = [
   {
     accessorKey: "created_at",
     header: "Created At",
+    cell: (info) => {
+      const date = new Date(info.getValue() as string);
+      return date.toLocaleString("en-PH");
+    },
   },
   {
     id: "actions",
@@ -37,9 +39,10 @@ export const getCorrectionolumns: ColumnDef<SentimentCorrection>[] = [
       <Button
         type="button"
         variant="ghost"
-        onClick={() => alert(`Delete: ${row.original.id}`)}
+        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+        onClick={() => onDelete(row.original.id)}
       >
-        <Trash />
+        <Trash className="text-red-500" />
       </Button>
     ),
   },
