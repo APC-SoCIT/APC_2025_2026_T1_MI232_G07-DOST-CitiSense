@@ -1,4 +1,9 @@
-import { Table, House, ChartColumnDecreasing } from "lucide-react";
+import {
+  Table,
+  House,
+  ChartColumnDecreasing,
+  BrainCircuit,
+} from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavUser } from "@/components/sidebar/nav-user";
@@ -30,6 +35,11 @@ const data = {
       title: "Dashboard",
       url: "/",
       icon: ChartColumnDecreasing,
+    },
+    {
+      title: "AI Retrain",
+      url: "/ai/retrain",
+      icon: BrainCircuit,
     },
   ],
 };

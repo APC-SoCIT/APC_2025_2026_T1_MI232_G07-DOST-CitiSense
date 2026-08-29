@@ -127,7 +127,27 @@ class labeled_feedback(models.Model):
                 self.sentiment = None
       
         return super().save(*args, **kwargs)
-    
+
+class SentimentCorrection(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "pending"),
+        ("finished", "finished"),
+    ]
+
+    SENTIMENT_CHOICES = [
+        ("Positive", "Positive"),
+        ("Neutral", "Neutral"),
+        ("Negative", "Negative"),
+    ]   
+
+    labeled_feedback = models.ForeignKey(labeled_feedback, on_delete=models.CASCADE, related_name="corrections")
+    original_sentiment = models.CharField(max_length=20, choices=SENTIMENT_CHOICES)
+    corrected_sentiment = models.CharField(max_length=20, choices=SENTIMENT_CHOICES)
+    corrected_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class FileMigration(models.Model):
     sql_file = models.FileField(upload_to="sql_dumps/")
     uploaded_at = models.DateTimeField(auto_now_add=True)

@@ -4,7 +4,7 @@ from rest_framework import serializers
 class CleanedFeedbackSerializer(serializers.ModelSerializer):
     sentiment = serializers.SerializerMethodField()
     labeled_feedback_id = serializers.SerializerMethodField()
-
+    
     class Meta:
         model = cleaned_feedback
         fields = '__all__'
@@ -28,3 +28,9 @@ class LabeledFeedbackSerializer(serializers.ModelSerializer):
     class Meta: 
         model = labeled_feedback
         fields = ['id','sentiment']
+
+class SentimentCorrectionSerializer(serializers.ModelSerializer):
+    comments = serializers.CharField(source="labeled_feedback.feedback.comments", read_only=True)
+    class Meta:
+        model = SentimentCorrection
+        fields = "__all__"

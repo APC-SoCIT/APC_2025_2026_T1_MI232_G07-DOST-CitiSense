@@ -8,7 +8,7 @@ def create_analyst_group(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
     ContentType = apps.get_model("contenttypes", "ContentType")
     Permission = apps.get_model("auth", "Permission")
-    analyst_group, created = Group.objects.get_or_create(name="analyst")
+    analyst_group, created = Group.objects.get_or_create(name="Data Analyst")
     analyst_ct = ContentType.objects.get_for_model(SentimentPost)
     analyst_permission = Permission.objects.filter(content_type=analyst_ct)
     analyst_group.permissions.set(analyst_permission)

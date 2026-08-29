@@ -23,6 +23,7 @@ import { EmailVerificationSent } from "./components/auth/AuthenticationForms/ema
 import EmailVerificationCallback from "./components/auth/AuthenticationForms/EmailVerificationCallback.js";
 import GuestDashboard from "./pages/Dashboard/GuestDashboard.js";
 import NonProtectedLayout from "./layouts/NonProtectedLayout.js";
+import { AIRetrain } from "./pages/AIRetrain/AIRetrain.js";
 
 const router = createBrowserRouter([
   {
@@ -44,8 +45,8 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/archive",
-        element: <Archive />,
+        path: "/ai/retrain",
+        element: <AIRetrain />,
       },
       { path: "*", element: <NotFound /> },
       { path: "/home", element: <Profile /> },

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
-from drf.models import cleaned_feedback, labeled_feedback
-from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer
+from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection
+from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer, SentimentCorrectionSerializer
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, throttle_classes
 from django.db.models import Count, Q, F, Min
@@ -136,7 +136,26 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
     
     # To automatically update/populate the last_modified_by field when editing a sentiment
     def perform_update(self, serializer):
-        serializer.save(last_modified_by=self.request.user)
+        instance = self.get_object()
+        old_sentiment = instance.sentiment
+
+        updated_instance = serializer.save(last_modified_by=self.request.user)
+
+        if old_sentiment and updated_instance.sentiment != old_sentiment:
+            SentimentCorrection.objects.create(
+                labeled_feedback = updated_instance,
+                original_sentiment = old_sentiment, 
+                corrected_sentiment = updated_instance.sentiment,
+                corrected_by = self.request.user,
+            )
+
+class SentimentCorrectionList(generics.ListAPIView):
+    serializer_class = SentimentCorrectionSerializer
+    permission_classes = [IsAnalyst, IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = SentimentCorrection.objects.filter(status="pending")
+        return queryset
 
 @api_view(['GET'])
 def get_unique_table_filters(request):
