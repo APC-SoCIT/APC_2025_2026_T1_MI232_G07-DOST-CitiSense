@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
-import { Loader2, Settings } from "lucide-react";
+import { Check, ChevronDown, Download, Loader2, Settings } from "lucide-react";
 import type { DashboardSettingsProps } from "../../../types/DashboardProps";
 import { toast } from "sonner";
 import { ExportFile } from "./ExportFile";
@@ -27,6 +27,11 @@ const DashboardSettings = ({
   gaugeValue,
   genderValue,
   serviceValue,
+  themes,
+  genderTooltip,
+  genderTooltipCount,
+  serviceTooltip,
+  serviceTooltipCount,
 }: DashboardSettingsProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<number>(0);
@@ -116,6 +121,11 @@ const DashboardSettings = ({
               gauge={gaugeValue}
               genderValue={genderValue}
               serviceValue={serviceValue}
+              themes={themes}
+              genderTooltip={genderTooltip}
+              genderTooltipCount={genderTooltipCount}
+              serviceTooltip={serviceTooltip}
+              serviceTooltipCount={serviceTooltipCount}
             />
             <DialogFooter>
               <DialogClose asChild>
