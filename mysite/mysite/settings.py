@@ -277,3 +277,6 @@ else:
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ]
+
+SENTIMENT_MODELS_DIR = BASE_DIR / "ml_models" / "sentiment"
+SENTIMENT_MODEL_PATH = str(SENTIMENT_MODELS_DIR / "v1")

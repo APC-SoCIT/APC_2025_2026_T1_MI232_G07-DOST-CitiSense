@@ -3,6 +3,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import ollama
 import json
+from django.conf import settings
 
 EMPTY_VALUES = ('NULL', '', 'N/A', 'NA', 'n/a', 'na', 'None', 'null')
 
@@ -13,10 +14,27 @@ def normalize(v):
         Used for comparing database values with SQL dump values.
         """
         return None if v in EMPTY_VALUES or v == "" else v
-    
 
-tokenizer = AutoTokenizer.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
-model = AutoModelForSequenceClassification.from_pretrained("dost-asti/RoBERTa-tl-sentiment-analysis")
+def get_active_model_path():
+    from drf.models import ModelVersion
+    active = ModelVersion.objects.filter(is_active=True).first()
+    return active.model_path if active else settings.SENTIMENT_MODEL_PATH
+
+_tokenizer = None
+_model = None
+
+# Lazy load the model and the tokenizer
+def get_model_and_tokenizer():
+    # Use the global tokenizer and the model variables which is currently set to None
+    global _tokenizer, _model
+
+    # If one of either is still none, then get the current the active model path and get the path and load the tokenizer and the model from it.
+    if _tokenizer is None or _model is None:
+        path = get_active_model_path()
+        _tokenizer = AutoTokenizer.from_pretrained(path)
+        _model = AutoModelForSequenceClassification.from_pretrained(path)
+    return _tokenizer, _model
+
 
 def analyze_sentiment(text):
 
@@ -24,7 +42,10 @@ def analyze_sentiment(text):
     # "   " comments are still counted as text.
     if not text or not text.strip():
         return None
-    
+
+    # Initialize the tokenizer and the model
+    tokenizer, model = get_model_and_tokenizer()
+
     # Remove whitespaces and new lines
     clean_text = text.strip()
 
