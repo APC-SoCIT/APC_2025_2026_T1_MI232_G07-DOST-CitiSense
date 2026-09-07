@@ -12,7 +12,7 @@ class Command(BaseCommand):
         try:     
             # Check if the superuser already exists:
             if not User.objects.filter(username="superuser1").exists():
-                superuser = User.objects.create_user("superuser1", email= "superuser1@stii.dost.gov.ph", password="superuser1")
+                superuser = User.objects.create_user("superuser1", email= "superuser1@stii.dost.gov.ph", first_name="Super", last_name="User", password="superuser1")
                 superuser.is_superuser = True
                 superuser.is_staff = True
                 superuser.is_registered=True
@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
                 # For successfully verifying the email of the user to login to CitiSense
                 EmailAddress.objects.create(user=superuser, email=superuser.email, verified=True, primary=True)
-                
+
                 self.stdout.write(self.style.SUCCESS("Created superuser!"))
             else:
                 self.stderr.write(self.style.ERROR(f'Superuser already exists!'))
@@ -38,6 +38,8 @@ class Command(BaseCommand):
                 user2 = User.objects.create_user(
                     "user2",
                     email="user2@stii.dost.gov.ph",
+                    first_name="User",
+                    last_name="2",
                     password="Password123!",
                 )
                 user2.is_registered = True
