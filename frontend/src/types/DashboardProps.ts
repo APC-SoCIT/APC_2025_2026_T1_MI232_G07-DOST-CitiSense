@@ -1,5 +1,9 @@
 import { type DateRange } from "react-day-picker";
-import type { GenderSeriesProps, ServiceSeriesProps } from "./ChartsProps";
+import type {
+  GenderSeriesProps,
+  ServiceSeriesProps,
+  themeDataProps,
+} from "./ChartsProps";
 
 export type sentimentFeedbackDataProps = {
   service_name: string[];
@@ -63,6 +67,11 @@ export type DashboardSettingsProps = {
   gaugeValue: number;
   genderValue: GenderSeriesProps[];
   serviceValue: ServiceSeriesProps[];
+  themes: themeDataProps[];
+  genderTooltip: string[][];
+  genderTooltipCount: number[][];
+  serviceTooltip: string[][];
+  serviceTooltipCount: number[][];
 };
 
 export type ExportFileProps = {
@@ -70,4 +79,9 @@ export type ExportFileProps = {
   gauge: number;
   genderValue: GenderSeriesProps[];
   serviceValue: ServiceSeriesProps[];
+  themes: themeDataProps[];
+  genderTooltip: string[][];
+  genderTooltipCount: number[][];
+  serviceTooltip: string[][];
+  serviceTooltipCount: number[][];
 };

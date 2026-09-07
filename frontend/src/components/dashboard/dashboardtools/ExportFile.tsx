@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import PizZipUtils from "pizzip/utils/index.js";
@@ -16,9 +15,12 @@ export const ExportFile = ({
   gauge,
   genderValue,
   serviceValue,
+  themes,
+  genderTooltip,
+  genderTooltipCount,
+  serviceTooltip,
+  serviceTooltipCount,
 }: ExportFileProps) => {
-  const [isExporting, setIsExporting] = useState(false);
-
   const downloadTemplate = async () => {
     loadFile(
       "/templates/ReportTemplate.docx",
@@ -174,9 +176,48 @@ export const ExportFile = ({
           })(),
           totalCount: totalCount,
           gauge: gauge.toFixed(2),
-          genderValue: genderValue.map((item, index) => {
-            return item.name;
-          }),
+          ...Object.fromEntries(
+            Array.from({ length: 6 }, (_, index) => {
+              const theme = themes[index];
+              return [
+                [`theme_name${index + 1}`, theme?.top ?? ""],
+                [`theme_percentage${index + 1}`, theme?.percentage ?? 0],
+              ];
+            }).flat(),
+          ),
+          ...Object.fromEntries(
+            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
+              Array.from({ length: 2 }, (_, genderIndex) => [
+                `gender_summary_${sentiment}${genderIndex + 1}`,
+                genderTooltip[index]?.[genderIndex] ?? "",
+              ]),
+            ),
+          ),
+          ...Object.fromEntries(
+            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
+              Array.from({ length: 2 }, (_, genderIndex) => [
+                `gender_summary_count_${sentiment}${genderIndex + 1}`,
+                genderTooltipCount[index]?.[genderIndex] ?? 0,
+              ]),
+            ),
+          ),
+          ...Object.fromEntries(
+            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
+              Array.from({ length: 5 }, (_, serviceIndex) => [
+                `service_summary_${sentiment}${serviceIndex + 1}`,
+                serviceTooltip[index]?.[serviceIndex] ?? "",
+              ]),
+            ),
+          ),
+          ...Object.fromEntries(
+            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
+              Array.from({ length: 5 }, (_, serviceIndex) => [
+                `service_summary_count_${sentiment}${serviceIndex + 1}`,
+                serviceTooltipCount[index]?.[serviceIndex] ?? 0,
+              ]),
+            ),
+          ),
+          genderValue: genderValue.map((item) => item.name),
           genderData,
           gender_name1: genderRow1?.name ?? "",
           NegP: genderRow1?.negP ?? 0,

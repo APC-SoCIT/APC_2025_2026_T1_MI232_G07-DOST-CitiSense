@@ -423,6 +423,11 @@ function DashboardPage() {
               gaugeValue={gaugeValue}
               genderValue={genderValue}
               serviceValue={serviceValue}
+              themes={themes}
+              genderTooltip={genderTooltip}
+              genderTooltipCount={genderTooltipCount}
+              serviceTooltip={serviceTooltip}
+              serviceTooltipCount={serviceTooltipCount}
             />
           </div>
         </div>
