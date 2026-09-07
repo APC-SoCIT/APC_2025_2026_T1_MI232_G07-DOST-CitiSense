@@ -3,7 +3,7 @@ import { TableBody, TableCell, TableRow } from "../ui/table";
 import { flexRender } from "@tanstack/react-table";
 import type { TableProps } from "../../types/TableColumnProps";
 
-const CustomTableBody = ({ table }: TableProps) => {
+const CustomTableBody = <TData,>({ table }: TableProps<TData>) => {
   return (
     <TableBody>
       {table.getRowModel().rows?.length ? (

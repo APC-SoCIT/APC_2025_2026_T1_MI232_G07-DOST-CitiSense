@@ -2,8 +2,8 @@ export type Gender = "M" | "F";
 export type Sentiment = "Positive" | "Negative" | "Neutral";
 import type { Table } from "@tanstack/react-table";
 
-export type TableProps = {
-  table: Table<SentimentPostType>;
+export type TableProps<TData> = {
+  table: Table<TData>;
 };
 
 export type SentimentOption = {

@@ -15,7 +15,7 @@ import {
 } from "../ui/dropdown-menu";
 import type { TableProps } from "../../types/TableColumnProps";
 
-const Pagination = ({ table }: TableProps) => {
+const Pagination = <TData,>({ table }: TableProps<TData>) => {
   return (
     <div className="flex flex-wrap w-full items-center justify-between">
       <div>
