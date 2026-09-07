@@ -27,10 +27,11 @@ export const getCorrectionColumns = (
   {
     accessorKey: "created_at",
     header: "Created At",
-    cell: (info) => {
-      const date = new Date(info.getValue() as string);
-      return date.toLocaleString("en-PH");
-    },
+    cell: (info) =>
+      new Date(info.getValue() as string).toLocaleString("en-PH", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
   },
   {
     id: "actions",

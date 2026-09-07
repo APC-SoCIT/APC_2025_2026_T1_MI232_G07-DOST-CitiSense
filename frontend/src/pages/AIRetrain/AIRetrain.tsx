@@ -7,16 +7,10 @@ import { type SentimentCorrection } from "@/types/AIRetrainProps";
 import { getCorrectionColumns } from "./AIRetrainColumns";
 import Pagination from "@/components/table/Pagination";
 
-interface AIRetrainProps {
-  pendingCount: number;
-  onStartRetrain: () => void | Promise<void>;
-}
-
-export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
+export const AIRetrain = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [rowCount, setRowCount] = useState(0);
-  const disabled = pendingCount === 0 || loading;
 
   const [sentimentCorrectionList, setSentimentCorrectionList] = useState<
     SentimentCorrection[]
@@ -30,20 +24,9 @@ export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
       console.log(error);
     }
   };
+
+  // Fetch the columns for the AI Retrain table, and pass the handleDelete function to it.
   const columns = useMemo(() => getCorrectionColumns(handleDelete), []);
-
-  useEffect(() => {
-    const fetchSentimentCorrections = async () => {
-      try {
-        const response = await api.get("sentimentcorrections/");
-        setSentimentCorrectionList(response.data.results);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchSentimentCorrections();
-  }, []);
 
   useEffect(() => {
     const fetchSentimentCorrections = async () => {
@@ -76,7 +59,10 @@ export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
     setLoading(true);
 
     try {
-      await onStartRetrain();
+      const response = await api.post("sentimentcorrections/retrain/");
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -89,16 +75,11 @@ export const AIRetrain = ({ pendingCount, onStartRetrain }: AIRetrainProps) => {
           <h2 className="text-lg font-medium text-gray-900">
             Model retraining
           </h2>
-
-          <p className="text-sm text-gray-500 mt-1">
-            {pendingCount} pending correction
-            {pendingCount === 1 ? "" : "s"} in queue
-          </p>
         </div>
 
         <button
           onClick={handleClick}
-          disabled={disabled}
+          disabled={rowCount === 0 || loading}
           className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-[0.98] transition"
         >
           <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
