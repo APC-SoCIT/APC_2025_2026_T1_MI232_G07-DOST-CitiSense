@@ -149,11 +149,12 @@ class SentimentCorrection(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
 
 class ModelVersion(models.Model):
-    version_name = models.CharField(max_length=50, unique=True)  # e.g. "v2"
-    model_path = models.CharField(max_length=500)  # e.g. "ml_models/sentiment/v2/"
+    version_name = models.CharField(max_length=50, unique=True)
+    model_path = models.CharField(max_length=500) 
     is_active = models.BooleanField(default=False)
     trained_on_corrections = models.ManyToManyField(SentimentCorrection, blank=True)
     samples_used = models.IntegerField(default=0)
+    eval_results = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def activate(self):
@@ -162,7 +163,7 @@ class ModelVersion(models.Model):
         self.is_active = True
         self.save()
 
-        
+
 class FileMigration(models.Model):
     sql_file = models.FileField(upload_to="sql_dumps/")
     uploaded_at = models.DateTimeField(auto_now_add=True)

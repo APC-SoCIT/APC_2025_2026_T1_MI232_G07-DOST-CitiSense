@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics, status
-from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection
+from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection, ModelVersion
 from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer, SentimentCorrectionSerializer
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, throttle_classes
+from rest_framework.decorators import api_view, throttle_classes, permission_classes
 from django.db.models import Count, Q, F, Min
 from django.db.models.functions import Lower, Trim
 from rest_framework import permissions
@@ -13,6 +13,14 @@ from drf.utils import summarize_text, generate_themes
 from django.core.cache import cache
 import time
 from .throttles import AISummaryThrottle
+from transformers import Trainer, AutoModelForSequenceClassification, AutoTokenizer, TrainingArguments
+from sklearn.model_selection import train_test_split
+from drf.utils import get_active_model_path
+from datasets import Dataset
+from django.conf import settings
+import os
+import numpy as np
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 bad_values = {
     "", " ", '', ' ',
@@ -164,7 +172,97 @@ class DeleteSentimentCorrection(generics.DestroyAPIView):
     queryset = SentimentCorrection.objects.all()
     serializer_class = SentimentCorrectionSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def FineTuneAIModel(request):
+    data = SentimentCorrection.objects.filter(status="pending").values(
+        "labeled_feedback__feedback__comments", "corrected_sentiment"
+    )
+
+    if not data.exists():
+        return Response({"error": "No pending corrections to train on"}, status=400)
+
+    # Capture the correction ids used for updating the status to "used" later.
+    correction_ids = list(SentimentCorrection.objects.filter(status="pending").values_list("id", flat=True))
+
+    sentiment_map = {"Negative": 0, "Positive": 1, "Neutral": 2}
+
+    texts = []
+    labels = []
+
+    for row in data: 
+        comment = row["labeled_feedback__feedback__comments"]
+        sentiment = row["corrected_sentiment"]
+
+        if not comment or not comment.strip():
+            continue # Skip corrections with no actual text to train/fine-tune on.
+
+        texts.append(comment.strip())
+        labels.append(sentiment_map[sentiment])
+
     
+
+    # 80/20 train/test split 
+    x_train, x_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, random_state=42, stratify=labels)
+
+    # Reference from this point onward: https://huggingface.co/docs/transformers/v4.41.1/training
+    base_model_path = get_active_model_path()
+    tokenizer = AutoTokenizer.from_pretrained(base_model_path)
+    model = AutoModelForSequenceClassification.from_pretrained(base_model_path)
+
+    def tokenize(batch):
+        return tokenizer(batch["text"], truncation=True, max_length=255, padding="max_length")
+
+    # Convert the dataset to a dictionary to be put in the trainer of HuggingFace
+    train_data = Dataset.from_dict({"text": x_train, "label": y_train}).map(tokenize, batched=True)
+    test_data = Dataset.from_dict({"text": x_test, "label": y_test}).map(tokenize, batched=True)
+
+    def compute_metrics(eval_pred):
+        logits, labels = eval_pred
+        predictions = np.argmax(logits, axis=-1)
+
+        accuracy = accuracy_score(labels, predictions)
+        cm = confusion_matrix(labels, predictions)  # rows = actual, cols = predicted
+        report = classification_report(labels, predictions, output_dict=True)  # precision/recall/f1 per class
+
+        return {
+            "accuracy": accuracy,
+            "confusion_matrix": cm.tolist(),
+            "classification_report": report,
+        }
+
+    training_args = TrainingArguments(output_dir=settings.SENTIMENT_MODELS_DIR / "checkpoints", save_strategy="no")
+
+    # Finally fine-tune and test  the model
+    trainer = Trainer(model=model, args=training_args, train_dataset=train_data, eval_dataset=test_data, compute_metrics=compute_metrics)
+    trainer.train()
+    test_results = trainer.evaluate()
+
+    # Convert numpy numbers to plain python numbers to be saved in the eval_results field of the ModelVersion field.
+    test_results = {k: (float(v) if isinstance(v, (np.floating, np.integer)) else v) for k, v in test_results.items()}
+
+    v2_path = os.path.join(settings.SENTIMENT_MODELS_DIR, "v2")
+    model.save_pretrained(v2_path)
+    tokenizer.save_pretrained(v2_path)
+
+    v2 = ModelVersion.objects.create(
+        version_name="v2",
+        model_path=v2_path,
+        samples_used=len(texts),        
+        eval_results=test_results,
+    )
+
+    corrections_used = SentimentCorrection.objects.filter(id__in=correction_ids)
+    v2.trained_on_corrections.set(corrections_used)
+
+    v2.activate()
+
+    corrections_used.update(status="used")
+
+    return Response({"status": "completed", "train_samples": len(train_data), "test_samples": len(test_data), "eval_results": test_results})
+    
+
 @api_view(['GET'])
 def get_unique_table_filters(request):
     quarter = cleaned_feedback.objects.values_list('quarter', flat=True).distinct()
