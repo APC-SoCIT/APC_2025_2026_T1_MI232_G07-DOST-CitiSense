@@ -140,12 +140,13 @@ class SentimentCorrection(models.Model):
         ("Negative", "Negative"),
     ]   
 
-    labeled_feedback = models.ForeignKey(labeled_feedback, on_delete=models.CASCADE, related_name="corrections")
+    labeled_feedback = models.OneToOneField(labeled_feedback, on_delete=models.CASCADE, related_name="correction")
     original_sentiment = models.CharField(max_length=20, choices=SENTIMENT_CHOICES)
     corrected_sentiment = models.CharField(max_length=20, choices=SENTIMENT_CHOICES)
     corrected_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
 
 class FileMigration(models.Model):

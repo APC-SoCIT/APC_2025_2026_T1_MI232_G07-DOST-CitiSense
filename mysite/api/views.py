@@ -142,11 +142,14 @@ class CleanedFeedbackUpdate(generics.RetrieveUpdateAPIView):
         updated_instance = serializer.save(last_modified_by=self.request.user)
 
         if old_sentiment and updated_instance.sentiment != old_sentiment:
-            SentimentCorrection.objects.create(
+            SentimentCorrection.objects.update_or_create(
                 labeled_feedback = updated_instance,
-                original_sentiment = old_sentiment, 
-                corrected_sentiment = updated_instance.sentiment,
-                corrected_by = self.request.user,
+                defaults={
+                    "original_sentiment": old_sentiment,
+                    "corrected_sentiment": updated_instance.sentiment,
+                    "corrected_by": self.request.user,
+                    "status": "pending",
+                },
             )
 
 class SentimentCorrectionList(generics.ListAPIView):
