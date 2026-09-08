@@ -1,6 +1,25 @@
 from django.urls import path
 from . import views
-from .views import gauge_chart, CleanedFeedbackList, gender_chart, service_chart, CleanedFeedbackUpdate, dashboard_filter, gender_bar_chart_tooltip, service_bar_chart_tooltip, get_total_feedback, area_chart, get_unique_table_filters, thematic_analysis, SentimentCorrectionList, DeleteSentimentCorrection, FineTuneAIModel
+from .views import (
+    gauge_chart,
+    CleanedFeedbackList,
+    gender_chart,
+    service_chart,
+    CleanedFeedbackUpdate,
+    dashboard_filter,
+    gender_bar_chart_tooltip,
+    service_bar_chart_tooltip,
+    get_total_feedback,
+    area_chart,
+    get_unique_table_filters,
+    thematic_analysis,
+    SentimentCorrectionList,
+    DeleteSentimentCorrection,
+    FineTuneAIModel,
+    ViewModelList,
+    ActivateModelVersion,
+)
+
 urlpatterns = [
     # path("sentimentposts/",views.SentimentPostListCreate.as_view(), name="sentiposts"),
     # path("sentimentposts/<int:pk>/", views.SentimentPostUpdate.as_view(), name="sentipost-update"),
@@ -26,4 +45,8 @@ urlpatterns = [
     path("sentimentcorrections/", SentimentCorrectionList.as_view(), name="senticorrection"),
     path("sentimentcorrections/<int:pk>/", DeleteSentimentCorrection.as_view(), name="senticorrection_delete"),
     path("sentimentcorrections/retrain/", FineTuneAIModel, name="start_retrain"),
+
+    #AI Model APIs
+    path("models/", ViewModelList.as_view(), name="models"),
+    path("models/<int:pk>/activate/", ActivateModelVersion.as_view(), name="activate_model"),
 ]

@@ -1,4 +1,4 @@
-from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection
+from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection, ModelVersion
 from rest_framework import serializers
 
 class CleanedFeedbackSerializer(serializers.ModelSerializer):
@@ -33,4 +33,9 @@ class SentimentCorrectionSerializer(serializers.ModelSerializer):
     comments = serializers.CharField(source="labeled_feedback.feedback.comments", read_only=True)
     class Meta:
         model = SentimentCorrection
+        fields = "__all__"
+
+class ModelVersionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ModelVersion
         fields = "__all__"

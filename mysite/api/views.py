@@ -1,12 +1,10 @@
-from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import generics, status
-from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection, ModelVersion
-from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer, SentimentCorrectionSerializer
+from rest_framework import generics
 from rest_framework.views import APIView
+from drf.models import cleaned_feedback, labeled_feedback, SentimentCorrection, ModelVersion
+from .serializers import CleanedFeedbackSerializer,LabeledFeedbackSerializer, SentimentCorrectionSerializer, ModelVersionSerializer
 from rest_framework.decorators import api_view, throttle_classes, permission_classes
-from django.db.models import Count, Q, F, Min
-from django.db.models.functions import Lower, Trim
+from django.db.models import Count, Q, F
 from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from drf.utils import summarize_text, generate_themes
@@ -173,6 +171,19 @@ class DeleteSentimentCorrection(generics.DestroyAPIView):
     serializer_class = SentimentCorrectionSerializer
     permission_classes = [IsAnalyst, IsAuthenticated]
 
+class ViewModelList(generics.ListAPIView):
+    queryset = ModelVersion.objects.all()
+    serializer_class = ModelVersionSerializer
+    permission_classes = [IsAuthenticated]
+
+class ActivateModelVersion(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        version = ModelVersion.objects.get(pk=pk)
+        version.activate()
+        return Response({"status": "Activated", "version": version.version_name})
+        
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def FineTuneAIModel(request):
