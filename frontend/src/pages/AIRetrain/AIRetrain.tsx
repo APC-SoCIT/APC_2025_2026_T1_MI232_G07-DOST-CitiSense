@@ -1,21 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
-import { RefreshCw } from "lucide-react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import api from "@/api";
 import { DataTable } from "@/components/table/DataTable";
 import { type SentimentCorrection } from "@/types/AIRetrainProps";
 import { getCorrectionColumns } from "./AIRetrainColumns";
 import Pagination from "@/components/table/Pagination";
+import {
+  AIRetrainDialog,
+  type AIRetrainDialogFormProps,
+} from "./AIRetrainDialog";
+import { toast } from "sonner";
+import axios from "axios";
 
 export const AIRetrain = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [rowCount, setRowCount] = useState(0);
-
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [sentimentCorrectionList, setSentimentCorrectionList] = useState<
     SentimentCorrection[]
   >([]);
+  const [formError, setFormError] = useState<string>();
 
+  // Delete the certain rows and afterwards update the table in real-time
   const handleDelete = async (id: number) => {
     try {
       await api.delete(`sentimentcorrections/${id}/`);
@@ -55,14 +62,21 @@ export const AIRetrain = () => {
     state: { pagination },
   });
 
-  const handleClick = async () => {
+  const handleClick = async (formData: AIRetrainDialogFormProps) => {
     setLoading(true);
-
+    setFormError(undefined);
     try {
-      const response = await api.post("sentimentcorrections/retrain/");
+      const response = await api.post("sentimentcorrections/retrain/", {
+        model_name: formData.model_name,
+      });
+      toast.success(`Model "${formData.model_name}" trained and activated`);
+      setDialogOpen(false);
+
       console.log(response.data);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        setFormError(error.response?.data.error);
+      }
     } finally {
       setLoading(false);
     }
@@ -76,15 +90,15 @@ export const AIRetrain = () => {
             Model retraining
           </h2>
         </div>
-
-        <button
-          onClick={handleClick}
-          disabled={rowCount === 0 || loading}
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 active:scale-[0.98] transition"
-        >
-          <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-          {loading ? "Starting..." : "Start retraining"}
-        </button>
+        <AIRetrainDialog
+          loading={loading}
+          disabled={rowCount === 0}
+          onRetrain={handleClick}
+          rowCount={rowCount}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          formError={formError}
+        />
       </div>
       <div className="flex flex-col mt-5">
         <DataTable table={table} />
