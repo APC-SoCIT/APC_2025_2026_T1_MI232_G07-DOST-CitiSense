@@ -187,6 +187,14 @@ class ActivateModelVersion(APIView):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def FineTuneAIModel(request):
+    model_name = request.data.get("model_name")
+
+    if not model_name:
+        return Response({"error": "Model name is required"}, status=400)
+
+    if ModelVersion.objects.filter(version_name=model_name).exists():
+        return Response({"error": f"A model version named '{model_name}' already exists"}, status=400)
+
     data = SentimentCorrection.objects.filter(status="pending").values(
         "labeled_feedback__feedback__comments", "corrected_sentiment"
     )
@@ -212,7 +220,8 @@ def FineTuneAIModel(request):
         texts.append(comment.strip())
         labels.append(sentiment_map[sentiment])
 
-    
+    if len(texts) < 100:
+        return Response({"error": "Not enough samples to train on (minimum 100 required)."}, status=400)
 
     # 80/20 train/test split 
     x_train, x_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, random_state=42, stratify=labels)
@@ -253,12 +262,12 @@ def FineTuneAIModel(request):
     # Convert numpy numbers to plain python numbers to be saved in the eval_results field of the ModelVersion field.
     test_results = {k: (float(v) if isinstance(v, (np.floating, np.integer)) else v) for k, v in test_results.items()}
 
-    v2_path = os.path.join(settings.SENTIMENT_MODELS_DIR, "v2")
+    v2_path = os.path.join(settings.SENTIMENT_MODELS_DIR, model_name)
     model.save_pretrained(v2_path)
     tokenizer.save_pretrained(v2_path)
 
     v2 = ModelVersion.objects.create(
-        version_name="v2",
+        version_name= model_name,
         model_path=v2_path,
         samples_used=len(texts),        
         eval_results=test_results,
