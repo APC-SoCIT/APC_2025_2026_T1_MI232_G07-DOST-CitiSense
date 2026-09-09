@@ -188,18 +188,6 @@ class ViewModelList(generics.ListAPIView):
     serializer_class = ModelVersionSerializer
     permission_classes = [IsAuthenticated]
 
-class ActivateModelVersion(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, pk):
-        version = ModelVersion.objects.get(pk=pk)
-        version.activate()
-        return Response({"status": "Activated", "version": version.version_name})
-
-class ViewModelList(generics.ListAPIView):
-    serializer_class = ModelVersionSerializer
-    permission_classes = [IsAuthenticated]
-
     def get_queryset(self):
         queryset = ModelVersion.objects.all()
         is_active = self.request.query_params.get("is_active")
@@ -208,6 +196,20 @@ class ViewModelList(generics.ListAPIView):
             queryset = queryset.filter(is_active=is_active.lower() == "true")
 
         return queryset
+
+class ActivateModelVersion(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        version = ModelVersion.objects.get(pk=pk)
+        version.activate()
+        return Response({"status": "Activated", "version": version.version_name})
+
+class ViewSpecificModel(generics.RetrieveAPIView):
+    queryset = ModelVersion.objects.all()
+    serializer_class = ModelVersionSerializer
+    permission_classes = [IsAuthenticated]
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def FineTuneAIModel(request):
