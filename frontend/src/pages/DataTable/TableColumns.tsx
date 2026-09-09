@@ -7,6 +7,7 @@ import type {
   filterOptions,
 } from "../../types/TableColumnProps";
 import type { Sentiment } from "../../types/ChartsProps";
+import HideEmptyFilterDropdown from "@/components/table/HideEmptyFilterDropdown";
 
 //column definition array initialization, this is where tanstack data table is referencing from
 export const getColumns = (
@@ -129,21 +130,36 @@ export const getColumns = (
   },
   {
     accessorKey: "key_takeaways",
-    header: () => <span>Key takeaways</span>,
+    header: ({ column }) => (
+      <div className="flex items-center justify-center gap-1">
+        Key takeaways
+        <HideEmptyFilterDropdown column={column} />
+      </div>
+    ),
     cell: (info) => <Dialog1 text={String(info.getValue() ?? " ")} />,
     enableColumnFilter: false,
     minSize: 74,
   },
   {
     accessorKey: "comments",
-    header: () => <span>Comments</span>,
+    header: ({ column }) => (
+      <div className="flex items-center justify-center gap-1">
+        Comments
+        <HideEmptyFilterDropdown column={column} />
+      </div>
+    ),
     cell: (info) => <Dialog1 text={String(info.getValue() ?? " ")} />,
     enableColumnFilter: false,
     minSize: 74,
   },
   {
     accessorKey: "suggestions",
-    header: () => <span>Suggestions</span>,
+    header: ({ column }) => (
+      <div className="flex items-center justify-center gap-1">
+        Suggestions
+        <HideEmptyFilterDropdown column={column} />
+      </div>
+    ),
     cell: (info) => <Dialog1 text={String(info.getValue() ?? " ")} />,
     enableColumnFilter: false,
     minSize: 74,

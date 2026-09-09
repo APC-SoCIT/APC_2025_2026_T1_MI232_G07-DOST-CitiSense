@@ -83,6 +83,9 @@ def filter_table_request(request):
     typeoflibrary = request.query_params.getlist("typeoflibrary")
     region = request.query_params.getlist("region")
     sentiment = request.query_params.getlist("sentiment")
+    comments = request.query_params.get("comments")
+    key_takeaways = request.query_params.get("key_takeaways")
+    suggestions = request.query_params.get("suggestions")
 
     # Instantiate a dictionary; this will be used to hold the key/value pairs for the filters
     filter_dict = {}
@@ -108,9 +111,19 @@ def filter_table_request(request):
     if sentiment:
         filter_dict["labeled_feedback__sentiment__in"] = sentiment
 
+
     # Filter based on what the contents of the dictionary are
     # Default to 0
-    return queryset.filter(**filter_dict)
+    queryset = queryset.filter(**filter_dict)
+
+    if comments == "hideEmpty":
+        queryset = queryset.exclude(comments__isnull=True).exclude(comments="").exclude(comments=" ")
+    if key_takeaways == "hideEmpty":
+            queryset = queryset.exclude(key_takeaways__isnull=True).exclude(key_takeaways="").exclude(key_takeaways=" ")
+    if suggestions == "hideEmpty":
+            queryset = queryset.exclude(suggestions__isnull=True).exclude(suggestions="").exclude(suggestions=" ")
+
+    return queryset
 
 class IsAuthorOnly(permissions.BasePermission):
     #this only allows the authors of the dashboard to view, and update or delete their own archive image
@@ -188,7 +201,7 @@ class ViewSpecificModel(generics.RetrieveAPIView):
     queryset = ModelVersion.objects.all()
     serializer_class = ModelVersionSerializer
     permission_classes = [IsAuthenticated]
-    
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def FineTuneAIModel(request):
