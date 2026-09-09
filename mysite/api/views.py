@@ -185,7 +185,6 @@ class DeleteSentimentCorrection(generics.DestroyAPIView):
     permission_classes = [IsAnalyst, IsAuthenticated]
 
 class ViewModelList(generics.ListAPIView):
-    queryset = ModelVersion.objects.all()
     serializer_class = ModelVersionSerializer
     permission_classes = [IsAuthenticated]
 
@@ -197,11 +196,18 @@ class ActivateModelVersion(APIView):
         version.activate()
         return Response({"status": "Activated", "version": version.version_name})
 
-class ViewSpecificModel(generics.RetrieveAPIView):
-    queryset = ModelVersion.objects.all()
+class ViewModelList(generics.ListAPIView):
     serializer_class = ModelVersionSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = ModelVersion.objects.all()
+        is_active = self.request.query_params.get("is_active")
+
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active.lower() == "true")
+
+        return queryset
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def FineTuneAIModel(request):

@@ -18,6 +18,8 @@ const ModelSelection = () => {
       const response = await api.get(
         `models/?limit=${pageSize}&offset=${offset}`,
       );
+      const res = await api.get("models/?is_active=true");
+      console.log(res.data.results[0].version_name);
       setModelList(response.data.results);
       setRowCount(response.data.count);
     } catch (error) {
