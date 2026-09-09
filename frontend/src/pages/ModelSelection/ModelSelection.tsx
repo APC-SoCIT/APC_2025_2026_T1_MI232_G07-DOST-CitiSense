@@ -5,6 +5,7 @@ import { DataTable } from "@/components/table/DataTable";
 import { getModelColumns } from "./ModelSelectionColumn";
 import Pagination from "@/components/table/Pagination";
 import { type ModelVersion } from "@/types/ModelSelectionProps";
+import { AIRetrainDialog } from "../AIRetrain/AIRetrainDialog";
 
 const ModelSelection = () => {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });

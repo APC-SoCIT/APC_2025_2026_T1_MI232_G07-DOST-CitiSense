@@ -11,6 +11,7 @@ import {
 } from "./AIRetrainDialog";
 import { toast } from "sonner";
 import axios from "axios";
+import { type ModelVersion } from "@/types/ModelSelectionProps";
 
 export const AIRetrain = () => {
   const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ export const AIRetrain = () => {
     SentimentCorrection[]
   >([]);
   const [formError, setFormError] = useState<string>();
+  const [modelList, setModelList] = useState<ModelVersion[]>([]);
 
   // Delete the certain rows and afterwards update the table in real-time
   const handleDelete = async (id: number) => {
@@ -68,7 +70,9 @@ export const AIRetrain = () => {
     try {
       const response = await api.post("sentimentcorrections/retrain/", {
         model_name: formData.model_name,
+        model_id: formData.model_id,
       });
+      console.log(response.data);
       toast.success(`Model "${formData.model_name}" trained and activated`);
       setDialogOpen(false);
 
@@ -81,6 +85,19 @@ export const AIRetrain = () => {
       setLoading(false);
     }
   };
+
+  const fetchModels = async () => {
+    try {
+      const response = await api.get("/models");
+      setModelList(response.data.results);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchModels();
+  }, []);
 
   return (
     <div className="scale-90 origin-top mt-10">
@@ -98,6 +115,7 @@ export const AIRetrain = () => {
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           formError={formError}
+          modelList={modelList}
         />
       </div>
       <div className="flex flex-col mt-5">

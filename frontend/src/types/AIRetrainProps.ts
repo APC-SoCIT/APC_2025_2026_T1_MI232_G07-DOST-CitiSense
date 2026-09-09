@@ -1,4 +1,5 @@
 import type { AIRetrainDialogFormProps } from "@/pages/AIRetrain/AIRetrainDialog";
+import type { ModelVersion } from "./ModelSelectionProps";
 
 export type SentimentCorrection = {
   id: number;
@@ -17,4 +18,11 @@ export type AIRetrainDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   formError?: string;
+  modelList: ModelVersion[];
+};
+
+export type AIRetrainDialogDropdownProps = {
+  modelList: ModelVersion[];
+  selectedModel?: ModelVersion;
+  onSelectModel: (model: ModelVersion) => void;
 };
