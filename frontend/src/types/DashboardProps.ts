@@ -72,6 +72,7 @@ export type DashboardSettingsProps = {
   genderTooltipCount: number[][];
   serviceTooltip: string[][];
   serviceTooltipCount: number[][];
+  modelName: string;
 };
 
 export type ExportFileProps = {
@@ -84,4 +85,5 @@ export type ExportFileProps = {
   genderTooltipCount: number[][];
   serviceTooltip: string[][];
   serviceTooltipCount: number[][];
+  modelName: string;
 };

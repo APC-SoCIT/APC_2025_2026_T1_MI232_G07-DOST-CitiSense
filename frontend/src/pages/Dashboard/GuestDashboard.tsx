@@ -6,7 +6,7 @@ import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
 import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Download, Loader2, RefreshCcw } from "lucide-react";
+import { Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";
@@ -26,7 +26,7 @@ import ThematicAnalysisTable, {
 
 import useDashboardCharts from "@/hooks/useDashboardCharts";
 
-function GuestDashboard() {
+function DashboardPage() {
   const [themes, setThemes] = useState<themeDataProps[]>(fallbackThemes); // To hold the values for the thematic analysis table
   const [isThemesLoading, setIsThemesLoading] = useState(false);
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
@@ -43,6 +43,7 @@ function GuestDashboard() {
   const [genderTooltipCount, setGenderTooltipCount] = useState<number[][]>([]); // State to count how many gender text got summarized by the AI
   const [isGenderTooltipLoading, setIsGenderTooltipLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [modelName, setModelName] = useState<string>("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     try {
       const parsedDate = JSON.parse(
@@ -185,6 +186,7 @@ function GuestDashboard() {
   // On mount, fetch the filter values, and refresh the charts
   useEffect(() => {
     fetchServiceFilter();
+    getModelName();
     setRefreshCharts((prev) => prev + 1);
   }, []);
 
@@ -358,6 +360,15 @@ function GuestDashboard() {
     }
   };
 
+  const getModelName = async () => {
+    try {
+      const res = await api.get("models/?is_active=true");
+      setModelName(res.data.results[0]?.version_name ?? "Unknown");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Get the chart values from the useDashboardCharts.ts file, and also pass the filterParams and refreshCharts.
   const { gaugeValue, genderTypes, genderValue, serviceTypes, serviceValue } =
     useDashboardCharts({ filterParams, refreshCharts });
@@ -423,6 +434,7 @@ function GuestDashboard() {
               gaugeValue={gaugeValue}
               genderValue={genderValue}
               serviceValue={serviceValue}
+              modelName={modelName}
               themes={themes}
               genderTooltip={genderTooltip}
               genderTooltipCount={genderTooltipCount}
@@ -483,7 +495,7 @@ function GuestDashboard() {
             {/* Added negative margin-bottom to pull the bottom up */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="h-[400px] rounded-md shadow-lg p-10 flex justify-center items-center">
-                <div className="h-[330px] w-[400px]">
+                <div className="h-[] w-[400px]">
                   <Gauge gaugeValue={gaugeValue} />
                 </div>
               </div>
@@ -534,4 +546,4 @@ function GuestDashboard() {
   );
 }
 
-export default GuestDashboard;
+export default DashboardPage;
