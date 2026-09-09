@@ -1,15 +1,12 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
 import Login from "./pages/AuthPage/Login.js";
 import Register from "./pages/AuthPage/Register.js";
 import NotFound from "./pages/NotFound.js";
 import Layout from "./layouts/Layout.js";
 import DataTablePage from "./pages/DataTable/DataTablePage.js";
 import AuthCallback from "./components/auth/AuthenticationForms/AuthCallback.js";
-import Archive from "./components/dashboard/Archive.js";
 import DashboardPage from "./pages/Dashboard/Dashboard.js";
 import { AuthenticationProvider } from "./context/AuthenticationContext.js";
 import AnalystRoute from "./routes/AnalystRoute.js";
@@ -24,6 +21,8 @@ import EmailVerificationCallback from "./components/auth/AuthenticationForms/Ema
 import GuestDashboard from "./pages/Dashboard/GuestDashboard.js";
 import NonProtectedLayout from "./layouts/NonProtectedLayout.js";
 import { AIRetrain } from "./pages/AIRetrain/AIRetrain.js";
+import ModelSelection from "./pages/ModelSelection/ModelSelection.js";
+import ViewModel from "./pages/ModelSelection/ViewModel.js";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +46,14 @@ const router = createBrowserRouter([
       {
         path: "/ai/retrain",
         element: <AIRetrain />,
+      },
+      {
+        path: "/ai/models",
+        element: <ModelSelection />,
+      },
+      {
+        path: "/ai/models/:id",
+        element: <ViewModel />,
       },
       { path: "*", element: <NotFound /> },
       { path: "/home", element: <Profile /> },

@@ -3,6 +3,7 @@ import {
   House,
   ChartColumnDecreasing,
   BrainCircuit,
+  Bot,
 } from "lucide-react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
@@ -40,6 +41,11 @@ const data = {
       title: "AI Retrain",
       url: "/ai/retrain",
       icon: BrainCircuit,
+    },
+    {
+      title: "Models",
+      url: "/ai/models",
+      icon: Bot,
     },
   ],
 };
