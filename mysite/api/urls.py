@@ -18,6 +18,7 @@ from .views import (
     FineTuneAIModel,
     ViewModelList,
     ActivateModelVersion,
+    ViewSpecificModel,
 )
 
 urlpatterns = [
@@ -49,4 +50,5 @@ urlpatterns = [
     #AI Model APIs
     path("models/", ViewModelList.as_view(), name="models"),
     path("models/<int:pk>/activate/", ActivateModelVersion.as_view(), name="activate_model"),
+    path("models/<int:pk>/", ViewSpecificModel.as_view(), name="view_model"),
 ]

@@ -183,7 +183,12 @@ class ActivateModelVersion(APIView):
         version = ModelVersion.objects.get(pk=pk)
         version.activate()
         return Response({"status": "Activated", "version": version.version_name})
-        
+
+class ViewSpecificModel(generics.RetrieveAPIView):
+    queryset = ModelVersion.objects.all()
+    serializer_class = ModelVersionSerializer
+    permission_classes = [IsAuthenticated]
+    
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def FineTuneAIModel(request):
