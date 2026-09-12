@@ -116,11 +116,7 @@ function Profile() {
           <Button
             type="button"
             onClick={handleEditOrCancel}
-            className={
-              isEditing
-                ? "bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-500"
-                : "bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600"
-            }
+            className="bg-[#00aeef] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
           >
             {isEditing ? "Cancel" : "Edit"}
           </Button>
@@ -259,7 +255,7 @@ function Profile() {
             <div className="flex justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:px-8 lg:px-10">
               <Button
                 type="submit"
-                className="bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-600"
+                className="bg-[#00aeef] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
               >
                 Save
               </Button>

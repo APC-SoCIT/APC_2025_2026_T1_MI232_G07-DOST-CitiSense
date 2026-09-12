@@ -66,7 +66,7 @@ const DashboardSettings = ({
     <div className="flex flex-col min-w-0">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="bg-gray-100">
+          <Button variant="default" className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]">
             <Settings />{" "}
           </Button>
         </DialogTrigger>
@@ -85,8 +85,8 @@ const DashboardSettings = ({
           />
           <div className="flex flex-col sm:flex-row sm:items-center min-w-full justify-between gap-2">
             <Button
-              variant="bluedefault"
-              className="flex-1  w-full sm:w-auto"
+              variant="default"
+              className="flex-1 w-full sm:w-auto bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
               onClick={() => handleGenerateThematicAnalysis()}
               disabled={isGenderTooltipLoading}
             >
@@ -100,8 +100,8 @@ const DashboardSettings = ({
               )}{" "}
             </Button>
             <Button
-              variant="bluedefault"
-              className="flex-1 w-full sm:w-auto"
+              variant="default"
+              className="flex-1 w-full sm:w-auto bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
               onClick={() => handleGenerateSummaries()}
               disabled={isGenderTooltipLoading}
             >

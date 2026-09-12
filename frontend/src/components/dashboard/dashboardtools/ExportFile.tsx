@@ -20,6 +20,7 @@ export const ExportFile = ({
   genderTooltipCount,
   serviceTooltip,
   serviceTooltipCount,
+  modelName,
 }: ExportFileProps) => {
   const downloadTemplate = async () => {
     loadFile(
@@ -137,6 +138,7 @@ export const ExportFile = ({
 
         doc.render({
           date_now: `${new Date().toLocaleDateString()}, ${new Date().toLocaleTimeString()}`,
+          model_name: model_Name,
           filters_applied: (() => {
             const getStoredJson = <T,>(key: string, fallback: T): T => {
               try {

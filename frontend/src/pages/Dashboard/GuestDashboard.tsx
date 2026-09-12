@@ -1,5 +1,4 @@
 import Gauge from "../../components/dashboard/charts/gauge";
-import ChatbotUI from "../../components/dashboard/chatbot/chatbotui";
 import Service from "../../components/dashboard/charts/service";
 import Gender from "../../components/dashboard/charts/gender";
 import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
@@ -394,7 +393,7 @@ function DashboardPage() {
             )}
           </h3>
           <div className="flex flex-row justify-center items-center gap-2 md:gap-4">
-            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all ">
+            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all text-gray-500">
               {lastRefreshed
                 ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
                 : ""}
@@ -541,7 +540,6 @@ function DashboardPage() {
           </main>
         </div>
       )}{" "}
-      <ChatbotUI />
     </div>
   );
 }

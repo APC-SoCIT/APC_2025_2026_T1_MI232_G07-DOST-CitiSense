@@ -1,12 +1,11 @@
 import Gauge from "../../components/dashboard/charts/gauge";
-import ChatbotUI from "../../components/dashboard/chatbot/chatbotui";
 import Service from "../../components/dashboard/charts/service";
 import Gender from "../../components/dashboard/charts/gender";
 import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
 import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Loader2, RefreshCcw } from "lucide-react";
+import { Download, Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";
@@ -186,7 +185,6 @@ function DashboardPage() {
   // On mount, fetch the filter values, and refresh the charts
   useEffect(() => {
     fetchServiceFilter();
-    getModelName();
     setRefreshCharts((prev) => prev + 1);
   }, []);
 
@@ -360,15 +358,6 @@ function DashboardPage() {
     }
   };
 
-  const getModelName = async () => {
-    try {
-      const res = await api.get("models/?is_active=true");
-      setModelName(res.data.results[0]?.version_name ?? "Unknown");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   // Get the chart values from the useDashboardCharts.ts file, and also pass the filterParams and refreshCharts.
   const { gaugeValue, genderTypes, genderValue, serviceTypes, serviceValue } =
     useDashboardCharts({ filterParams, refreshCharts });
@@ -388,13 +377,13 @@ function DashboardPage() {
           <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex flex-col md:flex-row">
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
-              <span className="ml-4 md:mt-1.5 text-lg text-blue-600 font-semibold">
+              <span className="ml-4 md:mt-1.5 text-lg text-[#00aeef] font-semibold">
                 Total Responses: {totalCount?.toLocaleString() ?? 0}
               </span>
             )}
           </h3>
           <div className="flex flex-row justify-center items-center gap-2 md:gap-4">
-            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all ">
+            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all text-gray-500">
               {lastRefreshed
                 ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
                 : ""}
@@ -434,7 +423,6 @@ function DashboardPage() {
               gaugeValue={gaugeValue}
               genderValue={genderValue}
               serviceValue={serviceValue}
-              modelName={modelName}
               themes={themes}
               genderTooltip={genderTooltip}
               genderTooltipCount={genderTooltipCount}
@@ -541,7 +529,6 @@ function DashboardPage() {
           </main>
         </div>
       )}{" "}
-      <ChatbotUI />
     </div>
   );
 }

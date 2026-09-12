@@ -24,7 +24,7 @@ export default function LoginPage() {
           <div className="md:hidden flex flex-col">
             <Button
               variant="outline"
-              className="w-full h-9 text-base bg-[#00aeef] hover:bg-[#33bbed] focus:bg-[#66c9f2] text-white border-none"
+              className="h-9 text-base flex items-center justify-center gap-2 bg-[#00aeef] text-white hover:bg-[#00aeef] border-[#00aeef]"
               onClick={() => navigate("/guest-dashboard")}
               type="button"
             >
