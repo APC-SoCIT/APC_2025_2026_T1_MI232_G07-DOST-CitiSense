@@ -115,7 +115,7 @@ export function LoginForm1({ ...props }) {
                     </Label>
                     <a
                       href="/email/forgotpassword"
-                      className="ml-auto text-xs underline-offset-4 hover:underline text-blue-700"
+                      className="ml-auto text-xs underline-offset-4 hover:underline text-[#06adef]"
                     >
                       Forgot your password?
                     </a>
@@ -145,7 +145,7 @@ export function LoginForm1({ ...props }) {
                 <Button
                   type="submit"
                   variant="default"
-                  className="w-full h-9 text-base bg-[#3949ab] hover:bg-[#5c6bc0] focus:bg-[#3949ab] text-white border-none"
+                  className="w-full h-9 text-base bg-[#06adef] hover:bg-[#039be5] focus:bg-[#06adef] text-white border-none"
                   disabled={isSubmitting}
                 >
                   Login
@@ -180,7 +180,7 @@ export function LoginForm1({ ...props }) {
                 Don't have an account?{" "}
                 <a
                   href="/register"
-                  className="underline underline-offset-4 text-blue-700"
+                  className="underline underline-offset-4 text-[#06adef]"
                 >
                   Sign up
                 </a>
