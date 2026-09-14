@@ -5,7 +5,7 @@ import ollama
 import json
 from django.conf import settings
 
-EMPTY_VALUES = ('NULL', '', 'N/A', 'NA', 'n/a', 'na', 'None', 'null')
+EMPTY_VALUES = ('NULL', '', 'N/A', 'NA', 'n/a', 'na', 'None', 'null', '.', '!', '?')
 
 
 def normalize(v):
