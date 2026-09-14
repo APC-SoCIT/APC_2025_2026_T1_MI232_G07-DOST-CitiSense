@@ -26,7 +26,7 @@ const AIRetrainDialogDropdown = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-        {modelList.map((model) => (
+        {modelList?.map((model) => (
           <DropdownMenuItem
             className="w-full"
             key={model.id}

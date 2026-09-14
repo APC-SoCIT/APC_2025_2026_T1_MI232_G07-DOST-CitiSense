@@ -49,7 +49,7 @@ export function AIRetrainDialog({
   });
 
   const selectedModelId = watch("model_id");
-  const selectedModel = modelList.find((m) => m.id === selectedModelId);
+  const selectedModel = modelList?.find((m) => m.id === selectedModelId);
 
   const onSelectModel = async (model: ModelVersion) => {
     setValue("model_id", model.id); // store just the clicked model's id into the form state
