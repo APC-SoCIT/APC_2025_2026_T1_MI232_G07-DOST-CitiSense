@@ -42,7 +42,7 @@ const Dialog1 = ({ showDialog, setShowDialog, text }: TableDialogProps) => {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="" variant="default">
+            <Button className="bg-[#00aeef] hover:bg-[#33bbed]" variant="default">
               Okay, got it
             </Button>
           </DialogClose>
