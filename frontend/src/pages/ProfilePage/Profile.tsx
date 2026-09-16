@@ -116,7 +116,7 @@ function Profile() {
           <Button
             type="button"
             onClick={handleEditOrCancel}
-            className="bg-[#00aeef] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
+            className={`${!isEditing ? 'bg-[#00aeef] hover:bg-[#33bbed]' : 'bg-red-500 hover:bg-red-600'} px-5 py-2.5 text-sm font-medium text-white  border-none`}
           >
             {isEditing ? "Cancel" : "Edit"}
           </Button>
