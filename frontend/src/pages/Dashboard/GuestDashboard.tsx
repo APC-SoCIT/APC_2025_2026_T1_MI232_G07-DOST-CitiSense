@@ -5,7 +5,7 @@ import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
 import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Loader2, RefreshCcw } from "lucide-react";
+import { Download, Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";
@@ -185,7 +185,6 @@ function DashboardPage() {
   // On mount, fetch the filter values, and refresh the charts
   useEffect(() => {
     fetchServiceFilter();
-    getModelName();
     setRefreshCharts((prev) => prev + 1);
   }, []);
 
@@ -359,15 +358,6 @@ function DashboardPage() {
     }
   };
 
-  const getModelName = async () => {
-    try {
-      const res = await api.get("models/?is_active=true");
-      setModelName(res.data.results[0]?.version_name ?? "Unknown");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   // Get the chart values from the useDashboardCharts.ts file, and also pass the filterParams and refreshCharts.
   const { gaugeValue, genderTypes, genderValue, serviceTypes, serviceValue } =
     useDashboardCharts({ filterParams, refreshCharts });
@@ -383,24 +373,94 @@ function DashboardPage() {
   ) : (
     <div className="w-full">
       <div>
-        <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-center md:justify-between items-center">
-          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex flex-col md:flex-row">
+        <div
+          className="
+      bg-white shadow-md border-b border-gray-200
+      px-4 md:px-8 py-4
+      flex flex-wrap
+      gap-4
+      justify-center md:justify-between
+      items-center
+
+      min-[768px]:max-[1069px]:flex-col
+      min-[768px]:max-[1069px]:gap-2
+      min-[768px]:max-[1069px]:items-stretch
+    "
+        >
+          <h3
+            className="
+        text-xl md:text-2xl lg:text-3xl
+        text-gray-800
+        text-center
+        whitespace-nowrap
+        rounded-md
+        font-medium
+        sm:text-left
+        flex flex-col md:flex-row
+
+        min-[768px]:max-[1069px]:text-base
+        min-[768px]:max-[1069px]:flex-row
+        min-[768px]:max-[1069px]:items-center
+        min-[768px]:max-[1069px]:justify-center
+      "
+          >
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
-              <span className="ml-4 md:mt-1.5 text-lg text-blue-600 font-semibold">
-                Total Responses: {totalCount?.toLocaleString() ?? 0}
+              <span
+                className="
+            ml-4 md:mt-1.5
+            text-lg
+            text-[#00aeef]
+            font-semibold
+
+            min-[768px]:max-[1069px]:text-xs
+            min-[768px]:max-[1069px]:ml-2
+            min-[768px]:max-[1069px]:mt-0
+          "
+              >
+                Total Responses: {totalCount.toLocaleString()}
               </span>
             )}
           </h3>
-          <div className="flex flex-row justify-center items-center gap-2 md:gap-4">
-            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all text-gray-500">
+
+          <div
+            className="
+        flex flex-row
+        justify-center
+        items-center
+        gap-2 md:gap-4
+
+        min-[768px]:max-[1069px]:gap-1
+        min-[768px]:max-[1069px]:shrink-0
+        min-[768px]:max-[1069px]:w-full
+        min-[768px]:max-[1069px]:justify-center
+      "
+          >
+            {/* Last refreshed */}
+            <span
+              className="
+          hidden md:inline
+          mr-2
+          whitespace-nowrap
+          rounded-md
+          text-sm
+          font-medium
+          text-gray-500
+
+          min-[768px]:max-[1069px]:hidden
+        "
+            >
               {lastRefreshed
-                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
+                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, {
+                    addSuffix: true,
+                  })}`
                 : ""}
             </span>
+
+            {/* Refresh */}
             <Button
               size="icon"
-              className="rounded-full mr-4"
+              className="rounded-full mr-4 min-[768px]:max-[1069px]:mr-1"
               variant="ghost"
               disabled={isSpinning}
               onClick={() => {
@@ -408,10 +468,11 @@ function DashboardPage() {
               }}
             >
               <RefreshCcw
-                className={`w-24 h-24 ${isSpinning ? "animate-spin" : ""}`}
+                className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""}`}
               />
             </Button>
 
+            {/* Filter */}
             <DashboardFilter
               dateRange={dateRange}
               setDateRange={setDateRange}
@@ -422,6 +483,8 @@ function DashboardPage() {
               setFilterServiceNameArray={setFilterServiceNameArray}
               setFilterServiceTypeArray={setFilterServiceTypeArray}
             />
+
+            {/* Settings */}
             <DashboardSettings
               getGenderTooltip={getGenderTooltip}
               isGenderTooltipLoading={isGenderTooltipLoading}
@@ -433,12 +496,12 @@ function DashboardPage() {
               gaugeValue={gaugeValue}
               genderValue={genderValue}
               serviceValue={serviceValue}
-              modelName={modelName}
               themes={themes}
               genderTooltip={genderTooltip}
               genderTooltipCount={genderTooltipCount}
               serviceTooltip={serviceTooltip}
               serviceTooltipCount={serviceTooltipCount}
+              modelName={modelName}
             />
           </div>
         </div>

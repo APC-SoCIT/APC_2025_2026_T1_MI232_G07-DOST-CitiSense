@@ -138,7 +138,7 @@ export const ExportFile = ({
 
         doc.render({
           date_now: `${new Date().toLocaleDateString()}, ${new Date().toLocaleTimeString()}`,
-          model_name: model_Name,
+          model_name: modelName,
           filters_applied: (() => {
             const getStoredJson = <T,>(key: string, fallback: T): T => {
               try {

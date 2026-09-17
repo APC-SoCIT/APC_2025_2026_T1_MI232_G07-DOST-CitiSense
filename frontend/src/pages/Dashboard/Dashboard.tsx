@@ -373,24 +373,94 @@ function DashboardPage() {
   ) : (
     <div className="w-full">
       <div>
-        <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-center md:justify-between items-center">
-          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex flex-col md:flex-row">
+        <div
+          className="
+      bg-white shadow-md border-b border-gray-200
+      px-4 md:px-8 py-4
+      flex flex-wrap
+      gap-4
+      justify-center md:justify-between
+      items-center
+
+      min-[768px]:max-[1069px]:flex-col
+      min-[768px]:max-[1069px]:gap-2
+      min-[768px]:max-[1069px]:items-stretch
+    "
+        >
+          <h3
+            className="
+        text-xl md:text-2xl lg:text-3xl
+        text-gray-800
+        text-center
+        whitespace-nowrap
+        rounded-md
+        font-medium
+        sm:text-left
+        flex flex-col md:flex-row
+
+        min-[768px]:max-[1069px]:text-base
+        min-[768px]:max-[1069px]:flex-row
+        min-[768px]:max-[1069px]:items-center
+        min-[768px]:max-[1069px]:justify-center
+      "
+          >
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
-              <span className="ml-4 md:mt-1.5 text-lg text-[#00aeef] font-semibold">
-                Total Responses: {totalCount?.toLocaleString() ?? 0}
+              <span
+                className="
+            ml-4 md:mt-1.5
+            text-lg
+            text-[#00aeef]
+            font-semibold
+
+            min-[768px]:max-[1069px]:text-xs
+            min-[768px]:max-[1069px]:ml-2
+            min-[768px]:max-[1069px]:mt-0
+          "
+              >
+                Total Responses: {totalCount.toLocaleString()}
               </span>
             )}
           </h3>
-          <div className="flex flex-row justify-center items-center gap-2 md:gap-4">
-            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all text-gray-500">
+
+          <div
+            className="
+        flex flex-row
+        justify-center
+        items-center
+        gap-2 md:gap-4
+
+        min-[768px]:max-[1069px]:gap-1
+        min-[768px]:max-[1069px]:shrink-0
+        min-[768px]:max-[1069px]:w-full
+        min-[768px]:max-[1069px]:justify-center
+      "
+          >
+            {/* Last refreshed */}
+            <span
+              className="
+          hidden md:inline
+          mr-2
+          whitespace-nowrap
+          rounded-md
+          text-sm
+          font-medium
+          text-gray-500
+
+          min-[768px]:max-[1069px]:hidden
+        "
+            >
               {lastRefreshed
-                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
+                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, {
+                    addSuffix: true,
+                  })}`
                 : ""}
             </span>
+
+            {/* Refresh */}
             <Button
               size="icon"
-              className="rounded-full mr-4"
+              className="rounded-full mr-4 min-[768px]:max-[1069px]:mr-1"
               variant="ghost"
               disabled={isSpinning}
               onClick={() => {
@@ -398,10 +468,11 @@ function DashboardPage() {
               }}
             >
               <RefreshCcw
-                className={`w-24 h-24 ${isSpinning ? "animate-spin" : ""}`}
+                className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""}`}
               />
             </Button>
 
+            {/* Filter */}
             <DashboardFilter
               dateRange={dateRange}
               setDateRange={setDateRange}
@@ -412,6 +483,8 @@ function DashboardPage() {
               setFilterServiceNameArray={setFilterServiceNameArray}
               setFilterServiceTypeArray={setFilterServiceTypeArray}
             />
+
+            {/* Settings */}
             <DashboardSettings
               getGenderTooltip={getGenderTooltip}
               isGenderTooltipLoading={isGenderTooltipLoading}
@@ -428,6 +501,7 @@ function DashboardPage() {
               genderTooltipCount={genderTooltipCount}
               serviceTooltip={serviceTooltip}
               serviceTooltipCount={serviceTooltipCount}
+              modelName={modelName}
             />
           </div>
         </div>
