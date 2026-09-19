@@ -24,15 +24,11 @@ const TermsAndConditionsPopup: React.FC<TermsAndConditionsPopupProps> = ({
 }) => {
   // State to track if the user has agreed to the terms
   const [agreed, setAgreed] = useState(false);
-  const [error, setError] = useState("");
 
   // Handler for the "Accept & Continue" button
   const handleOk = () => {
     if (agreed) {
-      setError("");
       onAgree();
-    } else {
-      setError("You must agree to the Terms and Conditions to register.");
     }
   };
 
