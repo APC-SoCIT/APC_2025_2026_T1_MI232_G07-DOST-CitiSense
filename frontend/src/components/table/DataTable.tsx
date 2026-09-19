@@ -3,14 +3,11 @@
 import { flexRender } from "@tanstack/react-table";
 import { Table, TableHead, TableHeader, TableRow } from "../ui/table";
 import { useEffect, useMemo } from "react";
-import { useSidebar } from "../ui/sidebar";
 import { toast } from "sonner";
 import CustomTableBody, { MemoizedTableBody } from "./TableBody";
 import type { TableProps } from "../../types/TableColumnProps";
 
 export function DataTable<TData>({ table }: TableProps<TData>) {
-  const { state } = useSidebar(); //for conditional rendering based on sidebar closed or open state
-
   //scroll to top whenever page index resets, based on pagination
   useEffect(() => {
     window.scroll(0, 0);
