@@ -16,7 +16,6 @@ import ForgotPassword from "./pages/AuthPage/ForgotPassword.js";
 import EmailForgotPassword from "./pages/AuthPage/EmailForgotPassword.js";
 import EmailVerification from "./pages/AuthPage/EmailVerification.js";
 import EmailForgotPasswordSuccess from "./pages/AuthPage/EmailForgotPasswordSuccess.js";
-import { EmailVerificationSent } from "./components/auth/AuthenticationForms/email-verification.js";
 import EmailVerificationCallback from "./components/auth/AuthenticationForms/EmailVerificationCallback.js";
 import GuestDashboard from "./pages/Dashboard/GuestDashboard.js";
 import NonProtectedLayout from "./layouts/NonProtectedLayout.js";
