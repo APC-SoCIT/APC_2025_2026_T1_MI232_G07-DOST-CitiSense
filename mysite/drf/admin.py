@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import FileMigration
+from .models import FileMigration, ModelVersion
 import os
 from .forms import FileMigrationForm
+from django.conf import settings
+from pathlib import Path
 
 class FileMigrationAdmin(admin.ModelAdmin):
     form = FileMigrationForm
@@ -34,7 +36,25 @@ class FileMigrationAdmin(admin.ModelAdmin):
     # Make the column name "SQL File", and make it sortable
     sql_file_name.short_description = "SQL File"
     sql_file_name.admin_order_field  = 'sql_file'
-    
+class ModelVersionAdmin(admin.ModelAdmin):
+    list_display = ["version_name", "is_active", "model_path", "samples_used"]
+    actions = None
+
+    def has_change_permission(self, request, obj = None):
+            return False
+
+    # Prevent deletion of the base model and the currently active model
+    def has_delete_permission(self, request, obj = None):
+        if obj is None: 
+            return True
+        if Path(obj.model_path).resolve() == Path(settings.SENTIMENT_MODEL_PATH).resolve():
+            return False
+        if obj.is_active:
+            return False
+
+        return True
+
+admin.site.register(ModelVersion, ModelVersionAdmin)
 admin.site.register(FileMigration, FileMigrationAdmin)
 
 # To change the admin panel to CitiSense specific branding

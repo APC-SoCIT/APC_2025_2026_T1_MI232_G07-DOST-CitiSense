@@ -12,6 +12,10 @@ import re
 import csv
 from django.db.models.functions import Upper
 from .utils import normalize
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+from pathlib import Path
+import shutil
 
 User = get_user_model()
 
@@ -163,6 +167,21 @@ class ModelVersion(models.Model):
         self.is_active = True
         self.save()
 
+# Delete the file directory after admin deletion of the AI model
+@receiver(post_delete, sender=ModelVersion)
+def delete_model_files(sender, instance, **kwargs):
+    if not instance.model_path:
+        return
+    model_path = Path(instance.model_path).resolve()
+    root = Path(settings.SENTIMENT_MODELS_DIR).resolve()
+
+    # Don't delete the base model
+    if model_path == Path(settings.SENTIMENT_MODEL_PATH).resolve():
+        return
+    
+    # Check if the model path is a directory and if its included in models directory
+    if model_path.is_dir() and root in model_path.parents:
+        shutil.rmtree(model_path, ignore_errors=False)
 
 class FileMigration(models.Model):
     sql_file = models.FileField(upload_to="sql_dumps/")
