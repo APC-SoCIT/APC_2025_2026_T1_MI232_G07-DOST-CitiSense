@@ -10,13 +10,11 @@ import axios from "axios";
 import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";
 import { format, formatDistanceToNow } from "date-fns";
-import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import type { sentimentFeedbackDataProps } from "../../types/DashboardProps";
 import DashboardSettings from "../../components/dashboard/dashboardtools/DashboardSettings";
 import type {
   GenderTooltipDataProps,
   ServiceTooltipDataProps,
-  serviceMap,
   themeDataProps,
 } from "../../types/ChartsProps";
 import ThematicAnalysisTable, {
@@ -88,7 +86,7 @@ function DashboardPage() {
 
   const [isSpinning, setIsSpinning] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null); // For the last refreshed x minutes ago message
-  const [tick, setTick] = useState(0); // State for manually refreshing the page every minute, for the {x} value inside the last refreshed message
+  const [, setTick] = useState(0); // State for manually refreshing the page every minute, for the {x} value inside the last refreshed message
   const [refreshCharts, setRefreshCharts] = useState(0); // State for refreshing the charts in their respective useEffects, when user clicks the refresh dashboard button
   const [chartsLoading, setChartsLoading] = useState(false);
 
@@ -185,6 +183,7 @@ function DashboardPage() {
   // On mount, fetch the filter values, and refresh the charts
   useEffect(() => {
     fetchServiceFilter();
+    getModelName();
     setRefreshCharts((prev) => prev + 1);
   }, []);
 
@@ -355,6 +354,15 @@ function DashboardPage() {
       console.error("This is the thematic analysis error", error);
     } finally {
       setIsThemesLoading(false);
+    }
+  };
+
+  const getModelName = async () => {
+    try {
+      const res = await api.get("models/?is_active=true");
+      setModelName(res.data.results[0]?.version_name ?? "Unknown");
+    } catch (error) {
+      console.log(error);
     }
   };
 
