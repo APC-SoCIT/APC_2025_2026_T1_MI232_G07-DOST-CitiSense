@@ -6,7 +6,6 @@ import React, {
 } from "react";
 import api from "../api";
 import type { SignInProps } from "../components/auth/AuthenticationForms/login-form";
-import type { EmailForgotPasswordProps } from "../components/auth/AuthenticationForms/email-forgotpassword";
 import type { SignUpFieldProps } from "../components/auth/AuthenticationForms/register-form";
 
 export type User = {

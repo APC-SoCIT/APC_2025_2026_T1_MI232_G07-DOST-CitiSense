@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import AuthenticationContext from "../context/AuthenticationContext";
 
 //have a hook for easier access to the context value
