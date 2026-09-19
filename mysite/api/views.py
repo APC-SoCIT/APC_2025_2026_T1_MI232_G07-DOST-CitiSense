@@ -246,11 +246,19 @@ def FineTuneAIModel(request):
         texts.append(comment.strip())
         labels.append(sentiment_map[sentiment])
 
-    if len(texts) < 100:
-        return Response({"error": "Not enough samples to train on (minimum 100 required)."}, status=400)
+    # if len(texts) < 100:
+    #     return Response({"error": "Not enough samples to train on (minimum 100 required)."}, status=400)
 
     # 80/20 train/test split 
-    x_train, x_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, random_state=42, stratify=labels)
+    try:
+        x_train, x_test, y_train, y_test = train_test_split(
+            texts, labels, test_size=0.20, random_state=42, stratify=labels
+        )
+    except ValueError:
+        return Response(
+            {"error": "Not enough corrections per sentiment to train. Each sentiment (Negative, Positive, Neutral) needs more samples."},
+            status=400,
+        )
 
     # Get the model data from the query params and select from it to be retrained on.
     model_id = request.data.get("model_id")
@@ -293,9 +301,12 @@ def FineTuneAIModel(request):
     training_args = TrainingArguments(output_dir=settings.SENTIMENT_MODELS_DIR / "checkpoints", save_strategy="no")
 
     # Finally fine-tune and test  the model
-    trainer = Trainer(model=model, args=training_args, train_dataset=train_data, eval_dataset=test_data, compute_metrics=compute_metrics)
-    trainer.train()
-    test_results = trainer.evaluate()
+    try:
+        trainer = Trainer(model=model, args=training_args, train_dataset=train_data, eval_dataset=test_data, compute_metrics=compute_metrics)
+        trainer.train()
+        test_results = trainer.evaluate()
+    except Exception as e:
+        return Response({"error": f"Training failed: {e}"}, status=500)
 
     # Convert numpy numbers to plain python numbers to be saved in the eval_results field of the ModelVersion field.
     test_results = {k: (float(v) if isinstance(v, (np.floating, np.integer)) else v) for k, v in test_results.items()}
@@ -455,7 +466,12 @@ def gender_bar_chart_tooltip(request):
         return Response({"genderTooltip": cached_result})
 
     # Convert the queryset to a list so you can modify it in place
-    response = list(queryset[offset:offset+limit].values("sentiment", sex=F("feedback__sex"), summary=F("feedback__comments")))
+    response = list(queryset
+                    .filter(sentiment__isnull=False, feedback__sex__isnull=False)
+                    .exclude(feedback__comments__isnull=True)
+                    .exclude(feedback__comments="")
+                    [offset:offset+limit]
+                    .values("sentiment", sex=F("feedback__sex"), summary=F("feedback__comments")))
    
    # Initialize a dictionary to hold the new shape of the API
     response_dict = {}
@@ -512,7 +528,12 @@ def service_bar_chart_tooltip(request):
         return Response({"serviceTooltip": cached_result})
     
     # Convert the queryset to a list so you can modify it in place
-    response = list(queryset[offset:offset+limit].values("sentiment", service=F("feedback__service_type"), summary=F("feedback__comments")))
+    response = list(queryset
+                    .filter(sentiment__isnull=False)
+                    .exclude(feedback__comments__isnull=True)
+                    .exclude(feedback__comments="")
+                    [offset:offset+limit]
+                    .values("sentiment", service=F("feedback__service_type"), summary=F("feedback__comments")))
     
     # Initialize a dictionary to hold the new shape of the API
     response_dict = {}
