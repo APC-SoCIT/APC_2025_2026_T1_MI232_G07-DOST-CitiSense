@@ -1,15 +1,8 @@
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import type {
-  ServiceDataProps,
-  ServiceSeriesProps,
-  ServiceChartProps,
-} from "../../../types/ChartsProps";
-import { serviceMap } from "../../../types/ChartsProps";
+import type { ServiceChartProps } from "../../../types/ChartsProps";
 
 const Service = ({
-  filterParams,
-  refreshCharts,
   serviceTooltipLoading,
   serviceTooltip,
   serviceTooltipCount,
@@ -66,7 +59,7 @@ const Service = ({
       text: "Sentiment by Service",
     },
     xaxis: {
-      categories: serviceYAxis,
+      categories: serviceYAxis as string[][],
     },
     yaxis: {
       show: serviceTypes.length > 0,
@@ -117,7 +110,7 @@ const Service = ({
             fontSize: "14px",
           },
           // Series index is the index for the row, data point index is the index for the column
-          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+          custom: function ({ seriesIndex, dataPointIndex, w }) {
             return `
       <div style="
         padding: 16px;

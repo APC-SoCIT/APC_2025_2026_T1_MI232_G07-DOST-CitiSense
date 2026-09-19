@@ -1,15 +1,8 @@
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import type {
-  GenderDataProps,
-  GenderSeriesProps,
-  GenderChartProps,
-} from "../../../types/ChartsProps";
-import { genderMap } from "../../../types/ChartsProps";
+import type { GenderChartProps } from "../../../types/ChartsProps";
 
 const Gender = ({
-  filterParams,
-  refreshCharts,
   genderTooltip,
   isGenderTooltipLoading,
   genderTooltipCount,
@@ -26,7 +19,6 @@ const Gender = ({
     return label;
   });
 
-  console.log("dd", genderValue);
   const options: ApexOptions = {
     chart: {
       type: "bar",
@@ -66,7 +58,7 @@ const Gender = ({
       text: "Sentiment by Gender",
     },
     xaxis: {
-      categories: genderYAxis,
+      categories: genderYAxis as string[][],
     },
     yaxis: {
       show: genderValue.length > 0,
@@ -117,7 +109,7 @@ const Gender = ({
             fontSize: "14px",
           },
           // Series index is the index for the row, data point index is the index for the column
-          custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+          custom: function ({ seriesIndex, dataPointIndex, w }) {
             return `
       <div style="
         padding: 16px;
