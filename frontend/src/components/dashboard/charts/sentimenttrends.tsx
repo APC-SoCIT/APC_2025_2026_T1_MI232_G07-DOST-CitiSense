@@ -6,6 +6,7 @@ import type {
   SentimentTrendsDataProps,
   SentimentTrendsChartsProps,
 } from "../../../types/ChartsProps";
+// @ts-ignore
 import { generateFakeData } from "../../../mockdata/fakeSentimentTrends";
 
 const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
