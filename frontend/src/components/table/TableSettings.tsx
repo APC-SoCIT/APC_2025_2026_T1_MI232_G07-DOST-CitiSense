@@ -132,7 +132,7 @@ const TableSettings = ({
           Save
         </Button>
         <Button
-          disabled={table.getPreFilteredRowModel().rows.length < 0}
+          disabled={table.getPreFilteredRowModel().rows.length === 0}
           className="mr-2"
           variant="greendefault"
           onClick={() => handleTableExport()}
