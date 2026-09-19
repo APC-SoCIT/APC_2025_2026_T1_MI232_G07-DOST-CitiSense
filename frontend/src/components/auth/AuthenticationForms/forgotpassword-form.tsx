@@ -191,7 +191,7 @@ export function ForgotPasswordForm({ ...props }) {
                 <Button
                   type="submit"
                   variant="default"
-                  className="w-full h-9 text-base bg-[#3949ab] hover:bg-[#5c6bc0] focus:bg-[#3949ab] text-white border-none"
+                  className="w-full h-9 text-base bg-[#00aeef] hover:bg-[#33bbed] focus:bg-[#66c9f2] text-white border-none"
                   disabled={isSubmitting}
                 >
                   Reset password

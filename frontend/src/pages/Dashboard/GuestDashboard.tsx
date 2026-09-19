@@ -1,5 +1,4 @@
 import Gauge from "../../components/dashboard/charts/gauge";
-import ChatbotUI from "../../components/dashboard/chatbot/chatbotui";
 import Service from "../../components/dashboard/charts/service";
 import Gender from "../../components/dashboard/charts/gender";
 import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
@@ -26,7 +25,7 @@ import ThematicAnalysisTable, {
 
 import useDashboardCharts from "@/hooks/useDashboardCharts";
 
-function GuestDashboard() {
+function DashboardPage() {
   const [themes, setThemes] = useState<themeDataProps[]>(fallbackThemes); // To hold the values for the thematic analysis table
   const [isThemesLoading, setIsThemesLoading] = useState(false);
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
@@ -43,6 +42,7 @@ function GuestDashboard() {
   const [genderTooltipCount, setGenderTooltipCount] = useState<number[][]>([]); // State to count how many gender text got summarized by the AI
   const [isGenderTooltipLoading, setIsGenderTooltipLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [modelName, setModelName] = useState<string>("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     try {
       const parsedDate = JSON.parse(
@@ -373,24 +373,94 @@ function GuestDashboard() {
   ) : (
     <div className="w-full">
       <div>
-        <div className="bg-white shadow-md border-b border-gray-200 px-8 py-4 flex flex-wrap gap-4 justify-center md:justify-between items-center">
-          <h3 className="text-xl md:text-2xl lg:text-3xl text-gray-800 text-center whitespace-nowrap rounded-md font-medium sm:text-left flex flex-col md:flex-row">
+        <div
+          className="
+      bg-white shadow-md border-b border-gray-200
+      px-4 md:px-8 py-4
+      flex flex-wrap
+      gap-4
+      justify-center md:justify-between
+      items-center
+
+      min-[768px]:max-[1069px]:flex-col
+      min-[768px]:max-[1069px]:gap-2
+      min-[768px]:max-[1069px]:items-stretch
+    "
+        >
+          <h3
+            className="
+        text-xl md:text-2xl lg:text-3xl
+        text-gray-800
+        text-center
+        whitespace-nowrap
+        rounded-md
+        font-medium
+        sm:text-left
+        flex flex-col md:flex-row
+
+        min-[768px]:max-[1069px]:text-base
+        min-[768px]:max-[1069px]:flex-row
+        min-[768px]:max-[1069px]:items-center
+        min-[768px]:max-[1069px]:justify-center
+      "
+          >
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
-              <span className="ml-4 md:mt-1.5 text-lg text-blue-600 font-semibold">
-                Total Responses: {totalCount?.toLocaleString() ?? 0}
+              <span
+                className="
+            ml-4 md:mt-1.5
+            text-lg
+            text-[#00aeef]
+            font-semibold
+
+            min-[768px]:max-[1069px]:text-xs
+            min-[768px]:max-[1069px]:ml-2
+            min-[768px]:max-[1069px]:mt-0
+          "
+              >
+                Total Responses: {totalCount.toLocaleString()}
               </span>
             )}
           </h3>
-          <div className="flex flex-row justify-center items-center gap-2 md:gap-4">
-            <span className="hidden md:inline mr-2 whitespace-nowrap rounded-md text-sm font-medium transition-all ">
+
+          <div
+            className="
+        flex flex-row
+        justify-center
+        items-center
+        gap-2 md:gap-4
+
+        min-[768px]:max-[1069px]:gap-1
+        min-[768px]:max-[1069px]:shrink-0
+        min-[768px]:max-[1069px]:w-full
+        min-[768px]:max-[1069px]:justify-center
+      "
+          >
+            {/* Last refreshed */}
+            <span
+              className="
+          hidden md:inline
+          mr-2
+          whitespace-nowrap
+          rounded-md
+          text-sm
+          font-medium
+          text-gray-500
+
+          min-[768px]:max-[1069px]:hidden
+        "
+            >
               {lastRefreshed
-                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, { addSuffix: true })}`
+                ? `Last refreshed ${formatDistanceToNow(lastRefreshed, {
+                    addSuffix: true,
+                  })}`
                 : ""}
             </span>
+
+            {/* Refresh */}
             <Button
               size="icon"
-              className="rounded-full mr-4"
+              className="rounded-full mr-4 min-[768px]:max-[1069px]:mr-1"
               variant="ghost"
               disabled={isSpinning}
               onClick={() => {
@@ -398,10 +468,11 @@ function GuestDashboard() {
               }}
             >
               <RefreshCcw
-                className={`w-24 h-24 ${isSpinning ? "animate-spin" : ""}`}
+                className={`w-5 h-5 ${isSpinning ? "animate-spin" : ""}`}
               />
             </Button>
 
+            {/* Filter */}
             <DashboardFilter
               dateRange={dateRange}
               setDateRange={setDateRange}
@@ -412,6 +483,8 @@ function GuestDashboard() {
               setFilterServiceNameArray={setFilterServiceNameArray}
               setFilterServiceTypeArray={setFilterServiceTypeArray}
             />
+
+            {/* Settings */}
             <DashboardSettings
               getGenderTooltip={getGenderTooltip}
               isGenderTooltipLoading={isGenderTooltipLoading}
@@ -428,6 +501,7 @@ function GuestDashboard() {
               genderTooltipCount={genderTooltipCount}
               serviceTooltip={serviceTooltip}
               serviceTooltipCount={serviceTooltipCount}
+              modelName={modelName}
             />
           </div>
         </div>
@@ -483,7 +557,7 @@ function GuestDashboard() {
             {/* Added negative margin-bottom to pull the bottom up */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="h-[400px] rounded-md shadow-lg p-10 flex justify-center items-center">
-                <div className="h-[330px] w-[400px]">
+                <div className="h-[] w-[400px]">
                   <Gauge gaugeValue={gaugeValue} />
                 </div>
               </div>
@@ -529,9 +603,8 @@ function GuestDashboard() {
           </main>
         </div>
       )}{" "}
-      <ChatbotUI />
     </div>
   );
 }
 
-export default GuestDashboard;
+export default DashboardPage;

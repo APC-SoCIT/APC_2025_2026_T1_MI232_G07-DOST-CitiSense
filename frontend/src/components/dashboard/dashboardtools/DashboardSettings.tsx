@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
-import { Check, ChevronDown, Download, Loader2, Settings } from "lucide-react";
+import { Loader2, Settings } from "lucide-react";
 import type { DashboardSettingsProps } from "../../../types/DashboardProps";
 import { toast } from "sonner";
 import { ExportFile } from "./ExportFile";
@@ -32,6 +32,7 @@ const DashboardSettings = ({
   genderTooltipCount,
   serviceTooltip,
   serviceTooltipCount,
+  modelName,
 }: DashboardSettingsProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRows, setSelectedRows] = useState<number>(0);
@@ -65,7 +66,7 @@ const DashboardSettings = ({
     <div className="flex flex-col min-w-0">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" className="bg-gray-100">
+          <Button variant="default" className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]">
             <Settings />{" "}
           </Button>
         </DialogTrigger>
@@ -84,8 +85,8 @@ const DashboardSettings = ({
           />
           <div className="flex flex-col sm:flex-row sm:items-center min-w-full justify-between gap-2">
             <Button
-              variant="bluedefault"
-              className="flex-1  w-full sm:w-auto"
+              variant="default"
+              className="flex-1 w-full sm:w-auto bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
               onClick={() => handleGenerateThematicAnalysis()}
               disabled={isGenderTooltipLoading}
             >
@@ -99,8 +100,8 @@ const DashboardSettings = ({
               )}{" "}
             </Button>
             <Button
-              variant="bluedefault"
-              className="flex-1 w-full sm:w-auto"
+              variant="default"
+              className="flex-1 w-full sm:w-auto bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
               onClick={() => handleGenerateSummaries()}
               disabled={isGenderTooltipLoading}
             >
@@ -126,6 +127,7 @@ const DashboardSettings = ({
               genderTooltipCount={genderTooltipCount}
               serviceTooltip={serviceTooltip}
               serviceTooltipCount={serviceTooltipCount}
+              modelName={modelName}
             />
             <DialogFooter>
               <DialogClose asChild>

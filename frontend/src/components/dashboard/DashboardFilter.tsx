@@ -79,7 +79,7 @@ const DashboardFilter = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-gray-100" variant="outline">
+        <Button className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]" variant="default">
           <Filter /> <span className="hidden md:inline">Filter</span>
         </Button>
       </DialogTrigger>
@@ -116,7 +116,7 @@ const DashboardFilter = ({
           <div className="flex-1">
             <Button
               variant="ghost"
-              className="text-blue-600 hover:text-blue-800"
+              className="text-[#06adef] hover:text-[#039be5]"
               onClick={() => {
                 setLocalDateRange(undefined);
                 setLocalServiceName([]);
@@ -131,7 +131,7 @@ const DashboardFilter = ({
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type="submit" onClick={() => applyServiceFilters()}>
+              <Button type="submit" onClick={() => applyServiceFilters()} className="bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none">
                 Apply filters
               </Button>
             </DialogClose>

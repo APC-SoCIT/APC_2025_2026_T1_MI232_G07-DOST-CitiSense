@@ -5,6 +5,7 @@ import { DataTable } from "@/components/table/DataTable";
 import { getModelColumns } from "./ModelSelectionColumn";
 import Pagination from "@/components/table/Pagination";
 import { type ModelVersion } from "@/types/ModelSelectionProps";
+import { AIRetrainDialog } from "../AIRetrain/AIRetrainDialog";
 
 const ModelSelection = () => {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
@@ -18,6 +19,8 @@ const ModelSelection = () => {
       const response = await api.get(
         `models/?limit=${pageSize}&offset=${offset}`,
       );
+      const res = await api.get("models/?is_active=true");
+      console.log(res.data.results[0].version_name);
       setModelList(response.data.results);
       setRowCount(response.data.count);
     } catch (error) {

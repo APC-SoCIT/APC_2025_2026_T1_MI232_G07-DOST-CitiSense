@@ -252,8 +252,20 @@ def FineTuneAIModel(request):
     # 80/20 train/test split 
     x_train, x_test, y_train, y_test = train_test_split(texts, labels, test_size=0.20, random_state=42, stratify=labels)
 
-    # Reference from this point onward: https://huggingface.co/docs/transformers/v4.41.1/training
-    base_model_path = get_active_model_path()
+    # Get the model data from the query params and select from it to be retrained on.
+    model_id = request.data.get("model_id")
+
+    if model_id: 
+        try:
+            checkpoint = ModelVersion.objects.get(pk=model_id)
+            base_model_path = checkpoint.model_path
+
+        except ModelVersion.DoesNotExist:
+            return Response({"error": "Selected checkpoint does not exist"}, status=400)
+    else:
+        base_model_path = get_active_model_path()
+
+    # Reference for model training from this point onward: https://huggingface.co/docs/transformers/v4.41.1/training
     tokenizer = AutoTokenizer.from_pretrained(base_model_path)
     model = AutoModelForSequenceClassification.from_pretrained(base_model_path)
 

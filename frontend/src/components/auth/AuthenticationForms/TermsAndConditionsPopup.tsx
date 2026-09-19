@@ -143,8 +143,8 @@ const TermsAndConditionsPopup: React.FC<TermsAndConditionsPopupProps> = ({
                 disabled={!agreed}
                 className={
                   agreed
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : "bg-slate-400 cursor-not-allowed"
+                    ? "bg-[#06adef] hover:bg-[#039be5] text-white"
+                    : "bg-slate-400 cursor-not-allowed text-white"
                 }
               >
                 Accept & Continue

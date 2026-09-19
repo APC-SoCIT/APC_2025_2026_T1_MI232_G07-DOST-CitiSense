@@ -109,14 +109,22 @@ const TableSettings = ({
       {/* Edit and save for table updating */}
       <div className="flex justify-between py-2 ">
         <Button
-          className="mx-2"
-          variant={isEditing ? "destructive" : "bluedefault"}
+          className={`mx-2 border-none ${
+            isEditing
+              ? "bg-gray-200 hover:bg-gray-300 text-black"
+              : "bg-[#00aeef] hover:bg-[#33bbed] focus:bg-[#66c9f2] text-white"
+          }`}
+          variant="default"
           onClick={handleEditOrCancel}
         >
           {isEditing ? "Cancel" : "Edit"}
         </Button>
         <Button
-          className="mr-2"
+          className={`mr-2 border-none ${
+            isEditing
+              ? "bg-[#00aeef] hover:bg-[#33bbed] focus:bg-[#66c9f2] text-white"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+          }`}
           variant="default"
           onClick={() => {
             postChange?.();
