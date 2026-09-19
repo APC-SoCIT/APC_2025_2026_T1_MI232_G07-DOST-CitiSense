@@ -20,13 +20,11 @@ import type { TableToolbarProps } from "../../types/TableProps";
 const TableSettings = ({
   table,
   isEditing,
-  setIsEditing,
   postChange,
   handleEditOrCancel,
   filterParams,
-  rowCount,
 }: TableToolbarProps) => {
-  const handleTableExport = async (rows: any[]) => {
+  const handleTableExport = async () => {
     // Get total row count for current filters
     const countRes = await api.get(
       `sentimentposts/?limit=1&offset=0&${filterParams}`,
@@ -137,7 +135,7 @@ const TableSettings = ({
           disabled={table.getPreFilteredRowModel().rows.length < 0}
           className="mr-2"
           variant="greendefault"
-          onClick={() => handleTableExport(table.getPreFilteredRowModel().rows)}
+          onClick={() => handleTableExport()}
         >
           Export
         </Button>
