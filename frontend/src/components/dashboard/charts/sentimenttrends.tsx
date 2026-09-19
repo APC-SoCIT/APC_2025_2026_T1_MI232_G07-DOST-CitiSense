@@ -98,8 +98,16 @@ const SentimentTrends: React.FC<SentimentTrendsChartsProps> = ({
 
     xaxis: {
       type: "datetime",
+      tickAmount: trendsValue[0]?.data.length,
       labels: {
         datetimeUTC: true,
+        datetimeFormatter: {
+          year: "yyyy",
+          month: "MMM 'yy",
+          day: "dd MMM",
+          hour: "dd MMM",
+          minute: "dd MMM",
+        },
         style: {
           colors: "#64748b",
           fontSize: "12px",
