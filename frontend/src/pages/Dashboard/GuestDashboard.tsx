@@ -447,7 +447,7 @@ function DashboardPage() {
             {/* Last refreshed */}
             <span
               className="
-          hidden md:inline
+          hidden min-[1400px]:inline
           mr-2
           whitespace-nowrap
           rounded-md
