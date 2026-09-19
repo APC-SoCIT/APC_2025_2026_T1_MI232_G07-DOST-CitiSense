@@ -20,11 +20,21 @@ api.interceptors.response.use(
     // Get the config of the request
     const originalRequest = error.config;
 
+    const isRefreshRequest = originalRequest?.url?.includes(
+      "/api/auth/token/refresh",
+    );
+
     // If the error is a 401 (unauthorized) and we already haven't tried a refresh for the expired access token, then refresh the access token
     // The !originalRequest.sent will prevent infinite looping of attempting to refresh token with an expired refresh token
     // The authPath check is there to prevent any token refresh from happening from an authentication url.
+    // The Refresh request is if it failed the first ime then return the error.
     // Also checks if the user is logged in or not; default to false
-    if (error.response?.status === 401 && !originalRequest.sent && !authPath) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest.sent &&
+      !authPath &&
+      !isRefreshRequest
+    ) {
       originalRequest.sent = true;
 
       try {
