@@ -14,7 +14,6 @@ import { Filter } from "lucide-react";
 import FilterDropdownMenuItem from "./FilterDropdownMenuItem";
 import FilterCalendar from "./FilterCalendar";
 import { type DateRange } from "react-day-picker";
-import { serviceNames } from "../../mockdata/fakeServiceFilter";
 import type { DashboardFilterProps } from "../../types/DashboardProps";
 
 const DashboardFilter = ({
@@ -76,10 +75,19 @@ const DashboardFilter = ({
   const handleSelectAllServiceType = (selectAll = true) => {
     setLocalServiceType(selectAll ? serviceTypeArray : []);
   };
+
+  // After window refresh then set the date range in the filter to what the user has selected.
+  useEffect(() => {
+    setLocalDateRange(dateRange);
+  }, [dateRange]);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]" variant="default">
+        <Button
+          className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]"
+          variant="default"
+        >
           <Filter /> <span className="hidden md:inline">Filter</span>
         </Button>
       </DialogTrigger>
@@ -131,7 +139,11 @@ const DashboardFilter = ({
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <DialogClose asChild>
-              <Button type="submit" onClick={() => applyServiceFilters()} className="bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none">
+              <Button
+                type="submit"
+                onClick={() => applyServiceFilters()}
+                className="bg-[#00aeef] text-white hover:bg-[#33bbed] focus:bg-[#66c9f2] border-none"
+              >
                 Apply filters
               </Button>
             </DialogClose>
