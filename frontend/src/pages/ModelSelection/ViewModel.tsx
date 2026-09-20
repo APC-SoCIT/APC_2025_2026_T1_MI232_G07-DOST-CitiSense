@@ -39,7 +39,7 @@ const ViewModel = () => {
 
   if (!specificModel) {
     return (
-      <div>
+      <div className="flex flex-col justify-center items-center h-full">
         <Loader2 className="w-20 h-20 animate-spin [animation-duration:2s]" />{" "}
       </div>
     );
