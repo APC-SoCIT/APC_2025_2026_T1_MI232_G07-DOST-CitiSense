@@ -19,4 +19,5 @@ def save_google_picture(sender, request, sociallogin, **kwargs):
     if not user.username:
         user.username = extra_data.get("name") or extra_data.get("given_name")
 
-    user.save()
+    if sociallogin.is_existing:
+        user.save()
