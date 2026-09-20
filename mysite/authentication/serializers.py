@@ -12,7 +12,7 @@ User = get_user_model()
 from .forms import CustomAllAuthPasswordResetForm
 
 class UserSerializer(serializers.ModelSerializer):
-    groups = serializers.StringRelatedField(many=True, required=False) #convert the integer to a string representation of the role
+    groups = serializers.StringRelatedField(many=True, read_only=True) #convert the integer to a string representation of the role
     picture = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False, style={'input_type': 'password'})
     picture_file = serializers.ImageField(required=False, allow_null=False)
