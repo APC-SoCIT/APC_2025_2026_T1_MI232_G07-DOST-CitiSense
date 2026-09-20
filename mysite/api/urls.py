@@ -19,6 +19,7 @@ from .views import (
     ViewModelList,
     ActivateModelVersion,
     ViewSpecificModel,
+    ClearCache
 )
 
 urlpatterns = [
@@ -41,6 +42,7 @@ urlpatterns = [
     path("sentimentposts/servicetooltip/", service_bar_chart_tooltip, name="servicetooltip"),
     path("sentimentposts/totalcount/", get_total_feedback, name="total_feedback"),
     path("sentimentposts/themes/", thematic_analysis, name="thematic_analysis"),
+    path("dashboard/clearcache/", ClearCache, name="clear_cache"),
 
     #AI Retrain APIs
     path("sentimentcorrections/", SentimentCorrectionList.as_view(), name="senticorrection"),

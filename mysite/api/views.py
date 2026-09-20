@@ -19,6 +19,7 @@ from django.conf import settings
 import os
 import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from django.core.cache import cache
 
 bad_values = {
     "", " ", '', ' ',
@@ -135,6 +136,10 @@ class IsAnalyst(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.groups.filter(name="analyst").exists()
 
+@api_view(["POST"])
+def ClearCache(request):
+    cache.clear()
+    return Response({"message": "Succesfully reset cache"})
 
 # class SentimentPostUpdate(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = SentimentPost.objects.all()

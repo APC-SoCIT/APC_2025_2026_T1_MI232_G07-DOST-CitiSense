@@ -10,11 +10,12 @@ import {
   DialogTrigger,
 } from "../../ui/dialog";
 import { Button } from "../../ui/button";
-import { Loader2, Settings } from "lucide-react";
+import { Eraser, Loader2, Settings } from "lucide-react";
 import type { DashboardSettingsProps } from "../../../types/DashboardProps";
 import { toast } from "sonner";
 import { ExportFile } from "./ExportFile";
 import DashboardSettingsDropdown from "./DashboardSettingsDropdown";
+import api from "@/api";
 
 const DashboardSettings = ({
   getGenderTooltip,
@@ -62,11 +63,24 @@ const DashboardSettings = ({
       toast.error("Failed to generate themes.");
     }
   };
+
+  const handleResetCache = async () => {
+    setOpen(false);
+    try {
+      await api.post("dashboard/clearcache/");
+      toast.success("Successfully reset cache");
+    } catch (error) {
+      toast.error("Failed to reset cache");
+    }
+  };
   return (
     <div className="flex flex-col min-w-0">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button variant="default" className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]">
+          <Button
+            variant="default"
+            className="bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]"
+          >
             <Settings />{" "}
           </Button>
         </DialogTrigger>
@@ -129,6 +143,13 @@ const DashboardSettings = ({
               serviceTooltipCount={serviceTooltipCount}
               modelName={modelName}
             />
+            <Button
+              className=""
+              onClick={handleResetCache}
+              variant="destructive"
+            >
+              <Eraser /> Reset Cache
+            </Button>
             <DialogFooter>
               <DialogClose asChild>
                 <Button
