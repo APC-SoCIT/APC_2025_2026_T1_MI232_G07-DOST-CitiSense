@@ -558,8 +558,8 @@ function DashboardPage() {
           <Loader2 className="w-20 h-20 animate-spin" />
         </div>
       ) : (
-        /* Wrap main in a div that hides the overflow or handles the height collapse */
-        <div className="overflow-hidden">
+        /* Wrap main in a div */
+        <div className="overflow-x-clip">
           <main className="scale-85 origin-top p-4 -mb-[15vh]">
             {" "}
             {/* Added negative margin-bottom to pull the bottom up */}
