@@ -87,6 +87,7 @@ def filter_table_request(request):
     comments = request.query_params.get("comments")
     key_takeaways = request.query_params.get("key_takeaways")
     suggestions = request.query_params.get("suggestions")
+    sentiment_empty = request.query_params.get("sentiment_empty")
 
     # Instantiate a dictionary; this will be used to hold the key/value pairs for the filters
     filter_dict = {}
@@ -109,13 +110,25 @@ def filter_table_request(request):
         filter_dict["typeoflibrary__in"] = typeoflibrary
     if region:
         filter_dict["region__in"] = region
-    if sentiment:
-        filter_dict["labeled_feedback__sentiment__in"] = sentiment
-
 
     # Filter based on what the contents of the dictionary are
     # Default to 0
     queryset = queryset.filter(**filter_dict)
+
+    # Create a database query condition
+    if sentiment: 
+        q = Q()
+        real_values = [s for s in sentiment if s != "null"]
+
+        # If the sentiment is not null then include it in the query condition
+        if real_values:
+            q |= Q(labeled_feedback__sentiment__in=real_values)
+
+        # If null is in the sentiment being sent by the frontend then include it in the query condition.
+        if "null" in sentiment:
+            q |= Q(labeled_feedback__sentiment__isnull=True)
+
+        queryset = queryset.filter(q)
 
     if comments == "hideEmpty":
         queryset = queryset.exclude(comments__isnull=True).exclude(comments="").exclude(comments=" ")

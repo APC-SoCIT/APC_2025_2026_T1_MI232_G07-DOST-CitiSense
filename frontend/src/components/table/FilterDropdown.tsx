@@ -79,7 +79,9 @@ const FilterDropdown = ({
             onSelect={(e: Event) => e.preventDefault()}
           >
             <div className="flex items-center w-full justify-between">
-              <span className="text-sm text-gray-800">{value}</span>
+              <span className="text-sm text-gray-800">
+                {value ? value : "ㅤ"}
+              </span>
             </div>
           </TableDropdownMenuCheckBoxItem>
         ))}
