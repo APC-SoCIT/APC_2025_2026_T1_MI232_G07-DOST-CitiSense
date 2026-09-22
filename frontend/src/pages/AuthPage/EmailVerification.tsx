@@ -3,13 +3,21 @@ import DOSTLogo from "../../components/auth/DOST-IRAD";
 
 export default function EmailVerification() {
   return (
-    <div className="relative h-svh flex flex-col items-center justify-center p-6 md:p-10 bg-white">
-      <div className="absolute top-8 left-8 z-20 flex items-center gap-3">
-        <DOSTLogo />
+    <div className="flex min-h-svh">
+      <div className="hidden md:flex flex-col justify-center items-center text-primary-foreground w-80 p-8 bg-[#00aeef]">
+        <span className="text-4xl font-bold text-center">
+          Department of Science and Technology
+        </span>
       </div>
 
-      <div className="relative z-10 flex w-full max-w-sm flex-col gap-6">
-        <EmailVerificationSent />
+      <div
+        className="flex flex-1 flex-col items-center justify-center gap-6 p-6 md:p-10"
+        style={{ backgroundColor: "#ffffff" }}
+      >
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <DOSTLogo />
+          <EmailVerificationSent />
+        </div>
       </div>
     </div>
   );
