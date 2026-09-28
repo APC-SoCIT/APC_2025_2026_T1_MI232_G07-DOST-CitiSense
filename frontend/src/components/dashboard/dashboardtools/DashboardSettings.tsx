@@ -29,6 +29,7 @@ const DashboardSettings = ({
   genderValue,
   genderTypes,
   serviceValue,
+  serviceTypes,
   themes,
   genderTooltip,
   genderTooltipCount,
@@ -138,6 +139,7 @@ const DashboardSettings = ({
               genderValue={genderValue}
               genderTypes={genderTypes}
               serviceValue={serviceValue}
+              serviceTypes={serviceTypes}
               themes={themes}
               genderTooltip={genderTooltip}
               genderTooltipCount={genderTooltipCount}

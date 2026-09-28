@@ -505,6 +505,7 @@ function DashboardPage() {
               genderValue={genderValue}
               genderTypes={genderTypes}
               serviceValue={serviceValue}
+              serviceTypes={serviceTypes}
               themes={themes}
               genderTooltip={genderTooltip}
               genderTooltipCount={genderTooltipCount}

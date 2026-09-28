@@ -68,6 +68,7 @@ export type DashboardSettingsProps = {
   genderValue: GenderSeriesProps[];
   genderTypes: string[];
   serviceValue: ServiceSeriesProps[];
+  serviceTypes: string[];
   themes: themeDataProps[];
   genderTooltip: string[][];
   genderTooltipCount: number[][];
@@ -82,6 +83,7 @@ export type ExportFileProps = {
   genderValue: GenderSeriesProps[];
   genderTypes: string[];
   serviceValue: ServiceSeriesProps[];
+  serviceTypes: string[];
   themes: themeDataProps[];
   genderTooltip: string[][];
   genderTooltipCount: number[][];

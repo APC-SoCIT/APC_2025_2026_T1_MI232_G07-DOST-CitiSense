@@ -16,6 +16,7 @@ export const ExportFile = ({
   genderValue,
   genderTypes,
   serviceValue,
+  serviceTypes,
   themes,
   genderTooltip,
   genderTooltipCount,
@@ -98,46 +99,7 @@ export const ExportFile = ({
         const getServiceCount = (sentiment: string, index: number) =>
           serviceSeries[sentiment]?.[index] ?? 0;
 
-        const getStoredServiceNames = () => {
-          try {
-            const raw = localStorage.getItem("serviceNameFilter");
-            if (!raw || raw === "undefined" || raw === "null") {
-              return [] as string[];
-            }
-            const parsed = JSON.parse(raw) as string[];
-            return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
-          } catch {
-            return [] as string[];
-          }
-        };
-
-        const fallbackServiceLabels = [
-          "Hybrid Seminar",
-          "Material Requests",
-          "Online Library",
-          "Library Tour",
-          "Consultation",
-        ];
-
-        const storedServiceNames = getStoredServiceNames();
-        const inferredLength = Math.max(
-          0,
-          ...Object.values(serviceSeries).map((arr) => arr.length),
-        );
-
-        const serviceLabels =
-          storedServiceNames.length === inferredLength
-            ? storedServiceNames
-            : inferredLength > 0
-              ? inferredLength > fallbackServiceLabels.length
-                ? Array.from(
-                    { length: inferredLength },
-                    (_, i) => fallbackServiceLabels[i] ?? `Service ${i + 1}`,
-                  )
-                : fallbackServiceLabels.slice(0, inferredLength)
-              : fallbackServiceLabels;
-
-        const allServiceData = serviceLabels.map((label, index) => {
+        const allServiceData = serviceTypes.map((label, index) => {
           const negC = getServiceCount("negative", index);
           const neuC = getServiceCount("neutral", index);
           const posC = getServiceCount("positive", index);
