@@ -503,6 +503,7 @@ function DashboardPage() {
               totalCount={totalCount}
               gaugeValue={gaugeValue}
               genderValue={genderValue}
+              genderTypes={genderTypes}
               serviceValue={serviceValue}
               themes={themes}
               genderTooltip={genderTooltip}

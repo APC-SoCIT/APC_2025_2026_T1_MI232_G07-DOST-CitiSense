@@ -66,6 +66,7 @@ export type DashboardSettingsProps = {
   totalCount: number | null;
   gaugeValue: number;
   genderValue: GenderSeriesProps[];
+  genderTypes: string[];
   serviceValue: ServiceSeriesProps[];
   themes: themeDataProps[];
   genderTooltip: string[][];
@@ -79,6 +80,7 @@ export type ExportFileProps = {
   totalCount: number | null;
   gauge: number;
   genderValue: GenderSeriesProps[];
+  genderTypes: string[];
   serviceValue: ServiceSeriesProps[];
   themes: themeDataProps[];
   genderTooltip: string[][];

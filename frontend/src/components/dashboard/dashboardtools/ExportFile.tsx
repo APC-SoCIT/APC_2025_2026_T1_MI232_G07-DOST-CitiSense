@@ -14,6 +14,7 @@ export const ExportFile = ({
   totalCount,
   gauge,
   genderValue,
+  genderTypes,
   serviceValue,
   themes,
   genderTooltip,
@@ -47,14 +48,13 @@ export const ExportFile = ({
         const getCount = (sentiment: string, index: number) =>
           sentimentSeries[sentiment]?.[index] ?? 0;
 
-        const defaultGenderLabels = ["Female", "Male"];
         const maxGenderLength = Math.max(
-          defaultGenderLabels.length,
+          genderTypes.length,
           ...Object.values(sentimentSeries).map((arr) => arr.length),
         );
 
         const genderLabels = Array.from({ length: maxGenderLength }, (_, i) =>
-          defaultGenderLabels[i] ? defaultGenderLabels[i] : `Gender ${i + 1}`,
+          genderTypes[i] ?? `Gender ${i + 1}`,
         );
 
         const allGenderData = genderLabels.map((label, index) => {
@@ -116,6 +116,7 @@ export const ExportFile = ({
           "Material Requests",
           "Online Library",
           "Library Tour",
+          "Consultation",
         ];
 
         const storedServiceNames = getStoredServiceNames();
@@ -170,6 +171,26 @@ export const ExportFile = ({
         // Any service starting from index 4 (5th service) onwards
         const additionalServices = allServiceData.slice(4);
 
+        const genderTooltipRows = allGenderData.map((row) => ({
+          name: row.name,
+          summary_negative: row.summary_negative,
+          summary_neutral: row.summary_neutral,
+          summary_positive: row.summary_positive,
+          summary_count_negative: row.summary_count_negative,
+          summary_count_neutral: row.summary_count_neutral,
+          summary_count_positive: row.summary_count_positive,
+        }));
+
+        const serviceTooltipRows = allServiceData.map((row) => ({
+          name: row.name,
+          service_summary_negative: row.service_summary_negative,
+          service_summary_neutral: row.service_summary_neutral,
+          service_summary_positive: row.service_summary_positive,
+          service_summary_count_negative: row.service_summary_count_negative,
+          service_summary_count_neutral: row.service_summary_count_neutral,
+          service_summary_count_positive: row.service_summary_count_positive,
+        }));
+
         doc.render({
           date_now: `${new Date().toLocaleDateString()}, ${new Date().toLocaleTimeString()}`,
           model_name: modelName,
@@ -223,7 +244,7 @@ export const ExportFile = ({
           ),
           ...Object.fromEntries(
             ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
-              Array.from({ length: 2 }, (_, genderIndex) => [
+              Array.from({ length: allGenderData.length }, (_, genderIndex) => [
                 `gender_summary_${sentiment}${genderIndex + 1}`,
                 genderTooltip[index]?.[genderIndex] ?? "",
               ]),
@@ -231,7 +252,7 @@ export const ExportFile = ({
           ),
           ...Object.fromEntries(
             ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
-              Array.from({ length: 2 }, (_, genderIndex) => [
+              Array.from({ length: allGenderData.length }, (_, genderIndex) => [
                 `gender_summary_count_${sentiment}${genderIndex + 1}`,
                 genderTooltipCount[index]?.[genderIndex] ?? 0,
               ]),
@@ -255,6 +276,21 @@ export const ExportFile = ({
           ),
           genderValue: genderValue.map((item) => item.name),
           genderData: allGenderData,
+          genderTooltipRows,
+          ...Object.fromEntries(
+            allGenderData.slice(2).flatMap((row, index) => {
+              const placeholderIndex = index + 3;
+              return [
+                [`gender_name${placeholderIndex}`, row.name],
+                [`NegP${placeholderIndex}`, row.negP],
+                [`NegC${placeholderIndex}`, row.negC],
+                [`NeuP${placeholderIndex}`, row.neuP],
+                [`NeuC${placeholderIndex}`, row.neuC],
+                [`posP${placeholderIndex}`, row.posP],
+                [`posC${placeholderIndex}`, row.posC],
+              ];
+            }),
+          ),
           gender_name1: genderRow1?.name ?? "",
           NegP: genderRow1?.negP ?? 0,
           NegC: genderRow1?.negC ?? 0,
@@ -271,6 +307,7 @@ export const ExportFile = ({
           posC2: genderRow2?.posC ?? 0,
           additional_genders: additionalGenders,
           serviceData: allServiceData,
+          serviceTooltipRows,
           service_name1: serviceRow1?.name ?? "",
           sNegP1: serviceRow1?.sNegP ?? 0,
           sNegC1: serviceRow1?.sNegC ?? 0,

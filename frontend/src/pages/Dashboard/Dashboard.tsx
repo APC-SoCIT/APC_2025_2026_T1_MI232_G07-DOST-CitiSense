@@ -242,36 +242,40 @@ function DashboardPage() {
       const res = await api.get(
         `/sentimentposts/gendertooltip/?limit=${limit}&offset=0&${filterParams}`,
       );
-      const resData = res.data.genderTooltip;
+      const resData: GenderTooltipDataProps[] = res.data.genderTooltip;
 
-      let genderSummaryCount = {
-        Negative: [0, 0],
-        Neutral: [0, 0],
-        Positive: [0, 0],
-      };
+      const uniqueGenders = Array.from(new Set(resData.map((item) => item.sex)));
+      const size = uniqueGenders.length;
 
-      // Used to store the current summary for each sentiment and each gender category
-      let genderSummary = {
-        Negative: ["", ""],
-        Neutral: ["", ""],
-        Positive: ["", ""],
-      };
-
-      // Transform the data, and put the each summary in their respective genderSummary dictionary.
-      resData.forEach((item: GenderTooltipDataProps) => {
-        // Assign an index for both sex (e.g., Female = 0, Male = 1)
-        const index = item.sex === "Female" ? 0 : 1;
-        // Access the current sentiment within the loop in the genderSummary/count dictionary, then use the index of the gender to place the summary text
-        // e.g., item.sentiment is 0 = Negative, the index is 0 = Female. So genderSummary["Negative"][0] = summary text / summary text count
-        genderSummary[item.sentiment][index] = item.summary;
-        genderSummaryCount[item.sentiment][index] = item.count;
+      const dynamicGenderMap: Record<string, number> = {};
+      uniqueGenders.forEach((gender, index) => {
+        dynamicGenderMap[gender] = index;
       });
 
-      // Just get the values from the genderSummaryCount and genderSummary dictionary of lists
+      const genderSummary: Record<string, string[]> = {
+        Negative: Array(size).fill(""),
+        Neutral: Array(size).fill(""),
+        Positive: Array(size).fill(""),
+      };
+
+      const genderSummaryCount: Record<string, number[]> = {
+        Negative: Array(size).fill(0),
+        Neutral: Array(size).fill(0),
+        Positive: Array(size).fill(0),
+      };
+
+      resData.forEach((item: GenderTooltipDataProps) => {
+        const index = dynamicGenderMap[item.sex];
+        if (index !== undefined && genderSummary[item.sentiment]) {
+          genderSummary[item.sentiment][index] = item.summary;
+          genderSummaryCount[item.sentiment][index] = item.count;
+        }
+      });
+
       setGenderTooltipCount(Object.values(genderSummaryCount));
       setGenderTooltip(Object.values(genderSummary));
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching gender tooltip:", error);
       throw error;
     } finally {
       setIsGenderTooltipLoading(false);
@@ -285,56 +289,45 @@ function DashboardPage() {
       const res = await api.get(
         `/sentimentposts/servicetooltip/?limit=${limit}&offset=0&${filterParams}`,
       );
-      const resData = res.data.serviceTooltip;
+      const resData: ServiceTooltipDataProps[] = res.data.serviceTooltip;
 
-      // Get the unique values using set, and then convert it back to an array
-      const serviceResData = Array.from(
+      const uniqueServices = Array.from(
         new Set(
-          (res.data.serviceTooltip as ServiceTooltipDataProps[]).map(
-            (item: any) => item.service,
-          ),
+          resData.map((item) => item.service).filter(Boolean) as string[],
         ),
       );
 
-      // Get the length of the array
-      const size = serviceResData.length;
-
-      // Initialize an empty dictionary and put the current service in the loop, along with its index
+      const size = uniqueServices.length;
       const dynamicServiceMap: Record<string, number> = {};
-      serviceResData.forEach((service, index) => {
+      uniqueServices.forEach((service, index) => {
         dynamicServiceMap[service] = index;
       });
 
-      // Reference: https://stackoverflow.com/a/44172015
-      // Used to store the current summary for each sentiment and each service category
-      let serviceSummary = {
+      const serviceSummary: Record<string, string[]> = {
         Negative: Array(size).fill(""),
         Neutral: Array(size).fill(""),
         Positive: Array(size).fill(""),
       };
-      // Create an array filled with zeroes based on the serviceType count
-      let serviceSummaryCount = {
+
+      const serviceSummaryCount: Record<string, number[]> = {
         Negative: Array(size).fill(0),
         Neutral: Array(size).fill(0),
         Positive: Array(size).fill(0),
       };
 
-      // Transform the data, and put the each summary in their respective serviceSummary dictionary
       resData.forEach((item: ServiceTooltipDataProps) => {
-        // Get the current index from the serviceMap
         const index = dynamicServiceMap[item.service];
 
-        // Access the current sentiment within the loop in the serviceSumary dictionary, then use the index of the service to place the summary text
-        // e.g., item.sentiment is 0 = Negative, the index is 0 = Hybrid Seminar. So serviceSummary["Negative"][0] = summary text / summary count
-        serviceSummary[item.sentiment][index] = item.summary;
-        serviceSummaryCount[item.sentiment][index] = item.count;
+        if (index !== undefined && serviceSummary[item.sentiment]) {
+          serviceSummary[item.sentiment][index] = item.summary;
+          serviceSummaryCount[item.sentiment][index] = item.count;
+        }
       });
 
-      // Get only the values of the serviceSummary (not the key)
       setServiceTooltip(Object.values(serviceSummary));
       setServiceTooltipCount(Object.values(serviceSummaryCount));
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching service tooltip:", error);
       throw error;
     } finally {
       setServiceTooltipLoading(false);
@@ -503,6 +496,7 @@ function DashboardPage() {
               totalCount={totalCount}
               gaugeValue={gaugeValue}
               genderValue={genderValue}
+              genderTypes={genderTypes}
               serviceValue={serviceValue}
               themes={themes}
               genderTooltip={genderTooltip}

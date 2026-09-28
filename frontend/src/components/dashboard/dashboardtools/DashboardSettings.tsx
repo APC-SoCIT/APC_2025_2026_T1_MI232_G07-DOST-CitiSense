@@ -27,6 +27,7 @@ const DashboardSettings = ({
   totalCount,
   gaugeValue,
   genderValue,
+  genderTypes,
   serviceValue,
   themes,
   genderTooltip,
@@ -135,6 +136,7 @@ const DashboardSettings = ({
               totalCount={totalCount}
               gauge={gaugeValue}
               genderValue={genderValue}
+              genderTypes={genderTypes}
               serviceValue={serviceValue}
               themes={themes}
               genderTooltip={genderTooltip}
