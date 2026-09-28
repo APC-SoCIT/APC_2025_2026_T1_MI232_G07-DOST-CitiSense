@@ -34,6 +34,8 @@ export const ExportFile = ({
           paragraphLoop: true,
           linebreaks: true,
         });
+
+        // ---------------- GENDER PROCESSING ----------------
         const sentimentSeries = genderValue.reduce(
           (acc, series) => {
             acc[series.name.toLowerCase()] = series.data;
@@ -45,8 +47,17 @@ export const ExportFile = ({
         const getCount = (sentiment: string, index: number) =>
           sentimentSeries[sentiment]?.[index] ?? 0;
 
-        const defaultLabels = ["Female", "Male"];
-        const genderData = defaultLabels.map((label, index) => {
+        const defaultGenderLabels = ["Female", "Male"];
+        const maxGenderLength = Math.max(
+          defaultGenderLabels.length,
+          ...Object.values(sentimentSeries).map((arr) => arr.length),
+        );
+
+        const genderLabels = Array.from({ length: maxGenderLength }, (_, i) =>
+          defaultGenderLabels[i] ? defaultGenderLabels[i] : `Gender ${i + 1}`,
+        );
+
+        const allGenderData = genderLabels.map((label, index) => {
           const negC = getCount("negative", index);
           const neuC = getCount("neutral", index);
           const posC = getCount("positive", index);
@@ -62,12 +73,20 @@ export const ExportFile = ({
             neuC,
             posP: toPercent(posC),
             posC,
+            summary_negative: genderTooltip[0]?.[index] ?? "",
+            summary_neutral: genderTooltip[1]?.[index] ?? "",
+            summary_positive: genderTooltip[2]?.[index] ?? "",
+            summary_count_negative: genderTooltipCount[0]?.[index] ?? 0,
+            summary_count_neutral: genderTooltipCount[1]?.[index] ?? 0,
+            summary_count_positive: genderTooltipCount[2]?.[index] ?? 0,
           };
         });
 
-        const genderRow1 = genderData[0];
-        const genderRow2 = genderData[1];
+        const genderRow1 = allGenderData[0];
+        const genderRow2 = allGenderData[1];
+        const additionalGenders = allGenderData.slice(2);
 
+        // ---------------- SERVICE PROCESSING ----------------
         const serviceSeries = serviceValue.reduce(
           (acc, series) => {
             acc[series.name.toLowerCase()] = series.data;
@@ -109,10 +128,15 @@ export const ExportFile = ({
           storedServiceNames.length === inferredLength
             ? storedServiceNames
             : inferredLength > 0
-              ? fallbackServiceLabels.slice(0, inferredLength)
+              ? inferredLength > fallbackServiceLabels.length
+                ? Array.from(
+                    { length: inferredLength },
+                    (_, i) => fallbackServiceLabels[i] ?? `Service ${i + 1}`,
+                  )
+                : fallbackServiceLabels.slice(0, inferredLength)
               : fallbackServiceLabels;
 
-        const serviceData = serviceLabels.map((label, index) => {
+        const allServiceData = serviceLabels.map((label, index) => {
           const negC = getServiceCount("negative", index);
           const neuC = getServiceCount("neutral", index);
           const posC = getServiceCount("positive", index);
@@ -122,19 +146,29 @@ export const ExportFile = ({
 
           return {
             name: label,
-            negP: toPercent(negC),
-            negC,
-            neuP: toPercent(neuC),
-            neuC,
-            posP: toPercent(posC),
-            posC,
+            sNegP: toPercent(negC),
+            sNegC: negC,
+            sNeuP: toPercent(neuC),
+            sNeuC: neuC,
+            sPosP: toPercent(posC),
+            sPosC: posC,
+            service_summary_negative: serviceTooltip[0]?.[index] ?? "",
+            service_summary_neutral: serviceTooltip[1]?.[index] ?? "",
+            service_summary_positive: serviceTooltip[2]?.[index] ?? "",
+            service_summary_count_negative: serviceTooltipCount[0]?.[index] ?? 0,
+            service_summary_count_neutral: serviceTooltipCount[1]?.[index] ?? 0,
+            service_summary_count_positive: serviceTooltipCount[2]?.[index] ?? 0,
           };
         });
 
-        const serviceRow1 = serviceData[0];
-        const serviceRow2 = serviceData[1];
-        const serviceRow3 = serviceData[2];
-        const serviceRow4 = serviceData[3];
+        // Rows 1 to 4 for fixed service positions
+        const serviceRow1 = allServiceData[0];
+        const serviceRow2 = allServiceData[1];
+        const serviceRow3 = allServiceData[2];
+        const serviceRow4 = allServiceData[3];
+
+        // Any service starting from index 4 (5th service) onwards
+        const additionalServices = allServiceData.slice(4);
 
         doc.render({
           date_now: `${new Date().toLocaleDateString()}, ${new Date().toLocaleTimeString()}`,
@@ -220,7 +254,7 @@ export const ExportFile = ({
             ),
           ),
           genderValue: genderValue.map((item) => item.name),
-          genderData,
+          genderData: allGenderData,
           gender_name1: genderRow1?.name ?? "",
           NegP: genderRow1?.negP ?? 0,
           NegC: genderRow1?.negC ?? 0,
@@ -235,42 +269,44 @@ export const ExportFile = ({
           NeuC2: genderRow2?.neuC ?? 0,
           posP2: genderRow2?.posP ?? 0,
           posC2: genderRow2?.posC ?? 0,
-          serviceData,
+          additional_genders: additionalGenders,
+          serviceData: allServiceData,
           service_name1: serviceRow1?.name ?? "",
-          sNegP1: serviceRow1?.negP ?? 0,
-          sNegC1: serviceRow1?.negC ?? 0,
-          sNeuP1: serviceRow1?.neuP ?? 0,
-          sNeuC1: serviceRow1?.neuC ?? 0,
-          sPosP1: serviceRow1?.posP ?? 0,
-          sPosC1: serviceRow1?.posC ?? 0,
+          sNegP1: serviceRow1?.sNegP ?? 0,
+          sNegC1: serviceRow1?.sNegC ?? 0,
+          sNeuP1: serviceRow1?.sNeuP ?? 0,
+          sNeuC1: serviceRow1?.sNeuC ?? 0,
+          sPosP1: serviceRow1?.sPosP ?? 0,
+          sPosC1: serviceRow1?.sPosC ?? 0,
           service_name2: serviceRow2?.name ?? "",
-          sNegP2: serviceRow2?.negP ?? 0,
-          sNegC2: serviceRow2?.negC ?? 0,
-          sNeuP2: serviceRow2?.neuP ?? 0,
-          sNeuC2: serviceRow2?.neuC ?? 0,
-          sPosP2: serviceRow2?.posP ?? 0,
-          sPosC2: serviceRow2?.posC ?? 0,
+          sNegP2: serviceRow2?.sNegP ?? 0,
+          sNegC2: serviceRow2?.sNegC ?? 0,
+          sNeuP2: serviceRow2?.sNeuP ?? 0,
+          sNeuC2: serviceRow2?.sNeuC ?? 0,
+          sPosP2: serviceRow2?.sPosP ?? 0,
+          sPosC2: serviceRow2?.sPosC ?? 0,
           service_name3: serviceRow3?.name ?? "",
-          sNegP3: serviceRow3?.negP ?? 0,
-          sNegC3: serviceRow3?.negC ?? 0,
-          sNeuP3: serviceRow3?.neuP ?? 0,
-          sNeuC3: serviceRow3?.neuC ?? 0,
-          sPosP3: serviceRow3?.posP ?? 0,
-          sPosC3: serviceRow3?.posC ?? 0,
+          sNegP3: serviceRow3?.sNegP ?? 0,
+          sNegC3: serviceRow3?.sNegC ?? 0,
+          sNeuP3: serviceRow3?.sNeuP ?? 0,
+          sNeuC3: serviceRow3?.sNeuC ?? 0,
+          sPosP3: serviceRow3?.sPosP ?? 0,
+          sPosC3: serviceRow3?.sPosC ?? 0,
           service_name4: serviceRow4?.name ?? "",
-          sNegP4: serviceRow4?.negP ?? 0,
-          sNegC4: serviceRow4?.negC ?? 0,
-          sNeuP4: serviceRow4?.neuP ?? 0,
-          sNeuC4: serviceRow4?.neuC ?? 0,
-          sPosP4: serviceRow4?.posP ?? 0,
-          sPosC4: serviceRow4?.posC ?? 0,
+          sNegP4: serviceRow4?.sNegP ?? 0,
+          sNegC4: serviceRow4?.sNegC ?? 0,
+          sNeuP4: serviceRow4?.sNeuP ?? 0,
+          sNeuC4: serviceRow4?.sNeuC ?? 0,
+          sPosP4: serviceRow4?.sPosP ?? 0,
+          sPosC4: serviceRow4?.sPosC ?? 0,
+          additional_services: additionalServices,
           serviceValue: serviceValue,
         });
         const out = doc.getZip().generate({
           type: "blob",
           mimeType:
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        }); //Output the document using Data-URI
+        });
         const now = new Date();
         const pad = (value: number) => value.toString().padStart(2, "0");
         const timestamp = `${pad(now.getMonth() + 1)}-${pad(now.getDate())}-${now.getFullYear()}`;
