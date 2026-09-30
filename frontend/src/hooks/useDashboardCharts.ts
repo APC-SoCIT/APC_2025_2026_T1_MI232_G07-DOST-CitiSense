@@ -46,9 +46,7 @@ const useDashboardCharts = ({
   const getGender = async () => {
     try {
       const res = await api.get(`/sentimentposts/gen/?${filterParams}`);
-      const resData = (res.data.genderCount as GenderDataProps[])
-        .filter((item) => typeof item.sex === "string" && item.sex.trim())
-        .map((item) => ({ ...item, sex: item.sex.trim() }));
+      const resData = res.data.genderCount;
 
       // If there is no data from the api response just break from the function early and exit with no values inside the array
       if (!resData || resData.length === 0) {
@@ -58,7 +56,7 @@ const useDashboardCharts = ({
       }
       // Get the unique genders for rendering the y-axis of the chart
       const uniqueGenderArray: string[] = Array.from(
-        new Set(resData.map((item) => item.sex)),
+        new Set(resData.map((item: GenderDataProps) => item.sex)),
       );
 
       setGenderTypes(uniqueGenderArray);
@@ -79,7 +77,7 @@ const useDashboardCharts = ({
       };
 
       // if the gender is "F" set index to 0; otherwise 1 ("M")
-      resData.forEach((item) => {
+      resData.forEach((item: GenderDataProps) => {
         const index = dynamicGenderMap[item.sex];
 
         //get the current sentiment in the loop and determine the gender index
@@ -108,9 +106,7 @@ const useDashboardCharts = ({
   const getService = async () => {
     try {
       const res = await api.get(`/sentimentposts/service/?${filterParams}`);
-      const resData = (res.data.serviceCount as ServiceDataProps[])
-        .filter((item) => typeof item.service === "string" && item.service.trim())
-        .map((item) => ({ ...item, service: item.service.trim() }));
+      const resData = res.data.serviceCount;
 
       // If there is no data from the api response just break from the function early and exit with no values inside the array
       if (!resData || resData.length === 0) {
@@ -121,8 +117,8 @@ const useDashboardCharts = ({
 
       // Get the unique service names for rendering the y-axis of the chart
       const uniqueServiceTypesArray: string[] = Array.from(
-        new Set(resData.map((item) => item.service)),
-      ).sort((a, b) => a.localeCompare(b));
+        new Set(resData.map((item: ServiceDataProps) => item.service)),
+      );
 
       setServiceTypes(uniqueServiceTypesArray);
 
@@ -146,7 +142,7 @@ const useDashboardCharts = ({
 
       //loop for updating the serviceCounts based on the serviceMap
       //looks for the value pair of the current index and assigns it as the current index
-      resData.forEach((item) => {
+      resData.forEach((item: ServiceDataProps) => {
         const index = dynamicServiceMap[item.service];
         if (index !== undefined) {
           serviceCounts[item.sentiment][index] = item.sencount;

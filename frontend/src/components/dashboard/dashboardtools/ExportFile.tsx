@@ -92,10 +92,6 @@ export const ExportFile = ({
         
         const genderRowsForReport = [...allGenderData];
 
-        const genderRow1 = allGenderData[0];
-        const genderRow2 = allGenderData[1];
-        const additionalGenders = allGenderData.slice(2);
-
         // ---------------- SERVICE PROCESSING ----------------
         const serviceSeries = serviceValue.reduce(
           (acc, series) => {
@@ -144,15 +140,6 @@ export const ExportFile = ({
           };
           },
         );
-
-        // Rows 1 to 4 for fixed service positions
-        const serviceRow1 = allServiceData[0];
-        const serviceRow2 = allServiceData[1];
-        const serviceRow3 = allServiceData[2];
-        const serviceRow4 = allServiceData[3];
-
-        // Any service starting from index 4 (5th service) onwards
-        const additionalServices = allServiceData.slice(4);
 
         const genderTooltipRows = genderRowsForReport.map((row) => ({
           name: row.name,
@@ -225,104 +212,10 @@ export const ExportFile = ({
               ];
             }).flat(),
           ),
-          ...Object.fromEntries(
-            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
-              Array.from({ length: allGenderData.length }, (_, genderIndex) => [
-                `gender_summary_${sentiment}${genderIndex + 1}`,
-                genderTooltip[index]?.[genderIndex] ?? "",
-              ]),
-            ),
-          ),
-          ...Object.fromEntries(
-            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
-              Array.from({ length: allGenderData.length }, (_, genderIndex) => [
-                `gender_summary_count_${sentiment}${genderIndex + 1}`,
-                genderTooltipCount[index]?.[genderIndex] ?? 0,
-              ]),
-            ),
-          ),
-          ...Object.fromEntries(
-            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
-              Array.from({ length: 5 }, (_, serviceIndex) => [
-                `service_summary_${sentiment}${serviceIndex + 1}`,
-                serviceTooltip[index]?.[serviceIndex] ?? "",
-              ]),
-            ),
-          ),
-          ...Object.fromEntries(
-            ["negative", "neutral", "positive"].flatMap((sentiment, index) =>
-              Array.from({ length: 5 }, (_, serviceIndex) => [
-                `service_summary_count_${sentiment}${serviceIndex + 1}`,
-                serviceTooltipCount[index]?.[serviceIndex] ?? 0,
-              ]),
-            ),
-          ),
-          genderValue: genderValue.map((item) => item.name),
           genderRows: genderRowsForReport,
-          genderData: allGenderData,
           genderTooltipRows,
-          ...Object.fromEntries(
-            allGenderData.slice(2).flatMap((row, index) => {
-              const placeholderIndex = index + 3;
-              return [
-                [`gender_name${placeholderIndex}`, row.name],
-                [`NegP${placeholderIndex}`, row.negP],
-                [`NegC${placeholderIndex}`, row.negC],
-                [`NeuP${placeholderIndex}`, row.neuP],
-                [`NeuC${placeholderIndex}`, row.neuC],
-                [`posP${placeholderIndex}`, row.posP],
-                [`posC${placeholderIndex}`, row.posC],
-              ];
-            }),
-          ),
-          gender_name1: genderRow1?.name ?? "",
-          NegP: genderRow1?.negP ?? 0,
-          NegC: genderRow1?.negC ?? 0,
-          NeuP: genderRow1?.neuP ?? 0,
-          NeuC: genderRow1?.neuC ?? 0,
-          posP: genderRow1?.posP ?? 0,
-          posC: genderRow1?.posC ?? 0,
-          gender_name2: genderRow2?.name ?? "",
-          NegP2: genderRow2?.negP ?? 0,
-          NegC2: genderRow2?.negC ?? 0,
-          NeuP2: genderRow2?.neuP ?? 0,
-          NeuC2: genderRow2?.neuC ?? 0,
-          posP2: genderRow2?.posP ?? 0,
-          posC2: genderRow2?.posC ?? 0,
-          additional_genders: additionalGenders,
           serviceRows: allServiceData,
-          serviceData: allServiceData,
           serviceTooltipRows,
-          service_name1: serviceRow1?.name ?? "",
-          sNegP1: serviceRow1?.sNegP ?? 0,
-          sNegC1: serviceRow1?.sNegC ?? 0,
-          sNeuP1: serviceRow1?.sNeuP ?? 0,
-          sNeuC1: serviceRow1?.sNeuC ?? 0,
-          sPosP1: serviceRow1?.sPosP ?? 0,
-          sPosC1: serviceRow1?.sPosC ?? 0,
-          service_name2: serviceRow2?.name ?? "",
-          sNegP2: serviceRow2?.sNegP ?? 0,
-          sNegC2: serviceRow2?.sNegC ?? 0,
-          sNeuP2: serviceRow2?.sNeuP ?? 0,
-          sNeuC2: serviceRow2?.sNeuC ?? 0,
-          sPosP2: serviceRow2?.sPosP ?? 0,
-          sPosC2: serviceRow2?.sPosC ?? 0,
-          service_name3: serviceRow3?.name ?? "",
-          sNegP3: serviceRow3?.sNegP ?? 0,
-          sNegC3: serviceRow3?.sNegC ?? 0,
-          sNeuP3: serviceRow3?.sNeuP ?? 0,
-          sNeuC3: serviceRow3?.sNeuC ?? 0,
-          sPosP3: serviceRow3?.sPosP ?? 0,
-          sPosC3: serviceRow3?.sPosC ?? 0,
-          service_name4: serviceRow4?.name ?? "",
-          sNegP4: serviceRow4?.sNegP ?? 0,
-          sNegC4: serviceRow4?.sNegC ?? 0,
-          sNeuP4: serviceRow4?.sNeuP ?? 0,
-          sNeuC4: serviceRow4?.sNeuC ?? 0,
-          sPosP4: serviceRow4?.sPosP ?? 0,
-          sPosC4: serviceRow4?.sPosC ?? 0,
-          additional_services: additionalServices,
-          serviceValue: serviceValue,
         });
         const out = doc.getZip().generate({
           type: "blob",
