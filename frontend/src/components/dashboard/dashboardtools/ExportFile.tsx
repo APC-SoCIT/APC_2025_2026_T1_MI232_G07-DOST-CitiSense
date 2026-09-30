@@ -49,13 +49,19 @@ export const ExportFile = ({
         const getCount = (sentiment: string, index: number) =>
           sentimentSeries[sentiment]?.[index] ?? 0;
 
+        // Keep whitespace-only categories in the data, but make them visible in the report.
+        const displayCategory = (
+          label: string | null | undefined,
+          fallback: string,
+        ) => (label == null ? fallback : label.trim() ? label : "(blank)");
+
         const maxGenderLength = Math.max(
           genderTypes.length,
           ...Object.values(sentimentSeries).map((arr) => arr.length),
         );
 
         const genderLabels = Array.from({ length: maxGenderLength }, (_, i) =>
-          genderTypes[i] ?? `Gender ${i + 1}`,
+          displayCategory(genderTypes[i], `Gender ${i + 1}`),
         );
 
         const allGenderData = genderLabels.map((label, index) => {
@@ -83,6 +89,9 @@ export const ExportFile = ({
           };
         });
 
+        
+        const genderRowsForReport = [...allGenderData];
+
         const genderRow1 = allGenderData[0];
         const genderRow2 = allGenderData[1];
         const additionalGenders = allGenderData.slice(2);
@@ -99,7 +108,18 @@ export const ExportFile = ({
         const getServiceCount = (sentiment: string, index: number) =>
           serviceSeries[sentiment]?.[index] ?? 0;
 
-        const allServiceData = serviceTypes.map((label, index) => {
+        const maxServiceLength = Math.max(
+          serviceTypes.length,
+          ...Object.values(serviceSeries).map((arr) => arr.length),
+        );
+
+        const allServiceData = Array.from(
+          { length: maxServiceLength },
+          (_, index) => {
+          const label = displayCategory(
+            serviceTypes[index],
+            `Service ${index + 1}`,
+          );
           const negC = getServiceCount("negative", index);
           const neuC = getServiceCount("neutral", index);
           const posC = getServiceCount("positive", index);
@@ -122,7 +142,8 @@ export const ExportFile = ({
             service_summary_count_neutral: serviceTooltipCount[1]?.[index] ?? 0,
             service_summary_count_positive: serviceTooltipCount[2]?.[index] ?? 0,
           };
-        });
+          },
+        );
 
         // Rows 1 to 4 for fixed service positions
         const serviceRow1 = allServiceData[0];
@@ -133,7 +154,7 @@ export const ExportFile = ({
         // Any service starting from index 4 (5th service) onwards
         const additionalServices = allServiceData.slice(4);
 
-        const genderTooltipRows = allGenderData.map((row) => ({
+        const genderTooltipRows = genderRowsForReport.map((row) => ({
           name: row.name,
           summary_negative: row.summary_negative,
           summary_neutral: row.summary_neutral,
@@ -237,6 +258,7 @@ export const ExportFile = ({
             ),
           ),
           genderValue: genderValue.map((item) => item.name),
+          genderRows: genderRowsForReport,
           genderData: allGenderData,
           genderTooltipRows,
           ...Object.fromEntries(
@@ -268,6 +290,7 @@ export const ExportFile = ({
           posP2: genderRow2?.posP ?? 0,
           posC2: genderRow2?.posC ?? 0,
           additional_genders: additionalGenders,
+          serviceRows: allServiceData,
           serviceData: allServiceData,
           serviceTooltipRows,
           service_name1: serviceRow1?.name ?? "",

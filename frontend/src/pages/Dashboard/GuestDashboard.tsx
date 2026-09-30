@@ -244,27 +244,32 @@ function DashboardPage() {
       );
       const resData = res.data.genderTooltip;
 
-      let genderSummaryCount = {
-        Negative: [0, 0],
-        Neutral: [0, 0],
-        Positive: [0, 0],
+      const size = genderTypes.length;
+      const genderSummaryCount: Record<string, number[]> = {
+        Negative: Array(size).fill(0),
+        Neutral: Array(size).fill(0),
+        Positive: Array(size).fill(0),
       };
 
       // Used to store the current summary for each sentiment and each gender category
-      let genderSummary = {
-        Negative: ["", ""],
-        Neutral: ["", ""],
-        Positive: ["", ""],
+      const genderSummary: Record<string, string[]> = {
+        Negative: Array(size).fill(""),
+        Neutral: Array(size).fill(""),
+        Positive: Array(size).fill(""),
       };
 
       // Transform the data, and put the each summary in their respective genderSummary dictionary.
       resData.forEach((item: GenderTooltipDataProps) => {
-        // Assign an index for both sex (e.g., Female = 0, Male = 1)
-        const index = item.sex === "Female" ? 0 : 1;
+        const index =
+          typeof item.sex === "string"
+            ? genderTypes.indexOf(item.sex.trim())
+            : -1;
         // Access the current sentiment within the loop in the genderSummary/count dictionary, then use the index of the gender to place the summary text
         // e.g., item.sentiment is 0 = Negative, the index is 0 = Female. So genderSummary["Negative"][0] = summary text / summary text count
-        genderSummary[item.sentiment][index] = item.summary;
-        genderSummaryCount[item.sentiment][index] = item.count;
+        if (index >= 0 && genderSummary[item.sentiment]) {
+          genderSummary[item.sentiment][index] = item.summary;
+          genderSummaryCount[item.sentiment][index] = item.count;
+        }
       });
 
       // Just get the values from the genderSummaryCount and genderSummary dictionary of lists
@@ -287,23 +292,7 @@ function DashboardPage() {
       );
       const resData = res.data.serviceTooltip;
 
-      // Get the unique values using set, and then convert it back to an array
-      const serviceResData = Array.from(
-        new Set(
-          (res.data.serviceTooltip as ServiceTooltipDataProps[]).map(
-            (item: any) => item.service,
-          ),
-        ),
-      );
-
-      // Get the length of the array
-      const size = serviceResData.length;
-
-      // Initialize an empty dictionary and put the current service in the loop, along with its index
-      const dynamicServiceMap: Record<string, number> = {};
-      serviceResData.forEach((service, index) => {
-        dynamicServiceMap[service] = index;
-      });
+      const size = serviceTypes.length;
 
       // Reference: https://stackoverflow.com/a/44172015
       // Used to store the current summary for each sentiment and each service category
@@ -322,12 +311,17 @@ function DashboardPage() {
       // Transform the data, and put the each summary in their respective serviceSummary dictionary
       resData.forEach((item: ServiceTooltipDataProps) => {
         // Get the current index from the serviceMap
-        const index = dynamicServiceMap[item.service];
+        const index =
+          typeof item.service === "string"
+            ? serviceTypes.indexOf(item.service.trim())
+            : -1;
 
         // Access the current sentiment within the loop in the serviceSumary dictionary, then use the index of the service to place the summary text
         // e.g., item.sentiment is 0 = Negative, the index is 0 = Hybrid Seminar. So serviceSummary["Negative"][0] = summary text / summary count
-        serviceSummary[item.sentiment][index] = item.summary;
-        serviceSummaryCount[item.sentiment][index] = item.count;
+        if (index >= 0 && serviceSummary[item.sentiment]) {
+          serviceSummary[item.sentiment][index] = item.summary;
+          serviceSummaryCount[item.sentiment][index] = item.count;
+        }
       });
 
       // Get only the values of the serviceSummary (not the key)

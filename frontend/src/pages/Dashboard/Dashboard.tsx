@@ -244,13 +244,7 @@ function DashboardPage() {
       );
       const resData: GenderTooltipDataProps[] = res.data.genderTooltip;
 
-      const uniqueGenders = Array.from(new Set(resData.map((item) => item.sex)));
-      const size = uniqueGenders.length;
-
-      const dynamicGenderMap: Record<string, number> = {};
-      uniqueGenders.forEach((gender, index) => {
-        dynamicGenderMap[gender] = index;
-      });
+      const size = genderTypes.length;
 
       const genderSummary: Record<string, string[]> = {
         Negative: Array(size).fill(""),
@@ -265,7 +259,10 @@ function DashboardPage() {
       };
 
       resData.forEach((item: GenderTooltipDataProps) => {
-        const index = dynamicGenderMap[item.sex];
+        const index =
+          typeof item.sex === "string"
+            ? genderTypes.indexOf(item.sex.trim())
+            : -1;
         if (index !== undefined && genderSummary[item.sentiment]) {
           genderSummary[item.sentiment][index] = item.summary;
           genderSummaryCount[item.sentiment][index] = item.count;
@@ -291,17 +288,7 @@ function DashboardPage() {
       );
       const resData: ServiceTooltipDataProps[] = res.data.serviceTooltip;
 
-      const uniqueServices = Array.from(
-        new Set(
-          resData.map((item) => item.service).filter(Boolean) as string[],
-        ),
-      );
-
-      const size = uniqueServices.length;
-      const dynamicServiceMap: Record<string, number> = {};
-      uniqueServices.forEach((service, index) => {
-        dynamicServiceMap[service] = index;
-      });
+      const size = serviceTypes.length;
 
       const serviceSummary: Record<string, string[]> = {
         Negative: Array(size).fill(""),
@@ -316,7 +303,10 @@ function DashboardPage() {
       };
 
       resData.forEach((item: ServiceTooltipDataProps) => {
-        const index = dynamicServiceMap[item.service];
+        const index =
+          typeof item.service === "string"
+            ? serviceTypes.indexOf(item.service.trim())
+            : -1;
 
         if (index !== undefined && serviceSummary[item.sentiment]) {
           serviceSummary[item.sentiment][index] = item.summary;
