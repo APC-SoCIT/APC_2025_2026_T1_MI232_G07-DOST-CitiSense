@@ -5,7 +5,7 @@ import SentimentTrends from "../../components/dashboard/charts/sentimenttrends";
 import { Button } from "../../components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Loader2, RefreshCcw } from "lucide-react";
+import { ChevronLeft, Loader2, RefreshCcw } from "lucide-react";
 import axios from "axios";
 import DashboardFilter from "../../components/dashboard/DashboardFilter";
 import { type DateRange } from "react-day-picker";
@@ -22,8 +22,10 @@ import ThematicAnalysisTable, {
 } from "../../components/dashboard/charts/ThematicAnalysis";
 
 import useDashboardCharts from "@/hooks/useDashboardCharts";
+import { useNavigate } from "react-router-dom";
 
 function DashboardPage() {
+  const navigate = useNavigate();
   const [themes, setThemes] = useState<themeDataProps[]>(fallbackThemes); // To hold the values for the thematic analysis table
   const [isThemesLoading, setIsThemesLoading] = useState(false);
   const [uniqueServiceType, setUniqueServiceType] = useState<string[]>([]);
@@ -389,6 +391,7 @@ function DashboardPage() {
       min-[768px]:max-[1069px]:items-stretch
     "
         >
+          {" "}
           <h3
             className="
         text-xl md:text-2xl lg:text-3xl
@@ -406,6 +409,15 @@ function DashboardPage() {
         min-[768px]:max-[1069px]:justify-center
       "
           >
+            <Button
+              variant="default"
+              className="mr-2 bg-[#00aeef] text-white hover:bg-[#33bbed] hover:text-white focus:bg-[#66c9f2] focus:text-white border-[#00aeef]"
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              <ChevronLeft />
+            </Button>
             Sentiment Analysis Dashboard
             {typeof totalCount === "number" && (
               <span
@@ -424,7 +436,6 @@ function DashboardPage() {
               </span>
             )}
           </h3>
-
           <div
             className="
         flex flex-row
