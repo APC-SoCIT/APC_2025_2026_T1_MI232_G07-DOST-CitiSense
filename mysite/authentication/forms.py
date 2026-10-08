@@ -2,6 +2,9 @@
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
+from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.auth.forms import UsernameField
+from django import forms
 
 if 'allauth' in settings.INSTALLED_APPS:
     from allauth.account import app_settings
@@ -58,3 +61,12 @@ class CustomAllAuthPasswordResetForm(DefaultPasswordResetForm):
                 'account/email/password_reset_key', email, context
             )
         return self.cleaned_data['email']
+
+class CustomAdminAuthenticationForm(AdminAuthenticationForm):
+    """
+    Override the base admin panel login to change the username to email label.
+
+    Reference: https://github.com/django/django/blob/stable/6.1.x/django/contrib/auth/forms.py#L305
+    
+    """
+    username = UsernameField(label="Email",widget=forms.TextInput(attrs={"autofocus": True}))
